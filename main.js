@@ -1,117 +1,94 @@
 const config = {
   'N. Virginia': {
-    'color': '#e6194b',
-    'graident': 'linear-gradient(to right, #00009b, #e6194b)',
+    'background': 'linear-gradient(to right, #00009b, #e6194b)',
     'flag': '🇺🇸'
   },
   'Ohio': {
-    'color': '#3cb44b',
-    'graident': 'linear-gradient(to right, #00009b, #3cb44b)',
+    'background': 'linear-gradient(to right, #00009b, #3cb44b)',
     'flag': '🇺🇸'
   },
   'N. California': {
-    'color': '#e58e00',
-    'graident': 'linear-gradient(to right, #00009b, #e58e00)',
+    'background': 'linear-gradient(to right, #00009b, #e58e00)',
     'flag': '🇺🇸'
   },
   'Oregon': {
-    'color': '#4363d8',
-    'graident': 'linear-gradient(to right, #00009b, #4363d8)',
+    'background': 'linear-gradient(to right, #00009b, #4363d8)',
     'flag': '🇺🇸'
   },
   'Cape Town': {
-    'color': '#16ab3e',
-    'graident': '',
+    'background': 'linear-gradient(to right, #9d6100, #d60000, #008a67, #273790)',
     'flag': '🇿🇦'
   },
   'Hong Kong': {
-    'color': '#808000',
-    'graident': '',
+    'background': 'linear-gradient(to right, #c9001a, #fcaeb6, #c9001a)',
     'flag': '🇭🇰'
   },
   'Jakarta': {
-    'color': '#008080',
-    'graident': '',
+    'background': 'linear-gradient(to right, #f50003, #e3e2e2)',
     'flag': '🇮🇩'
   },
   'Mumbai': {
-    'color': '#8a7299',
-    'graident': 'linear-gradient(to right, #f98000, #009200)',
+    'background': 'linear-gradient(to right, #f98000, #c1bbe5, #009200)',
     'flag': '🇮🇳'
   },
   'Osaka': {
-    'color': '#669975',
-    'graident': 'linear-gradient(to right, #222222, #d70048, #b87b00)',
+    'background': 'linear-gradient(to right, #d8d8d8, #d70048, #b87b00)',
     'flag': '🇯🇵'
   },
   'Seoul': {
-    'color': '#9a6324',
-    'graident': 'linear-gradient(to right, #e30423, #00009b)',
+    'background': 'linear-gradient(to right, #e30423, #00009b)',
     'flag': '🇰🇷'
   },
   'Singapore': {
-    'color': '#ccc8a0',
-    'graident': 'linear-gradient(to right, #ff3047, #ccc8a0)',
+    'background': 'linear-gradient(to right, #e7b2b5, #ff3047, #ccc8a0)',
     'flag': '🇸🇬'
   },
   'Sydney': {
-    'color': '#800000',
-    'graident': 'linear-gradient(to right, #00205b, #ef3340, #000080)',
+    'background': 'linear-gradient(to right, #00205b, #ef3340, #000080)',
     'flag': '🇦🇺'
   },
   'Tokyo': {
-    'color': '#669975',
-    'graident': 'linear-gradient(to right, #222222, #d70048, #222222)',
+    'background': 'linear-gradient(to right, #d8d8d8, #d70048, #dfdfdf)',
     'flag': '🇯🇵'
   },
   'Central': {
-    'color': '#f58231',
-    'graident': 'linear-gradient(to right, #f60000, #aaaaaa, #f60000)',
+    'background': 'linear-gradient(to right, #f60000, #ffdfe0, #f60000)',
     'flag': '🇨🇦'
   },
   'Frankfurt': {
-    'color': '#911eb4',
-    'graident': 'linear-gradient(to right, #181d1d, #eb3d00, #dd9400)',
+    'background': 'linear-gradient(to right, #181d1d, #eb3d00, #dd9400)',
     'flag': '🇩🇪'
   },
   'Ireland': {
-    'color': '#31a8a8',
-    'graident': 'linear-gradient(to right, #009555, #aaaaaa, #ec6b00)',
+    'background': 'linear-gradient(to right, #009555, #aaaaaa, #ec6b00)',
     'flag': '🇮🇪'
   },
   'London': {
-    'color': '#f032e6',
-    'graident': 'linear-gradient(to right, #194171, #ef3340, #075aaa)',
+    'background': 'linear-gradient(to right, #194171, #ef3340, #075aaa)',
     'flag': '🇬🇧'
   },
   'Milan': {
-    'color': '#a30f88',
-    'graident': 'linear-gradient(to right, #008639, #aaaaaa, #c80d2e)',
+    'background': 'linear-gradient(to right, #008639, #aaaaaa, #c80d2e)',
     'flag': '🇮🇹'
   },
   'Paris': {
-    'color': '#83ac08',
-    'graident': 'linear-gradient(to right, #00569b, #aaaaaa, #f31c21)',
+    'background': 'linear-gradient(to right, #00569b, #aaaaaa, #f31c21)',
     'flag': '🇫🇷'
   },
   'Stockholm': {
-    'color': '#c89898',
-    'graident': 'linear-gradient(to right, #004ca8, #fccc00, #004ca8)',
+    'background': 'linear-gradient(to right, #004ca8, #fccc00, #004ca8)',
     'flag': '🇸🇪'
   },
   'Bahrain': {
-    'color': '#808000',
-    'graident': '',
+    'background': 'linear-gradient(to right, #9ea0a1, #e70e3b, #9e112b)',
     'flag': '🇧🇭'
   },
   'São Paulo': {
-    'color': '#009a4a',
-    'graident': 'linear-gradient(to right, #009a4a, #fed500, #009a4a)',
+    'background': 'linear-gradient(to right, #009a4a, #fed500, #009042)',
     'flag': '🇧🇷'
   },
   'Global': {
-    'color': '',
-    'graident': 'linear-gradient(to right, #0575e6, #159957)',
+    'background': 'linear-gradient(to right, #0575e6, #159957)',
     'flag': '🌍'
   }
 }
@@ -121,17 +98,9 @@ const region = document.querySelector('[data-testid="awsc-nav-regions-menu-butto
 console.log(`region: ${region}`);
 
 if (config.hasOwnProperty(region)) {
-  let color = config[region]['color'];
-  let graident = config[region]['graident'];
-  let flag = config[region]['flag'];
+  // region header background
+  document.querySelector("#awsc-navigation-container>div>header>nav").style.background = config[region]['background'];
 
-  /* ------------------------- region Gradient header ------------------------- */
-  if (graident === '') {
-    document.querySelector("#awsc-navigation-container>div>header>nav").style.backgroundColor = color;
-  } else {
-    document.querySelector("#awsc-navigation-container>div>header>nav").style.background = graident;
-  }
-
-  /* ------------------------------- region emoji flag ------------------------------ */
-  document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", "<span style='font-size: 1.8em;line-height: 1em;margin-right:0.2em'>" + flag + "</span>");
+  // region flag
+  document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", "<span style='font-size: 1.8em;line-height: 1em;margin-right:0.2em'>" + config[region]['flag'] + "</span>");
 }
