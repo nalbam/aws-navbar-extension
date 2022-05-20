@@ -1,13 +1,15 @@
 {
   "name": "AWS Navbar Region Color & Flag",
-  "version": "1.0.1",
   "description": "Change navbar color and flag according to AWS region",
-  "manifest_version": 2,
+  "version": "1.1.0",
+  "manifest_version": 3,
   "icons": {
     "128": "icon.png"
   },
   "permissions": [
-    "storage",
+    "storage"
+  ],
+  "host_permissions": [
     "*://*.console.aws.amazon.com/*"
   ],
   "content_scripts": [
