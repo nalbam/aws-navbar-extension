@@ -1,0 +1,81 @@
+body {
+  width: 399px;
+}
+
+#popup_whole_row {
+  margin: 0 0 !important;
+}
+
+#popup_whole_col {
+  padding: 0 0 !important;
+}
+
+.card {
+  margin: 0 0 !important;
+}
+
+.card .card-content {
+  overflow: hidden;
+}
+
+.card .card-content .card-title {
+  margin-bottom: 45px;
+}
+
+#extension_name {
+  padding: 0 0 !important;
+}
+
+.option_row {
+  height: 30px;
+  margin-top: 10px;
+  clear: both;
+}
+
+.option_name {
+  padding: 0 0 !important;
+  font-size: 12px;
+}
+
+.option_value {
+  float: right !important;
+}
+
+.switch {
+  -webkit-transform: translateY(70%);
+  -ms-transform: translateY(70%);
+  transform: translateY(70%);
+}
+
+.input-field {
+  margin-top: 0;
+  top: -12;
+}
+
+.select-wrapper input.select-dropdown {
+  font-size: 12px;
+  margin: 0;
+}
+
+.dropdown-content {
+  max-height: 110px;
+}
+
+.dropdown-content li {
+  min-height: 0;
+  border-bottom: solid 1px rgba(84, 110, 122, .19);
+}
+
+.dropdown-content li>a,
+.dropdown-content li>span {
+  font-size: 12px;
+  padding: 4px 16px;
+}
+
+.switch label input[type=checkbox]:checked+.lever {
+  background-color: #ea6;
+}
+
+.switch label input[type=checkbox]:checked+.lever:after {
+  background-color: #f93;
+}
