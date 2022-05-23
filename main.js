@@ -139,8 +139,7 @@ const account_menu = document.querySelector('div[data-testid=account-detail-menu
 const account_id = account_menu.children[1].innerText.replaceAll('-', '');
 console.log(`account_id: ${account_id}`);
 
-// awsc-nav-account-menu-button
-
+// load
 chrome.storage.local.get('config', (c) => {
   const config = c.config !== undefined ? c.config : {};
   console.log(`config: ${JSON.stringify(config, null, 2)}`);
@@ -153,7 +152,12 @@ chrome.storage.local.get('config', (c) => {
 
     // region flag
     if (config['flag'] !== 'disabled') {
-      document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", "<span style='font-size: 1.8em;line-height: 1em;margin-right:0.2em'>" + colors[region]['flag'] + "</span>");
+      document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style='font-size:1.8em;line-height:1em;margin-right:0.2em'>${colors[region]['flag']}</span>`);
     }
+  }
+
+  // account
+  if (config[account_id] !== undefined) {
+    document.querySelector('[data-testid="awsc-nav-account-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style='font-size:1.8em;line-height:1em;margin-right:0.2em'>${config[account_id]}</span>`);
   }
 });
