@@ -1,5 +1,5 @@
 body {
-  width: 399px;
+  width: 400px;
 }
 
 #popup_whole_row {
@@ -28,48 +28,14 @@ body {
 
 .option_row {
   height: 30px;
-  margin-top: 10px;
+  margin-top: 20px;
   clear: both;
-}
-
-.option_name {
-  padding: 0 0 !important;
-  font-size: 12px;
-}
-
-.option_value {
-  float: right !important;
 }
 
 .switch {
   -webkit-transform: translateY(70%);
   -ms-transform: translateY(70%);
   transform: translateY(70%);
-}
-
-.input-field {
-  margin-top: 0;
-  top: -12;
-}
-
-.select-wrapper input.select-dropdown {
-  font-size: 12px;
-  margin: 0;
-}
-
-.dropdown-content {
-  max-height: 110px;
-}
-
-.dropdown-content li {
-  min-height: 0;
-  border-bottom: solid 1px rgba(84, 110, 122, .19);
-}
-
-.dropdown-content li>a,
-.dropdown-content li>span {
-  font-size: 12px;
-  padding: 4px 16px;
 }
 
 .switch label input[type=checkbox]:checked+.lever {

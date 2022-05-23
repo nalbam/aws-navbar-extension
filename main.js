@@ -90,7 +90,7 @@ const colors = {
   'Global': {
     'background': 'linear-gradient(to right, #0575e6, #159957)',
     'flag': '🌍'
-  }
+  },
 }
 
 const regions = {
@@ -117,7 +117,7 @@ const regions = {
     '스톡홀름': 'Stockholm',
     '바레인': 'Bahrain',
     '상파울루': 'São Paulo',
-    '글로벌': 'Global'
+    '글로벌': 'Global',
   }
 }
 
@@ -157,7 +157,7 @@ chrome.storage.local.get('config', (c) => {
   }
 
   // account
-  if (config[account_id] !== undefined) {
-    document.querySelector('[data-testid="awsc-nav-account-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style='font-size:1.8em;line-height:1em;margin-right:0.2em'>${config[account_id]}</span>`);
+  if (config['info'] !== undefined && config['info'][account_id] !== undefined) {
+    document.querySelector('[data-testid="awsc-nav-account-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style='font-size:1.8em;line-height:1em;margin-right:0.2em'>${config['info'][account_id]}</span>`);
   }
 });
