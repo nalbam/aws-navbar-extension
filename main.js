@@ -127,9 +127,9 @@ console.log(`region: ${region}`);
 
 // lang
 const lang = document.documentElement.lang;
-if (lang === 'ko') {
-  if (regions['ko'].hasOwnProperty(region)) {
-    region = regions['ko'][region];
+if (regions.hasOwnProperty(lang)) {
+  if (regions[lang].hasOwnProperty(region)) {
+    region = regions[lang][region];
     console.log(`region: ${region}`);
   }
 }
