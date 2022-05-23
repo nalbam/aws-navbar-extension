@@ -1,4 +1,4 @@
-const config = {
+const colors = {
   'N. Virginia': {
     'background': 'linear-gradient(to right, #00009b, #e6194b)',
     'flag': '🇺🇸'
@@ -93,14 +93,30 @@ const config = {
   }
 }
 
+// region
 const region = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]>span').innerText;
-
 console.log(`region: ${region}`);
 
-if (config.hasOwnProperty(region)) {
-  // region header background
-  document.querySelector("#awsc-navigation-container>div>header>nav").style.background = config[region]['background'];
+// account_id
+const account_menu = document.querySelector('div[data-testid=account-detail-menu]>div>div');
+const account_id = account_menu.children[1].innerText.replaceAll('-', '');
+console.log(`account_id: ${account_id}`);
 
-  // region flag
-  document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", "<span style='font-size: 1.8em;line-height: 1em;margin-right:0.2em'>" + config[region]['flag'] + "</span>");
-}
+// awsc-nav-account-menu-button
+
+chrome.storage.local.get('config', (c) => {
+  const config = c.config !== undefined ? c.config : {};
+  console.log(`config: ${JSON.stringify(config, null, 2)}`);
+
+  if (colors.hasOwnProperty(region)) {
+    // region header background
+    if (config['background'] !== 'disabled') {
+      document.querySelector("#awsc-navigation-container>div>header>nav").style.background = colors[region]['background'];
+    }
+
+    // region flag
+    if (config['flag'] !== 'disabled') {
+      document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", "<span style='font-size: 1.8em;line-height: 1em;margin-right:0.2em'>" + colors[region]['flag'] + "</span>");
+    }
+  }
+});
