@@ -93,9 +93,46 @@ const colors = {
   }
 }
 
+const regions = {
+  'ko': {
+    '버지니아 북부': 'N. Virginia',
+    '오하이오': 'Ohio',
+    '캘리포니아': 'N. California',
+    '오레곤': 'Oregon',
+    '케이프타운': 'Cape Town',
+    '홍콩': 'Hong Kong',
+    '자카르타': 'Jakarta',
+    '뭄바이': 'Mumbai',
+    '오사카': 'Osaka',
+    '서울': 'Seoul',
+    '싱가포르': 'Singapore',
+    '시드니': 'Sydney',
+    '도쿄': 'Tokyo',
+    '중부': 'Central',
+    '프랑크푸르트': 'Frankfurt',
+    '아일랜드': 'Ireland',
+    '런던': 'London',
+    '밀라노': 'Milan',
+    '파리': 'Paris',
+    '스톡홀름': 'Stockholm',
+    '바레인': 'Bahrain',
+    '상파울루': 'São Paulo',
+    '글로벌': 'Global'
+  }
+}
+
 // region
-const region = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]>span').innerText;
+let region = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]>span').innerText;
 console.log(`region: ${region}`);
+
+// lang
+const lang = document.documentElement.lang;
+if (lang === 'ko') {
+  if (regions['ko'].hasOwnProperty(region)) {
+    region = regions['ko'][region];
+    console.log(`region: ${region}`);
+  }
+}
 
 // account_id
 const account_menu = document.querySelector('div[data-testid=account-detail-menu]>div>div');
