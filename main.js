@@ -93,7 +93,7 @@ const colors = {
   },
 }
 
-const regions = {
+const langs = {
   'ko': {
     '버지니아 북부': 'N. Virginia',
     '오하이오': 'Ohio',
@@ -127,11 +127,9 @@ console.log(`region: ${region}`);
 
 // lang
 const lang = document.documentElement.lang;
-if (regions.hasOwnProperty(lang)) {
-  if (regions[lang].hasOwnProperty(region)) {
-    region = regions[lang][region];
-    console.log(`region: ${region}`);
-  }
+if (langs.hasOwnProperty(lang) && langs[lang].hasOwnProperty(region)) {
+  region = langs[lang][region];
+  console.log(`region: ${region}`);
 }
 
 // account_id
