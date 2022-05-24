@@ -174,13 +174,13 @@ chrome.storage.local.get('config', (c) => {
     // region flag
     if (config['flag'] !== 'disabled') {
       const img = `https://nalbam.github.io/aws-navbar-extension/flags/flag-${colors[region]['country']}.png`;
-      document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style='line-height:1.5em;margin-right:0.5em;'><img src="${img}" style="width:20px;height:20px;"></span>`);
-      // document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style='font-size:1.8em;margin-right:0.2em;'>${colors[region]['emoji']}</span>`);
+      document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style="line-height:1.5em;margin-right:0.5em;"><img src="${img}" style="width:20px;height:20px;"></span>`);
+      // document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style="font-size:1.8em;margin-right:0.2em;">${colors[region]['emoji']}</span>`);
     }
   }
 
   // account info
   if (config['info'] !== undefined && config['info'][account_id] !== undefined) {
-    document.querySelector('[data-testid="awsc-nav-account-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style='font-size:1.8em;margin-right:0.2em;'>${config['info'][account_id]}</span>`);
+    document.querySelector('[data-testid="awsc-nav-account-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style="font-size:1.8em;margin-right:0.2em;">${config['info'][account_id]}</span>`);
   }
 });
