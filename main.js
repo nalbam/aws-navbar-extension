@@ -2,117 +2,117 @@ const colors = {
   'N. Virginia': {
     'country': 'united-states',
     'background': 'linear-gradient(to right, #00009b, #e6194b)',
-    'flag': '🇺🇸'
+    'emoji': '🇺🇸'
   },
   'Ohio': {
     'country': 'united-states',
     'background': 'linear-gradient(to right, #00009b, #3cb44b)',
-    'flag': '🇺🇸'
+    'emoji': '🇺🇸'
   },
   'N. California': {
     'country': 'united-states',
     'background': 'linear-gradient(to right, #00009b, #e58e00)',
-    'flag': '🇺🇸'
+    'emoji': '🇺🇸'
   },
   'Oregon': {
     'country': 'united-states',
     'background': 'linear-gradient(to right, #00009b, #4363d8)',
-    'flag': '🇺🇸'
+    'emoji': '🇺🇸'
   },
   'Cape Town': {
     'country': 'south-africa',
     'background': 'linear-gradient(to right, #9d6100, #d60000, #008a67, #273790)',
-    'flag': '🇿🇦'
+    'emoji': '🇿🇦'
   },
   'Hong Kong': {
     'country': 'hong-kong',
     'background': 'linear-gradient(to right, #c9001a, #fcaeb6, #c9001a)',
-    'flag': '🇭🇰'
+    'emoji': '🇭🇰'
   },
   'Jakarta': {
     'country': 'indonesia',
     'background': 'linear-gradient(to right, #f50003, #e3e2e2)',
-    'flag': '🇮🇩'
+    'emoji': '🇮🇩'
   },
   'Mumbai': {
     'country': 'india',
     'background': 'linear-gradient(to right, #f98000, #c1bbe5, #009200)',
-    'flag': '🇮🇳'
+    'emoji': '🇮🇳'
   },
   'Osaka': {
     'country': 'japan',
     'background': 'linear-gradient(to right, #d8d8d8, #d70048, #b87b00)',
-    'flag': '🇯🇵'
+    'emoji': '🇯🇵'
   },
   'Seoul': {
     'country': 'south-korea',
     'background': 'linear-gradient(to right, #e30423, #00009b)',
-    'flag': '🇰🇷'
+    'emoji': '🇰🇷'
   },
   'Singapore': {
     'country': 'singapore',
     'background': 'linear-gradient(to right, #e7b2b5, #ff3047, #ccc8a0)',
-    'flag': '🇸🇬'
+    'emoji': '🇸🇬'
   },
   'Sydney': {
     'country': 'australia',
     'background': 'linear-gradient(to right, #00205b, #ef3340, #000080)',
-    'flag': '🇦🇺'
+    'emoji': '🇦🇺'
   },
   'Tokyo': {
     'country': 'japan',
     'background': 'linear-gradient(to right, #d8d8d8, #d70048, #dfdfdf)',
-    'flag': '🇯🇵'
+    'emoji': '🇯🇵'
   },
   'Central': {
     'country': 'canada',
     'background': 'linear-gradient(to right, #f60000, #ffdfe0, #f60000)',
-    'flag': '🇨🇦'
+    'emoji': '🇨🇦'
   },
   'Frankfurt': {
     'country': 'germany',
     'background': 'linear-gradient(to right, #181d1d, #eb3d00, #dd9400)',
-    'flag': '🇩🇪'
+    'emoji': '🇩🇪'
   },
   'Ireland': {
     'country': 'ireland',
     'background': 'linear-gradient(to right, #009555, #aaaaaa, #ec6b00)',
-    'flag': '🇮🇪'
+    'emoji': '🇮🇪'
   },
   'London': {
     'country': 'united-kingdom',
     'background': 'linear-gradient(to right, #194171, #ef3340, #075aaa)',
-    'flag': '🇬🇧'
+    'emoji': '🇬🇧'
   },
   'Milan': {
     'country': 'italy',
     'background': 'linear-gradient(to right, #008639, #aaaaaa, #c80d2e)',
-    'flag': '🇮🇹'
+    'emoji': '🇮🇹'
   },
   'Paris': {
     'country': 'france',
     'background': 'linear-gradient(to right, #00569b, #aaaaaa, #f31c21)',
-    'flag': '🇫🇷'
+    'emoji': '🇫🇷'
   },
   'Stockholm': {
     'country': 'sweden',
     'background': 'linear-gradient(to right, #004ca8, #fccc00, #004ca8)',
-    'flag': '🇸🇪'
+    'emoji': '🇸🇪'
   },
   'Bahrain': {
     'country': 'bahrain',
     'background': 'linear-gradient(to right, #9ea0a1, #e70e3b, #9e112b)',
-    'flag': '🇧🇭'
+    'emoji': '🇧🇭'
   },
   'São Paulo': {
     'country': 'brazil',
     'background': 'linear-gradient(to right, #009a4a, #fed500, #009042)',
-    'flag': '🇧🇷'
+    'emoji': '🇧🇷'
   },
   'Global': {
     'country': 'global',
     'background': 'linear-gradient(to right, #0575e6, #159957)',
-    'flag': '🌍'
+    'emoji': '🌍'
   },
 }
 
@@ -175,6 +175,7 @@ chrome.storage.local.get('config', (c) => {
     if (config['flag'] !== 'disabled') {
       const img = `https://nalbam.github.io/aws-navbar-extension/flags/flag-${colors[region]['country']}.png`;
       document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style='line-height:1.5em;margin-right:0.3em;'><img src="${img}" style="width:20px;height:20px;"></span>`);
+      // document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style='font-size:1.8em;margin-right:0.2em;'>${colors[region]['emoji']}</span>`);
     }
   }
 
