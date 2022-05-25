@@ -144,26 +144,23 @@ const langs = {
   }
 }
 
-// region
-let region = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]>span').innerText;
-console.log(`region: ${region}`);
-
-// lang
-const lang = document.documentElement.lang;
-if (langs.hasOwnProperty(lang) && langs[lang].hasOwnProperty(region)) {
-  region = langs[lang][region];
-  console.log(`region: ${region}`);
-}
-
-// account_id
-const account_menu = document.querySelector('div[data-testid=account-detail-menu]>div>div');
-const account_id = account_menu.children[1].innerText.replaceAll('-', '');
-console.log(`account_id: ${account_id}`);
+const isDebug = false;
 
 // load
 chrome.storage.local.get('config', (c) => {
   const config = c.config !== undefined ? c.config : {};
-  console.log(`config: ${JSON.stringify(config, null, 2)}`);
+  if (isDebug) console.log(`config: ${JSON.stringify(config, null, 2)}`);
+
+  // region
+  let region = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]>span').innerText;
+  if (isDebug) console.log(`region: ${region}`);
+
+  // lang
+  const lang = document.documentElement.lang;
+  if (langs.hasOwnProperty(lang) && langs[lang].hasOwnProperty(region)) {
+    region = langs[lang][region];
+    if (isDebug) console.log(`region: ${region}`);
+  }
 
   if (colors.hasOwnProperty(region)) {
     // region header background
@@ -179,8 +176,39 @@ chrome.storage.local.get('config', (c) => {
     }
   }
 
+  // account_id
+  const account_menu = document.querySelector('div[data-testid=account-detail-menu]>div>div');
+  const account_id = account_menu.children[1].innerText.replaceAll('-', '');
+  if (isDebug) console.log(`account_id: ${account_id}`);
+
   // account info
   if (config['info'] !== undefined && config['info'][account_id] !== undefined) {
     document.querySelector('[data-testid="awsc-nav-account-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style="font-size:1.8em;margin-right:0.2em;">${config['info'][account_id]}</span>`);
+  }
+
+  // aws service
+  let svc = undefined;
+  const re = /^https:\/\/([a-z0-9-]+)?(?:\.)?console\.aws\.amazon\.com\/([a-z0-9-]+)\/([a-z0-9]+(?=\/))?.*/;
+  const m = re.exec(window.location.href);
+  if (m !== undefined && m.length > 2) {
+    svc = m[2];
+    if (svc === 'codesuite' && m.length > 3) {
+      svc = m[3];
+    }
+    if (isDebug) console.log(`service: ${svc}`);
+  }
+
+  // favicon
+  if (config['favicon'] !== 'disabled' && svc !== undefined) {
+    const x1 = document.querySelector("link[rel*='shortcut icon']");
+    if (x1) document.head.removeChild(x1);
+
+    const x2 = document.querySelector("link[rel*='icon']");
+    if (x2) document.head.removeChild(x2);
+
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.href = `https://nalbam.github.io/aws-navbar-extension/svcs/${svc}.png`;
+    document.head.appendChild(link);
   }
 });

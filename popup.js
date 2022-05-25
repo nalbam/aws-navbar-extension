@@ -1,6 +1,7 @@
 window.onload = function () {
   let bg_chk = document.getElementById('background');
   let fg_chk = document.getElementById('flag');
+  let fv_chk = document.getElementById('favicon');
   let info_a = document.getElementById('info_area');
   let info_b = document.getElementById('info_btn');
 
@@ -14,6 +15,9 @@ window.onload = function () {
     }
     if (config['flag'] !== 'disabled') {
       fg_chk.checked = true;
+    }
+    if (config['favicon'] !== 'disabled') {
+      fv_chk.checked = true;
     }
     if (config['info'] === undefined) {
       config['info'] = {
@@ -35,13 +39,13 @@ window.onload = function () {
 
     chrome.storage.local.set({ 'config': config });
   }
-  fg_chk.onclick = function () {
-    console.log(`fg_chk: ${fg_chk.checked}`);
+  fv_chk.onclick = function () {
+    console.log(`fv_chk: ${fv_chk.checked}`);
 
-    if (fg_chk.checked) {
-      config['flag'] = 'enabled';
+    if (fv_chk.checked) {
+      config['favicon'] = 'enabled';
     } else {
-      config['flag'] = 'disabled';
+      config['favicon'] = 'disabled';
     }
 
     chrome.storage.local.set({ 'config': config });
