@@ -6,7 +6,7 @@
 
 * [Chrome Web Store](https://chrome.google.com/webstore/detail/aws-colorful-navbar/kgifmgnlchjjippdpkblbdlfidcpceme)
 * [Microsoft Edge](https://chrome.google.com/webstore/detail/aws-colorful-navbar/kgifmgnlchjjippdpkblbdlfidcpceme)
-* [Mozilla Firefox](https://addons.mozilla.org/ko/firefox/addon/aws-colorful-navbar/)
+* [Mozilla Firefox](https://addons.mozilla.org/firefox/addon/aws-colorful-navbar/)
 
 ## How to load
 
