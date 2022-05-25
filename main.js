@@ -122,7 +122,7 @@ const langs = {
   },
   'jp': {
     'グローバル': 'Global',
-  }
+  },
 }
 
 const isDebug = true;
@@ -196,7 +196,7 @@ chrome.storage.local.get('config', (c) => {
 
     const link = document.createElement('link');
     link.rel = 'icon';
-    if (svc === 'console') {
+    if (svc === 'console' || svc === 'settings' || svc === 'servicequotas') {
       link.href = `https://${region}.console.aws.amazon.com/favicon.ico`;
     } else if (svc === 'billing') {
       link.href = `https://us-east-1.console.aws.amazon.com/favicon.ico`;
