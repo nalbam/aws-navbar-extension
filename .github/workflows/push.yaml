@@ -16,9 +16,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Build
+      - name: Package
         run: |
-          mkdir -p target && cat ./manifest.json | jq '.version' -r >./target/VERSION
+          bash ./package.sh
 
       - name: Release to GitHub
         uses: opspresso/action-builder@master
@@ -26,3 +26,4 @@ jobs:
           args: --release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ASSET_PATH: ./release

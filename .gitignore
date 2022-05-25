@@ -24,4 +24,7 @@ $RECYCLE.BIN/
 
 # Build
 target/
-build/
+release/
+
+# Package
+*.zip
