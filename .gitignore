@@ -17,3 +17,11 @@ $RECYCLE.BIN/
 # JetBrains
 .idea/
 *.iml
+
+# Eclipse
+.settings/
+.metadata/
+
+# Build
+target/
+build/
