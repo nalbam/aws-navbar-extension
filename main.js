@@ -208,7 +208,7 @@ chrome.storage.local.get('config', (c) => {
 
     const link = document.createElement('link');
     link.rel = 'icon';
-    link.href = `https://nalbam.github.io/aws-navbar-extension/svcs/${svc}.png`;
+    link.href = `https://nalbam.github.io/aws-navbar-extension/svcs/${svc}.svg`;
     document.head.appendChild(link);
   }
 });
