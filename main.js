@@ -119,6 +119,9 @@ const colors = {
 const langs = {
   'ko': {
     '글로벌': 'Global',
+  },
+  'jp': {
+    'グローバル': 'Global',
   }
 }
 
@@ -193,7 +196,7 @@ chrome.storage.local.get('config', (c) => {
 
     const link = document.createElement('link');
     link.rel = 'icon';
-    if (svc === 'console'  ) {
+    if (svc === 'console') {
       link.href = `https://${region}.console.aws.amazon.com/favicon.ico`;
     } else if (svc === 'billing') {
       link.href = `https://us-east-1.console.aws.amazon.com/favicon.ico`;
