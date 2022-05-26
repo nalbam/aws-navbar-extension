@@ -1,7 +1,7 @@
 {
   "name": "AWS Colorful Navbar",
   "description": "Change navbar color and flag according to AWS region",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "manifest_version": 3,
   "icons": {
     "128": "icon.png"
@@ -32,7 +32,7 @@
   ],
   "web_accessible_resources": [{
     "resources": [
-      "flags/*.png"
+      "flags/*.png", "svcs/*.svg", "svcs/*.ico"
     ],
     "matches": [
       "*://*.console.aws.amazon.com/*"

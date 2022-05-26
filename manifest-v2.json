@@ -31,6 +31,6 @@
     }
   ],
   "web_accessible_resources": [
-    "flags/*.png"
+    "flags/*.png", "svcs/*.svg", "svcs/*.ico"
   ]
 }
