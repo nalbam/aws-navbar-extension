@@ -11,7 +11,7 @@
 * [Microsoft Edge](https://chrome.google.com/webstore/detail/aws-colorful-navbar/kgifmgnlchjjippdpkblbdlfidcpceme)
 * [Mozilla Firefox](https://addons.mozilla.org/firefox/addon/aws-colorful-navbar/)
 
-## How to load
+## For Developer
 
 * Open the Extension Management page by navigating to `chrome://extensions`
 * Enable `Developer Mode` by clicking the toggle switch
