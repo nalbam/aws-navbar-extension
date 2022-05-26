@@ -70,7 +70,7 @@ _package() {
 
   echo $VERSION >./target/VERSION
 
-  ITEMS="manifest.json icon.png main.js background.js popup.html popup.js css flags images js"
+  ITEMS="manifest.json icon.png main.js background.js popup.html popup.js css flags images js svcs"
 
   # mv3
   zip -r ${RUN_PATH}/release/$REPONAME-$VERSION.zip $ITEMS

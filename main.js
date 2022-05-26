@@ -199,6 +199,7 @@ chrome.storage.local.get('config', (c) => {
     if (svc === 'console' || svc === 'settings' || svc === 'servicequotas' || svc === 'billing') {
       link.href = chrome.runtime.getURL(`svcs/favicon.ico`);
     } else {
+      link.type = 'image/svg+xml';
       link.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
     }
     document.head.appendChild(link);
