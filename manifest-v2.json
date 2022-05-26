@@ -29,5 +29,8 @@
         "main.js"
       ]
     }
+  ],
+  "web_accessible_resources": [
+    "flags/*.png"
   ]
 }

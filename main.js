@@ -170,7 +170,7 @@ chrome.storage.local.get('config', (c) => {
 
     // region flag
     if (config['flag'] !== 'disabled') {
-      const flag = `https://nalbam.github.io/aws-navbar-extension/flags/flag-${colors[region]['country']}.png`;
+      const flag = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
       document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style="line-height:0;margin-right:0.5em;"><img src="${flag}" style="width:20px;height:20px;"></span>`);
       // document.querySelector('[data-testid="awsc-nav-regions-menu-button"]').insertAdjacentHTML("beforeBegin", `<span style="font-size:1.8em;margin-right:0.2em;">${colors[region]['emoji']}</span>`);
     }
@@ -196,12 +196,10 @@ chrome.storage.local.get('config', (c) => {
 
     const link = document.createElement('link');
     link.rel = 'icon';
-    if (svc === 'console' || svc === 'settings' || svc === 'servicequotas') {
-      link.href = `https://${region}.console.aws.amazon.com/favicon.ico`;
-    } else if (svc === 'billing') {
-      link.href = `https://us-east-1.console.aws.amazon.com/favicon.ico`;
+    if (svc === 'console' || svc === 'settings' || svc === 'servicequotas' || svc === 'billing') {
+      link.href = chrome.runtime.getURL(`svcs/favicon.ico`);
     } else {
-      link.href = `https://nalbam.github.io/aws-navbar-extension/svcs/${svc}.svg`;
+      link.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
     }
     document.head.appendChild(link);
   }
