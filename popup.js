@@ -19,6 +19,7 @@ window.onload = function () {
     if (config['favicon'] !== 'disabled') {
       fv_chk.checked = true;
     }
+
     if (config['info'] === undefined) {
       config['info'] = {
         '123456789001': 'alpha',
@@ -31,25 +32,25 @@ window.onload = function () {
   bg_chk.onclick = function () {
     console.log(`bg_chk: ${bg_chk.checked}`);
 
-    if (bg_chk.checked) {
-      config['background'] = 'enabled';
-    } else {
-      config['background'] = 'disabled';
-    }
+    config['background'] = bg_chk.checked ? 'enabled' : 'disabled';
+
+    chrome.storage.local.set({ 'config': config });
+  }
+  fg_chk.onclick = function () {
+    console.log(`fg_chk: ${fg_chk.checked}`);
+
+    config['flag'] = fg_chk.checked ? 'enabled' : 'disabled';
 
     chrome.storage.local.set({ 'config': config });
   }
   fv_chk.onclick = function () {
     console.log(`fv_chk: ${fv_chk.checked}`);
 
-    if (fv_chk.checked) {
-      config['favicon'] = 'enabled';
-    } else {
-      config['favicon'] = 'disabled';
-    }
+    config['favicon'] = fv_chk.checked ? 'enabled' : 'disabled';
 
     chrome.storage.local.set({ 'config': config });
   }
+
   info_b.onclick = function () {
     console.log(`info_b: ${info_a.value}`);
 
