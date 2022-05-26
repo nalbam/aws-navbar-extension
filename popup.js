@@ -22,8 +22,8 @@ window.onload = function () {
 
     if (config['info'] === undefined) {
       config['info'] = {
-        '123456789001': 'alpha',
-        '123456789002': 'prod',
+        '123456789001': 'ALPHA',
+        '123456789002': 'PROD',
       }
     }
     info_v.value = JSON.stringify(config['info'], null, 2);
