@@ -29,5 +29,13 @@
         "main.js"
       ]
     }
-  ]
+  ],
+  "web_accessible_resources": [{
+    "resources": [
+      "flags/*.png"
+    ],
+    "matches": [
+      "*://*.console.aws.amazon.com/*"
+    ]
+  }]
 }
