@@ -194,14 +194,28 @@ chrome.storage.local.get('config', (c) => {
     const x2 = document.querySelector("link[rel*='icon']");
     if (x2) document.head.removeChild(x2);
 
-    const link = document.createElement('link');
-    link.rel = 'icon';
+    const link_icon = document.createElement('link');
+    const link_shortcut_icon = document.createElement('link');
+
+    link_icon.rel = 'icon';
+    link_shortcut_icon.rel = 'shortcut icon';
+
     if (svc === 'console' || svc === 'settings' || svc === 'servicequotas' || svc === 'billing') {
-      link.href = chrome.runtime.getURL(`svcs/favicon.ico`);
+      link_icon.href = chrome.runtime.getURL(`svcs/favicon.ico`);
+      link_icon.id = 'icon';
+
+      link_shortcut_icon.href = chrome.runtime.getURL(`svcs/favicon.ico`);
+      link_shortcut_icon.id = 'icon';
     } else {
-      link.type = 'image/svg+xml';
-      link.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
+      link_icon.type = 'image/svg+xml';
+      link_icon.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
+      link_icon.id = 'icon';
+
+      link_shortcut_icon.type = 'image/svg+xml';
+      link_shortcut_icon.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
+      link_shortcut_icon.id = 'shortcutIcon';
     }
-    document.head.appendChild(link);
+    document.head.appendChild(link_icon);
+    document.head.appendChild(link_shortcut_icon);
   }
 });
