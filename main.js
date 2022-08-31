@@ -105,7 +105,7 @@ const colors = {
     'emoji': '🇧🇭'
   },
   'me-central-1': {
-    'country': 'UAE',
+    'country': 'uae',
     'background': 'linear-gradient(to right, #f60000, #009555, #aaaaaa)',
     'emoji': '🇦🇪'
   },
