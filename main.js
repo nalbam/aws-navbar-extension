@@ -104,6 +104,11 @@ const colors = {
     'background': 'linear-gradient(to right, #9ea0a1, #e70e3b, #9e112b)',
     'emoji': '🇧🇭'
   },
+  'me-central-1': {
+    'country': 'UAE',
+    'background': 'linear-gradient(to right, #f60000, #009555, #aaaaaa)',
+    'emoji': '🇦🇪'
+  },
   'sa-east-1': {
     'country': 'brazil',
     'background': 'linear-gradient(to right, #009a4a, #fed500, #009042)',
