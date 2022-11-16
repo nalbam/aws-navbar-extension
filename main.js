@@ -94,6 +94,11 @@ const colors = {
     'background': 'linear-gradient(to right, #005599, #aaaaaa, #ee2222)',
     'emoji': '🇫🇷'
   },
+  'eu-south-2': {
+    'country': 'spain',
+    'background': 'linear-gradient(to right, #cc1122, #ffbb00, #cc1122)',
+    'emoji': '🇪🇸'
+  },
   'eu-north-1': {
     'country': 'sweden',
     'background': 'linear-gradient(to right, #0055aa, #ffcc00, #0044aa)',
