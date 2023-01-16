@@ -2,7 +2,7 @@
 
 > Change navbar color and flag according to AWS region
 
-[![build](https://img.shields.io/github/workflow/status/nalbam/aws-navbar-extension/build?label=build&style=for-the-badge&logo=github)](https://github.com/nalbam/aws-navbar-extension/actions/workflows/push.yaml)
+[![build](https://img.shields.io/github/actions/workflow/status/nalbam/aws-navbar-extension/build.yaml?branch=main&style=for-the-badge&logo=github)](https://github.com/nalbam/aws-navbar-extension/actions)
 [![release](https://img.shields.io/github/v/release/nalbam/aws-navbar-extension?style=for-the-badge&logo=github)](https://github.com/nalbam/aws-navbar-extension/releases)
 
 ## Install
