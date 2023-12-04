@@ -1,4 +1,9 @@
 const colors = {
+    'il-central-1': {
+    'country': 'israel',
+    'background': 'linear-gradient(to right, #0038b8, #ffffff)',
+    'emoji': '🇮🇱'
+  },
   'us-east-1': {
     'country': 'united-states',
     'background': 'linear-gradient(to right, #0000aa, #ee2244)',
