@@ -28,6 +28,13 @@ function createAccountEntry(accountId = '', accountName = '') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Set version from manifest
+  fetch(chrome.runtime.getURL('manifest.json'))
+    .then(response => response.json())
+    .then(manifest => {
+      document.querySelector('.version').textContent = `v${manifest.version}`;
+    });
+
   // Load saved settings
   chrome.storage.local.get('config', (c) => {
     const config = c.config !== undefined ? c.config : {};
