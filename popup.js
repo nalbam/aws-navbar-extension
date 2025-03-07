@@ -1,43 +1,67 @@
-window.onload = function () {
-  let bg_chk = document.getElementById('background');
-  let fg_chk = document.getElementById('flag');
-  let fv_chk = document.getElementById('favicon');
-  let info_v = document.getElementById('info_area');
-  let save_b = document.getElementById('save_btn');
-
-  let config = {};
-
+document.addEventListener('DOMContentLoaded', () => {
+  // Load saved settings
   chrome.storage.local.get('config', (c) => {
-    config = c.config !== undefined ? c.config : {};
+    const config = c.config !== undefined ? c.config : {};
 
-    if (config['background'] !== 'disabled') {
-      bg_chk.checked = true;
-    }
-    if (config['flag'] !== 'disabled') {
-      fg_chk.checked = true;
-    }
-    if (config['favicon'] !== 'disabled') {
-      fv_chk.checked = true;
+    // Set checkbox states
+    document.getElementById('background').checked = config['background'] !== 'disabled';
+    document.getElementById('flag').checked = config['flag'] !== 'disabled';
+    document.getElementById('favicon').checked = config['favicon'] !== 'disabled';
+
+    // Set account info
+    if (config['info']) {
+      document.getElementById('info_area').value = JSON.stringify(config['info'], null, 2);
     }
 
-    if (config['info'] === undefined) {
-      config['info'] = {
-        '123456789001': 'ALPHA',
-        '123456789002': 'PROD',
-      }
-    }
-    info_v.value = JSON.stringify(config['info'], null, 2);
+    // Load theme preference
+    const theme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeIcon(theme);
   });
 
-  save_b.onclick = function () {
-    config['background'] = bg_chk.checked ? 'enabled' : 'disabled';
-    config['flag'] = fg_chk.checked ? 'enabled' : 'disabled';
-    config['favicon'] = fv_chk.checked ? 'enabled' : 'disabled';
+  // Save settings
+  document.getElementById('save_btn').addEventListener('click', () => {
+    const config = {
+      background: document.getElementById('background').checked ? 'enabled' : 'disabled',
+      flag: document.getElementById('flag').checked ? 'enabled' : 'disabled',
+      favicon: document.getElementById('favicon').checked ? 'enabled' : 'disabled'
+    };
 
-    config['info'] = JSON.parse(info_v.value);
+    try {
+      const info = document.getElementById('info_area').value.trim();
+      if (info) {
+        config['info'] = JSON.parse(info);
+      }
+    } catch (e) {
+      alert('Invalid JSON format in Account Info');
+      return;
+    }
 
-    chrome.storage.local.set({ 'config': config });
+    chrome.storage.local.set({ config }, () => {
+      const btn = document.getElementById('save_btn');
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+      }, 1000);
+    });
+  });
 
-    info_v.value = JSON.stringify(config['info'], null, 2);
+  // Theme toggle
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon(newTheme);
+  });
+});
+
+function updateThemeIcon(theme) {
+  const icon = document.querySelector('.theme-toggle i');
+  if (theme === 'dark') {
+    icon.className = 'fa-solid fa-moon';
+  } else {
+    icon.className = 'fa-solid fa-sun';
   }
 }

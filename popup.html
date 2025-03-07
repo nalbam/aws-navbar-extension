@@ -1,65 +1,78 @@
+<!DOCTYPE html>
 <html>
-
 <head>
-  <link rel="stylesheet" href="css/materialize.min.css">
+  <meta charset="UTF-8">
   <link rel="stylesheet" href="css/popup.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-
 <body>
-  <div class="row" id="popup_whole_row">
-    <div class="col s12 m12" id="popup_whole_col">
-      <div class="card blue-grey darken-1">
-        <div class="card-content white-text">
-          <div class="card-title row">
-            <div class="col s12" id="extension_name">AWS Colorful Navbar</div>
-          </div>
-          <div class="option_row">
-            <div class="col s4"><i class="material-icons">color_lens</i> Background</div>
-            <div class="col s8 switch">
-              <label>
-                <input type="checkbox" id="background">
-                <span class="lever"></span>
-              </label>
-            </div>
-          </div>
-          <div class="option_row">
-            <div class="col s4"><i class="material-icons">flag</i> Show Flag</div>
-            <div class="col s8 switch">
-              <label>
-                <input type="checkbox" id="flag">
-                <span class="lever"></span>
-              </label>
-            </div>
-          </div>
-          <div class="option_row">
-            <div class="col s4"><i class="material-icons">collections</i> Favicon</div>
-            <div class="col s8 switch">
-              <label>
-                <input type="checkbox" id="favicon">
-                <span class="lever"></span>
-              </label>
-            </div>
-          </div>
-          <div class="option_row">
-            <div class="col s4"><i class="material-icons">storage</i> Account Info</div>
-            <div class="col s8">
-              <textarea id="info_area" class="materialize-textarea"></textarea>
-            </div>
-          </div>
-          <div class="option_row">
-            <div class="col s4"></div>
-            <div class="col s8">
-              <a class="waves-effect waves-light btn orange" id="save_btn">Save</a>
-            </div>
-          </div>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1>AWS Colorful Navbar</h1>
+    </header>
+    <div class="settings-container">
+      <div class="setting-item">
+        <div class="setting-label">
+          <i class="fa-solid fa-palette"></i>
+          <span>Background</span>
+        </div>
+        <div class="setting-control">
+          <label class="toggle">
+            <input type="checkbox" id="background">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-label">
+          <i class="fa-solid fa-flag"></i>
+          <span>Show Flag</span>
+        </div>
+        <div class="setting-control">
+          <label class="toggle">
+            <input type="checkbox" id="flag">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-label">
+          <i class="fa-solid fa-image"></i>
+          <span>Favicon</span>
+        </div>
+        <div class="setting-control">
+          <label class="toggle">
+            <input type="checkbox" id="favicon">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="setting-item account-info">
+        <div class="setting-label">
+          <i class="fa-solid fa-key"></i>
+          <span>Account Info</span>
+        </div>
+        <div class="setting-control">
+          <textarea id="info_area" placeholder='{"123456789012": "🔑"}'></textarea>
+        </div>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-control">
+          <button id="save_btn">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save
+          </button>
         </div>
       </div>
     </div>
+    <button id="theme-toggle" class="theme-toggle">
+      <i class="fa-solid fa-sun"></i>
+    </button>
   </div>
-  <script type="text/javascript" src="js/jquery.min.js"></script>
-  <script type="text/javascript" src="js/materialize.min.js"></script>
   <script src="popup.js"></script>
 </body>
-
 </html>

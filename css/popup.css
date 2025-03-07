@@ -1,47 +1,222 @@
+:root {
+  --primary-color: #232f3e;
+  --accent-color: #ff9900;
+  --text-color: #333;
+  --bg-color: #fff;
+  --input-bg: #f8f9fa;
+  --border-color: #ddd;
+  --border-radius: 6px;
+  --toggle-size: 20px;
+}
+
+[data-theme="dark"] {
+  --primary-color: #fff;
+  --text-color: #eee;
+  --bg-color: #232f3e;
+  --input-bg: #2d3a4a;
+  --border-color: #3a4857;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   width: 400px;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+  color: var(--text-color);
+  background: var(--bg-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
-#popup_whole_row {
-  margin: 0 0 !important;
+.popup-container {
+  padding: 16px;
+  position: relative;
 }
 
-#popup_whole_col {
-  padding: 0 0 !important;
+.popup-header {
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--accent-color);
 }
 
-.card {
-  margin: 0 0 !important;
+.popup-header h1 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--primary-color);
+  font-weight: 600;
 }
 
-.card .card-content {
-  overflow: hidden;
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.card .card-content .card-title {
-  margin-bottom: 45px;
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
 }
 
-#extension_name {
-  padding: 0 0 !important;
+.setting-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-color);
 }
 
-.option_row {
-  height: 30px;
-  margin-top: 20px;
-  clear: both;
+.setting-label i {
+  width: 16px;
+  color: var(--accent-color);
 }
 
-.switch {
-  -webkit-transform: translateY(70%);
-  -ms-transform: translateY(70%);
-  transform: translateY(70%);
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
 }
 
-.switch label input[type=checkbox]:checked+.lever {
-  background-color: #ea6;
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
-.switch label input[type=checkbox]:checked+.lever:after {
-  background-color: #f93;
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: var(--toggle-size);
+  width: var(--toggle-size);
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--accent-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Account Info Textarea */
+.account-info {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.account-info .setting-control {
+  width: 100%;
+  padding-right: 8px;
+}
+
+#info_area {
+  width: 100%;
+  height: 100px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  resize: none;
+  color: var(--text-color);
+  background-color: var(--input-bg);
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+#info_area:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.1);
+}
+
+#info_area::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+
+/* Save Button */
+#save_btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--accent-color);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+#save_btn:hover {
+  background-color: #e68a00;
+}
+
+#save_btn:active {
+  background-color: #cc7a00;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.theme-toggle:hover {
+  color: var(--accent-color);
+  transform: scale(1.1);
+}
+
+[data-theme="dark"] .theme-toggle .fa-sun {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f186";
+  font-weight: 900;
+}
+
+.theme-toggle .fa-sun {
+  font-size: 18px;
 }
