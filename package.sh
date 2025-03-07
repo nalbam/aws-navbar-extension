@@ -66,9 +66,13 @@ _prepare() {
 ################################################################################
 
 _package() {
-  VERSION=$(cat ./manifest.json | jq '.version' -r)
+  VERSION=$(cat ./VERSION)
 
-  echo $VERSION >./target/VERSION
+  echo $VERSION > ./target/VERSION
+
+  # Update version in manifest.json
+  cat ./manifest.json | jq '.version = $VERSION' --arg VERSION $VERSION > ./manifest.json.tmp
+  mv ./manifest.json.tmp ./manifest.json
 
   ITEMS="manifest.json icon.png main.js background.js popup.html popup.js css flags images js svcs"
 
@@ -76,7 +80,7 @@ _package() {
   zip -r ${RUN_PATH}/release/$REPONAME-$VERSION.zip $ITEMS
 
   # mv2
-  cat ./manifest-v2.json | jq '.version = $VERSION' --arg VERSION $VERSION >./manifest.json
+  cat ./manifest-v2.json | jq '.version = $VERSION' --arg VERSION $VERSION > ./manifest.json
   zip -r ${RUN_PATH}/release/$REPONAME-$VERSION-mv2.zip $ITEMS
 }
 

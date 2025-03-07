@@ -11,6 +11,8 @@
 * Region flag display next to region selector
 * Service-specific favicon updates
 * Account information display
+* Dark/Light theme support
+* Auto-save settings
 * Support for all AWS global regions
 * Multi-language support (ko, jp)
 
@@ -20,12 +22,6 @@
 * [Microsoft Edge](https://chrome.google.com/webstore/detail/aws-colorful-navbar/kgifmgnlchjjippdpkblbdlfidcpceme)
 * [Mozilla Firefox](https://addons.mozilla.org/firefox/addon/aws-colorful-navbar/)
 
-## For Developers
-
-* Open the Extension Management page by navigating to `chrome://extensions`
-* Enable `Developer Mode` by clicking the toggle switch
-* Click the `LOAD UNPACKED` button and select the extension directory
-
 ## Configuration
 
 The extension supports the following configuration options:
@@ -33,7 +29,8 @@ The extension supports the following configuration options:
 * `background`: Enable/disable navbar color customization
 * `flag`: Enable/disable region flag display
 * `favicon`: Enable/disable service-specific favicon
-* `info`: Custom account information display
+* `info`: Custom account information display (JSON format)
+* `theme`: Dark/Light mode preference
 
 ## Supported Regions
 
@@ -46,6 +43,21 @@ See [flags/README.md](flags/README.md) for a complete list of supported regions 
 ![before](images/aws-navbar-extension-00.png)
 
 ![after](images/aws-navbar-extension-01.png)
+
+## For Developers
+
+### Installation
+
+* Open the Extension Management page by navigating to `chrome://extensions`
+* Enable `Developer Mode` by clicking the toggle switch
+* Click the `LOAD UNPACKED` button and select the extension directory
+
+### Development
+
+* Clone the repository
+* Make changes to the source code
+* Test locally using the unpacked extension
+* Submit pull requests for improvements
 
 ## Contributing
 
