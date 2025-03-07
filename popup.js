@@ -80,9 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const accountId = entry.querySelector('.account-id').value.trim();
       const accountName = entry.querySelector('.account-name').value.trim();
 
-      if (accountId) {
-        info[accountId] = accountName;
+      if (!accountId) {
+        alert('Please enter an account ID');
+        return;
       }
+
+      info[accountId] = accountName;
     });
 
     config['info'] = info;
