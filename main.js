@@ -268,18 +268,18 @@ chrome.storage.local.get('config', (c) => {
         link_shortcut_icon.rel = 'shortcut icon';
 
         if (svc === 'console' || svc === 'settings' || svc === 'servicequotas' || svc === 'billing') {
-          link_icon.href = chrome.runtime.getURL(`svcs/favicon.ico`);
+          link_icon.href = chrome.runtime.getURL(`svgs/favicon.ico`);
           link_icon.id = 'aws-icon';
 
-          link_shortcut_icon.href = chrome.runtime.getURL(`svcs/favicon.ico`);
+          link_shortcut_icon.href = chrome.runtime.getURL(`svgs/favicon.ico`);
           link_shortcut_icon.id = 'aws-shortcut-icon';
         } else {
           link_icon.type = 'image/svg+xml';
-          link_icon.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
+          link_icon.href = chrome.runtime.getURL(`svgs/${svc}.svg`);
           link_icon.id = 'aws-icon';
 
           link_shortcut_icon.type = 'image/svg+xml';
-          link_shortcut_icon.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
+          link_shortcut_icon.href = chrome.runtime.getURL(`svgs/${svc}.svg`);
           link_shortcut_icon.id = 'aws-shortcut-icon';
         }
         document.head.appendChild(link_icon);

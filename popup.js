@@ -54,16 +54,24 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('theme', newTheme);
     updateThemeIcon(newTheme);
   });
+
+  // Theme toggle hover effect
+  const themeToggle = document.getElementById('theme-toggle');
+  themeToggle.addEventListener('mouseenter', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const icon = document.getElementById('theme-icon');
+    icon.src = `icons/${currentTheme === 'dark' ? 'moon' : 'sun'}-hover.ico`;
+  });
+
+  themeToggle.addEventListener('mouseleave', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    updateThemeIcon(currentTheme);
+  });
 });
 
-// Theme toggle
 function updateThemeIcon(theme) {
-  const icon = document.querySelector('.theme-toggle i');
-  if (theme === 'dark') {
-    icon.className = 'fa-solid fa-moon';
-  } else {
-    icon.className = 'fa-solid fa-sun';
-  }
+  const icon = document.getElementById('theme-icon');
+  icon.src = `icons/${theme === 'dark' ? 'moon' : 'sun'}.ico`;
 }
 
 // Helper function to get current config
@@ -80,9 +88,10 @@ function saveConfig(config, showSaveMessage = false) {
   chrome.storage.local.set({ config }, () => {
     if (showSaveMessage) {
       const btn = document.getElementById('save_btn');
-      btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
+      const originalContent = btn.innerHTML;
+      btn.innerHTML = '<img src="icons/floppy-disk.ico" alt="Save" class="icon"> Saved';
       setTimeout(() => {
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+        btn.innerHTML = originalContent;
       }, 1000);
     }
   });

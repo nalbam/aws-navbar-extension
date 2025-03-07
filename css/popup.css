@@ -7,6 +7,7 @@
   --border-color: #ddd;
   --border-radius: 6px;
   --toggle-size: 20px;
+  --icon-size: 16px;
 }
 
 [data-theme="dark"] {
@@ -69,9 +70,11 @@ body {
   color: var(--text-color);
 }
 
-.setting-label i {
-  width: 16px;
-  color: var(--accent-color);
+.icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  object-fit: contain;
+  vertical-align: middle;
 }
 
 /* Toggle Switch */
@@ -199,24 +202,15 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.3s, transform 0.3s;
+  padding: 0;
+  transition: transform 0.3s;
 }
 
 .theme-toggle:hover {
-  color: var(--accent-color);
   transform: scale(1.1);
 }
 
-[data-theme="dark"] .theme-toggle .fa-sun {
-  display: none;
-}
-
-[data-theme="dark"] .theme-toggle::before {
-  font-family: "Font Awesome 6 Free";
-  content: "\f186";
-  font-weight: 900;
-}
-
-.theme-toggle .fa-sun {
-  font-size: 18px;
+.theme-toggle .icon {
+  width: 24px;
+  height: 24px;
 }

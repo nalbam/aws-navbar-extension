@@ -34,8 +34,9 @@
     {
       "resources": [
         "flags/*.png",
-        "svcs/*.svg",
-        "svcs/*.ico"
+        "icons/*.ico",
+        "svgs/*.svg",
+        "svgs/*.ico"
       ],
       "matches": [
         "*://*.console.aws.amazon.com/*"

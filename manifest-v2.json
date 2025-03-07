@@ -32,7 +32,8 @@
   ],
   "web_accessible_resources": [
     "flags/*.png",
-    "svcs/*.svg",
-    "svcs/*.ico"
+    "icons/*.ico",
+    "svgs/*.svg",
+    "svgs/*.ico"
   ]
 }
