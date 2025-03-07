@@ -1,7 +1,5 @@
 # AWS Region Flags
 
-* <https://emojipedia.org/google/>
-
 | Country | Flag | AWS Regions |
 |---------|------|-------------|
 | Australia | ![australia](australia.png) | ap-southeast-2, ap-southeast-4 |
@@ -15,7 +13,7 @@
 | India | ![india](india.png) | ap-south-1, ap-south-2 |
 | Indonesia | ![indonesia](indonesia.png) | ap-southeast-3 |
 | Ireland | ![ireland](ireland.png) | eu-west-1 |
-| Israel | ❌ | il-central-1 |
+| Israel | ![israel](israel.png) | il-central-1 |
 | Italy | ![italy](italy.png) | eu-south-1, eu-south-3 |
 | Japan | ![japan](japan.png) | ap-northeast-1, ap-northeast-3 |
 | Singapore | ![singapore](singapore.png) | ap-southeast-1 |
@@ -27,5 +25,3 @@
 | UAE | ![uae](uae.png) | me-central-1, me-west-1 |
 | United Kingdom | ![united-kingdom](united-kingdom.png) | eu-west-2 |
 | United States | ![united-states](united-states.png) | us-east-1, us-east-2, us-west-1, us-west-2 |
-
-❌ Flag image not available
