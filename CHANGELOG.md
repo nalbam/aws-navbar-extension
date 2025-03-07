@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.7.3] - 2025-03-08
+## [1.8.6] - 2025-03-08
 
 ### Added
 - Dark/Light theme support with persistent settings
@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - Account ID detection improvements
 - Resource loading optimizations
 - JSON validation handling
+- Added default account info when not configured
 
 ## Features Evolution
 

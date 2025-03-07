@@ -78,7 +78,11 @@ function updateThemeIcon(theme) {
 function getCurrentConfig() {
   return new Promise(resolve => {
     chrome.storage.local.get('config', (c) => {
-      resolve(c.config !== undefined ? c.config : {});
+      const config = c.config !== undefined ? c.config : {};
+      if (!config.info) {
+        config.info = {"123456789012": "PROD"};
+      }
+      resolve(config);
     });
   });
 }

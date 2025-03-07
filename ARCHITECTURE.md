@@ -55,8 +55,9 @@ AWS Colorful Navbar is a browser extension that enhances the AWS Console navigat
 ### Account Management
 - Displays custom account information
 - Account ID detection and mapping
-- JSON-based configuration
+- JSON-based configuration with default values
 - Real-time validation
+- Fallback to default account info when not configured
 
 ### Service Integration
 - Dynamic favicon updates based on current AWS service
