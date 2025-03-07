@@ -1,9 +1,4 @@
 const colors = {
-    'il-central-1': {
-    'country': 'israel',
-    'background': 'linear-gradient(to right, #0038b8, #ffffff)',
-    'emoji': '🇮🇱'
-  },
   'us-east-1': {
     'country': 'united-states',
     'background': 'linear-gradient(to right, #0000aa, #ee2244)',
@@ -128,6 +123,11 @@ const colors = {
     'country': 'brazil',
     'background': 'linear-gradient(to right, #00aa55, #ffee00, #008844)',
     'emoji': '🇧🇷'
+  },
+  'il-central-1': {
+    'country': 'israel',
+    'background': 'linear-gradient(to right, #0038b8, #ffffff)',
+    'emoji': '🇮🇱'
   },
   'global': {
     'country': 'global',
