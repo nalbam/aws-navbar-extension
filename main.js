@@ -179,106 +179,117 @@ chrome.storage.local.get('config', (c) => {
     const config = c.config !== undefined ? c.config : {};
     if (isDebug) console.log(`config: ${JSON.stringify(config, null, 2)}`);
 
-    // city
-    const cityElement = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]>span');
-    if (!cityElement) {
-      console.error('Region selector not found');
-      return;
-    }
-    let city = cityElement.innerText;
-
-    // lang
-    const lang = document.documentElement.lang;
-    if (langs.hasOwnProperty(lang) && langs[lang].hasOwnProperty(city)) {
-      city = langs[lang][city];
-      if (isDebug) console.log(`city: ${city}`);
-    }
-
-    // aws service
-    let region = undefined;
-    let svc = undefined;
-    const re = /^https:\/\/([a-z0-9-]+)?(?:\.)?console\.aws\.amazon\.com\/([a-z0-9-]+)\/([a-z0-9]+(?=\/))?.*/;
-    const m = re.exec(window.location.href);
-    if (m !== undefined && m.length > 2) {
-      if (city === 'Global') {
-        region = 'global';
-      } else {
-        region = m[1];
+    const initializeAWS = (retryCount = 0) => {
+      const cityElement = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]>span');
+      if (!cityElement) {
+        if (retryCount < 3) {
+          console.log(`Region selector not found, retrying... (${retryCount + 1}/3)`);
+          setTimeout(() => initializeAWS(retryCount + 1), 1000);
+          return;
+        }
+        console.error('Region selector not found after 3 retries');
+        return;
       }
-      svc = m[2];
-      if (svc === 'codesuite' && m.length > 3) {
-        svc = m[3];
+
+      let city = cityElement.innerText;
+
+      // lang
+      const lang = document.documentElement.lang;
+      if (langs.hasOwnProperty(lang) && langs[lang].hasOwnProperty(city)) {
+        city = langs[lang][city];
+        if (isDebug) console.log(`city: ${city}`);
       }
-    }
 
-    if (isDebug) console.log(`region: ${region}`);
-    if (isDebug) console.log(`service: ${svc}`);
-
-    if (colors.hasOwnProperty(region)) {
-      // region header background
-      if (config['background'] !== 'disabled') {
-        const navElement = document.querySelector("#awsc-navigation-container>div>header>nav");
-        if (navElement) {
-          navElement.style.background = colors[region]['background'];
+      // aws service
+      let region = undefined;
+      let svc = undefined;
+      const re = /^https:\/\/([a-z0-9-]+)?(?:\.)?console\.aws\.amazon\.com\/([a-z0-9-]+)\/([a-z0-9]+(?=\/))?.*/;
+      const m = re.exec(window.location.href);
+      if (m !== undefined && m.length > 2) {
+        if (city === 'Global') {
+          region = 'global';
+        } else {
+          region = m[1];
+        }
+        svc = m[2];
+        if (svc === 'codesuite' && m.length > 3) {
+          svc = m[3];
         }
       }
 
-      // region flag
-      if (config['flag'] !== 'disabled') {
-        const regionButton = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]');
-        if (regionButton) {
-          const flag = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
-          regionButton.insertAdjacentHTML("beforeBegin", `<span style="line-height:0;margin-right:0.5em;"><img src="${flag}" style="width:20px;height:20px;"></span>`);
+      if (isDebug) console.log(`region: ${region}`);
+      if (isDebug) console.log(`service: ${svc}`);
+
+      if (colors.hasOwnProperty(region)) {
+        // region header background
+        if (config['background'] !== 'disabled') {
+          const navElement = document.querySelector("#awsc-navigation-container>div>header>nav");
+          if (navElement) {
+            navElement.style.background = colors[region]['background'];
+          }
+        }
+
+        // region flag
+        if (config['flag'] !== 'disabled') {
+          const regionButton = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]');
+          if (regionButton) {
+            const flag = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
+            regionButton.insertAdjacentHTML("beforeBegin", `<span style="line-height:0;margin-right:0.5em;"><img src="${flag}" style="width:20px;height:20px;"></span>`);
+          }
         }
       }
-    }
 
-    // account info
-    const accountMenu = document.querySelector('div[data-testid=account-detail-menu]>div>div');
-    if (accountMenu && accountMenu.children.length > 1) {
-      const account_id = accountMenu.children[1].innerText.replaceAll('-', '');
-      if (isDebug) console.log(`account_id: ${account_id}`);
+      // account info
+      const accountMenu = document.querySelector('div[data-testid=account-detail-menu]>div>div');
+      if (accountMenu && accountMenu.children.length > 1) {
+        const account_id = accountMenu.children[1].innerText.replaceAll('-', '');
+        if (isDebug) console.log(`account_id: ${account_id}`);
 
-      if (config['info'] !== undefined && config['info'][account_id] !== undefined) {
-        const accountButton = document.querySelector('[data-testid="awsc-nav-account-menu-button"]');
-        if (accountButton) {
-          accountButton.insertAdjacentHTML("beforeBegin", `<span style="font-size:1.8em;margin-right:0.2em;">${config['info'][account_id]}</span>`);
+        if (config['info'] !== undefined && config['info'][account_id] !== undefined) {
+          const accountButton = document.querySelector('[data-testid="awsc-nav-account-menu-button"]');
+          if (accountButton) {
+            accountButton.insertAdjacentHTML("beforeBegin", `<span style="font-size:1.8em;margin-right:0.2em;">${config['info'][account_id]}</span>`);
+          }
         }
       }
-    }
 
-    // favicon
-    if (config['favicon'] !== 'disabled' && svc !== undefined) {
-      const x1 = document.querySelector("link[rel*='shortcut icon']");
-      if (x1) document.head.removeChild(x1);
+      // favicon
+      if (config['favicon'] !== 'disabled' && svc !== undefined) {
+        const x1 = document.querySelector("link[rel*='shortcut icon']");
+        if (x1) document.head.removeChild(x1);
 
-      const x2 = document.querySelector("link[rel*='icon']");
-      if (x2) document.head.removeChild(x2);
+        const x2 = document.querySelector("link[rel*='icon']");
+        if (x2) document.head.removeChild(x2);
 
-      const link_icon = document.createElement('link');
-      const link_shortcut_icon = document.createElement('link');
+        const link_icon = document.createElement('link');
+        const link_shortcut_icon = document.createElement('link');
 
-      link_icon.rel = 'icon';
-      link_shortcut_icon.rel = 'shortcut icon';
+        link_icon.rel = 'icon';
+        link_shortcut_icon.rel = 'shortcut icon';
 
-      if (svc === 'console' || svc === 'settings' || svc === 'servicequotas' || svc === 'billing') {
-        link_icon.href = chrome.runtime.getURL(`svcs/favicon.ico`);
-        link_icon.id = 'aws-icon';
+        if (svc === 'console' || svc === 'settings' || svc === 'servicequotas' || svc === 'billing') {
+          link_icon.href = chrome.runtime.getURL(`svcs/favicon.ico`);
+          link_icon.id = 'aws-icon';
 
-        link_shortcut_icon.href = chrome.runtime.getURL(`svcs/favicon.ico`);
-        link_shortcut_icon.id = 'aws-shortcut-icon';
-      } else {
-        link_icon.type = 'image/svg+xml';
-        link_icon.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
-        link_icon.id = 'aws-icon';
+          link_shortcut_icon.href = chrome.runtime.getURL(`svcs/favicon.ico`);
+          link_shortcut_icon.id = 'aws-shortcut-icon';
+        } else {
+          link_icon.type = 'image/svg+xml';
+          link_icon.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
+          link_icon.id = 'aws-icon';
 
-        link_shortcut_icon.type = 'image/svg+xml';
-        link_shortcut_icon.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
-        link_shortcut_icon.id = 'aws-shortcut-icon';
+          link_shortcut_icon.type = 'image/svg+xml';
+          link_shortcut_icon.href = chrome.runtime.getURL(`svcs/${svc}.svg`);
+          link_shortcut_icon.id = 'aws-shortcut-icon';
+        }
+        document.head.appendChild(link_icon);
+        document.head.appendChild(link_shortcut_icon);
       }
-      document.head.appendChild(link_icon);
-      document.head.appendChild(link_shortcut_icon);
-    }
+    };
+
+    // Start initialization
+    initializeAWS();
+
   } catch (error) {
     console.error('Error:', error);
   }
