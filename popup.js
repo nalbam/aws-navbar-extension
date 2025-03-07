@@ -80,15 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const accountId = entry.querySelector('.account-id').value.trim();
       const accountName = entry.querySelector('.account-name').value.trim();
 
-      if (accountId && accountName) {
+      if (accountId) {
         info[accountId] = accountName;
       }
     });
-
-    if (Object.keys(info).length === 0) {
-      alert('Please add at least one valid account');
-      return;
-    }
 
     config['info'] = info;
     saveConfig(config, true);
