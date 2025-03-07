@@ -1,4 +1,140 @@
 const colors = {
+  // aws ec2 describe-regions --all-regions --query "Regions[].RegionName" --output text | tr '\t' '\n'
+  'af-south-1': {
+    'country': 'south-africa',
+    'background': 'linear-gradient(to right, #aa6600, #dd0000, #008866, #334488)',
+    'emoji': '🇿🇦'
+  },
+  'ap-east-1': {
+    'country': 'hong-kong',
+    'background': 'linear-gradient(to right, #cc0022, #ffaabb, #cc0022)',
+    'emoji': '🇭🇰'
+  },
+  'ap-northeast-1': {
+    'country': 'japan',
+    'background': 'linear-gradient(to right, #dddddd, #dd0044, #dddddd)',
+    'emoji': '🇯🇵'
+  },
+  'ap-northeast-2': {
+    'country': 'south-korea',
+    'background': 'linear-gradient(to right, #dd0022, #0000aa)',
+    'emoji': '🇰🇷'
+  },
+  'ap-northeast-3': {
+    'country': 'japan',
+    'background': 'linear-gradient(to right, #dddddd, #cc0044, #bb7700)',
+    'emoji': '🇯🇵'
+  },
+  'ap-south-1': {
+    'country': 'india',
+    'background': 'linear-gradient(to right, #f98000, #bbbbee, #009900)',
+    'emoji': '🇮🇳'
+  },
+  'ap-south-2': {
+    'country': 'india',
+    'background': 'linear-gradient(to right, #f98000, #009900, #bbbbee)',
+    'emoji': '🇮🇳'
+  },
+  'ap-southeast-1': {
+    'country': 'singapore',
+    'background': 'linear-gradient(to right, #eebbbb, #ff3344, #ccccaa)',
+    'emoji': '🇸🇬'
+  },
+  'ap-southeast-2': {
+    'country': 'australia',
+    'background': 'linear-gradient(to right, #002255, #ee3344, #000088)',
+    'emoji': '🇦🇺'
+  },
+  'ap-southeast-3': {
+    'country': 'indonesia',
+    'background': 'linear-gradient(to right, #ee0000, #dddddd)',
+    'emoji': '🇮🇩'
+  },
+  'ap-southeast-4': {
+    'country': 'australia',
+    'background': 'linear-gradient(to right, #002255, #000088, #ee3344)',
+    'emoji': '🇦🇺'
+  },
+  'ca-central-1': {
+    'country': 'canada',
+    'background': 'linear-gradient(to right, #ee0000, #dddddd, #ee0000)',
+    'emoji': '🇨🇦'
+  },
+  'eu-central-1': {
+    'country': 'germany',
+    'background': 'linear-gradient(to right, #222222, #ee4400, #dd9900)',
+    'emoji': '🇩🇪'
+  },
+  'eu-central-2': {
+    'country': 'switzerland',
+    'background': 'linear-gradient(to right, #dd0033, #eeeeee, #dd0022)',
+    'emoji': '🇨🇭'
+  },
+  'eu-central-3': {
+    'country': 'switzerland',
+    'background': 'linear-gradient(to right, #eeeeee, #dd0033, #eeeeee)',
+    'emoji': '🇨🇭'
+  },
+  'eu-north-1': {
+    'country': 'sweden',
+    'background': 'linear-gradient(to right, #0055aa, #ffcc00, #0044aa)',
+    'emoji': '🇸🇪'
+  },
+  'eu-south-1': {
+    'country': 'italy',
+    'background': 'linear-gradient(to right, #008844, #aaaaaa, #cc1133)',
+    'emoji': '🇮🇹'
+  },
+  'eu-south-2': {
+    'country': 'spain',
+    'background': 'linear-gradient(to right, #cc1122, #ffbb00, #cc1122)',
+    'emoji': '🇪🇸'
+  },
+  'eu-south-3': {
+    'country': 'italy',
+    'background': 'linear-gradient(to right, #cc1133, #aaaaaa, #008844)',
+    'emoji': '🇮🇹'
+  },
+  'eu-west-1': {
+    'country': 'ireland',
+    'background': 'linear-gradient(to right, #009955, #aaaaaa, #ee7700)',
+    'emoji': '🇮🇪'
+  },
+  'eu-west-2': {
+    'country': 'united-kingdom',
+    'background': 'linear-gradient(to right, #224477, #ee3344, #1166aa)',
+    'emoji': '🇬🇧'
+  },
+  'eu-west-3': {
+    'country': 'france',
+    'background': 'linear-gradient(to right, #005599, #aaaaaa, #ee2222)',
+    'emoji': '🇫🇷'
+  },
+  'il-central-1': {
+    'country': 'israel',
+    'background': 'linear-gradient(to right, #0038b8, #ffffff)',
+    'emoji': '🇮🇱'
+  },
+  'me-central-1': {
+    'country': 'uae',
+    'background': 'linear-gradient(to right, #ee0000, #009955, #aaaaaa)',
+    'emoji': '🇦🇪'
+  },
+  'me-south-1': {
+    'country': 'bahrain',
+    'background': 'linear-gradient(to right, #aa9999, #ee1144, #aa1133)',
+    'emoji': '🇧🇭'
+  },
+  'me-west-1': {
+    'country': 'uae',
+    'background': 'linear-gradient(to right, #009955, #ee0000, #009955)',
+    'emoji': '🇦🇪'
+  },
+  'sa-east-1': {
+    'country': 'brazil',
+    'background': 'linear-gradient(to right, #00aa55, #ffee00, #008844)',
+    'emoji': '🇧🇷'
+  },
   'us-east-1': {
     'country': 'united-states',
     'background': 'linear-gradient(to right, #0000aa, #ee2244)',
@@ -18,116 +154,6 @@ const colors = {
     'country': 'united-states',
     'background': 'linear-gradient(to right, #0000aa, #4466ee)',
     'emoji': '🇺🇸'
-  },
-  'af-south-1': {
-    'country': 'south-africa',
-    'background': 'linear-gradient(to right, #aa6600, #dd0000, #008866, #334488)',
-    'emoji': '🇿🇦'
-  },
-  'ap-east-1': {
-    'country': 'hong-kong',
-    'background': 'linear-gradient(to right, #cc0022, #ffaabb, #cc0022)',
-    'emoji': '🇭🇰'
-  },
-  'ap-southeast-3': {
-    'country': 'indonesia',
-    'background': 'linear-gradient(to right, #ee0000, #dddddd)',
-    'emoji': '🇮🇩'
-  },
-  'ap-south-1': {
-    'country': 'india',
-    'background': 'linear-gradient(to right, #f98000, #bbbbee, #009900)',
-    'emoji': '🇮🇳'
-  },
-  'ap-northeast-3': {
-    'country': 'japan',
-    'background': 'linear-gradient(to right, #dddddd, #cc0044, #bb7700)',
-    'emoji': '🇯🇵'
-  },
-  'ap-northeast-2': {
-    'country': 'south-korea',
-    'background': 'linear-gradient(to right, #dd0022, #0000aa)',
-    'emoji': '🇰🇷'
-  },
-  'ap-southeast-1': {
-    'country': 'singapore',
-    'background': 'linear-gradient(to right, #eebbbb, #ff3344, #ccccaa)',
-    'emoji': '🇸🇬'
-  },
-  'ap-southeast-2': {
-    'country': 'australia',
-    'background': 'linear-gradient(to right, #002255, #ee3344, #000088)',
-    'emoji': '🇦🇺'
-  },
-  'ap-northeast-1': {
-    'country': 'japan',
-    'background': 'linear-gradient(to right, #dddddd, #dd0044, #dddddd)',
-    'emoji': '🇯🇵'
-  },
-  'ca-central-1': {
-    'country': 'canada',
-    'background': 'linear-gradient(to right, #ee0000, #dddddd, #ee0000)',
-    'emoji': '🇨🇦'
-  },
-  'eu-central-1': {
-    'country': 'germany',
-    'background': 'linear-gradient(to right, #222222, #ee4400, #dd9900)',
-    'emoji': '🇩🇪'
-  },
-  'eu-west-1': {
-    'country': 'ireland',
-    'background': 'linear-gradient(to right, #009955, #aaaaaa, #ee7700)',
-    'emoji': '🇮🇪'
-  },
-  'eu-west-2': {
-    'country': 'united-kingdom',
-    'background': 'linear-gradient(to right, #224477, #ee3344, #1166aa)',
-    'emoji': '🇬🇧'
-  },
-  'eu-south-1': {
-    'country': 'italy',
-    'background': 'linear-gradient(to right, #008844, #aaaaaa, #cc1133)',
-    'emoji': '🇮🇹'
-  },
-  'eu-west-3': {
-    'country': 'france',
-    'background': 'linear-gradient(to right, #005599, #aaaaaa, #ee2222)',
-    'emoji': '🇫🇷'
-  },
-  'eu-south-2': {
-    'country': 'spain',
-    'background': 'linear-gradient(to right, #cc1122, #ffbb00, #cc1122)',
-    'emoji': '🇪🇸'
-  },
-  'eu-north-1': {
-    'country': 'sweden',
-    'background': 'linear-gradient(to right, #0055aa, #ffcc00, #0044aa)',
-    'emoji': '🇸🇪'
-  },
-  'eu-central-2': {
-    'country': 'switzerland',
-    'background': 'linear-gradient(to right, #dd0033, #eeeeee, #dd0022)',
-    'emoji': '🇨🇭'
-  },
-  'me-south-1': {
-    'country': 'bahrain',
-    'background': 'linear-gradient(to right, #aa9999, #ee1144, #aa1133)',
-    'emoji': '🇧🇭'
-  },
-  'me-central-1': {
-    'country': 'uae',
-    'background': 'linear-gradient(to right, #ee0000, #009955, #aaaaaa)',
-    'emoji': '🇦🇪'
-  },
-  'sa-east-1': {
-    'country': 'brazil',
-    'background': 'linear-gradient(to right, #00aa55, #ffee00, #008844)',
-    'emoji': '🇧🇷'
-  },
-  'il-central-1': {
-    'country': 'israel',
-    'background': 'linear-gradient(to right, #0038b8, #ffffff)',
-    'emoji': '🇮🇱'
   },
   'global': {
     'country': 'global',
