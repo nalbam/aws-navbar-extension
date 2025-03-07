@@ -19,13 +19,18 @@ document.addEventListener('DOMContentLoaded', () => {
     updateThemeIcon(theme);
   });
 
-  // Save settings
-  document.getElementById('save_btn').addEventListener('click', () => {
-    const config = {
-      background: document.getElementById('background').checked ? 'enabled' : 'disabled',
-      flag: document.getElementById('flag').checked ? 'enabled' : 'disabled',
-      favicon: document.getElementById('favicon').checked ? 'enabled' : 'disabled'
-    };
+  // Auto save on toggle changes
+  ['background', 'flag', 'favicon'].forEach(id => {
+    document.getElementById(id).addEventListener('change', async () => {
+      const config = await getCurrentConfig();
+      config[id] = document.getElementById(id).checked ? 'enabled' : 'disabled';
+      saveConfig(config);
+    });
+  });
+
+  // Save account info
+  document.getElementById('save_btn').addEventListener('click', async () => {
+    const config = await getCurrentConfig();
 
     try {
       const info = document.getElementById('info_area').value.trim();
@@ -37,13 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    chrome.storage.local.set({ config }, () => {
-      const btn = document.getElementById('save_btn');
-      btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
-      setTimeout(() => {
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
-      }, 1000);
-    });
+    saveConfig(config, true);
   });
 
   // Theme toggle
@@ -57,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Theme toggle
 function updateThemeIcon(theme) {
   const icon = document.querySelector('.theme-toggle i');
   if (theme === 'dark') {
@@ -64,4 +64,26 @@ function updateThemeIcon(theme) {
   } else {
     icon.className = 'fa-solid fa-sun';
   }
+}
+
+// Helper function to get current config
+function getCurrentConfig() {
+  return new Promise(resolve => {
+    chrome.storage.local.get('config', (c) => {
+      resolve(c.config !== undefined ? c.config : {});
+    });
+  });
+}
+
+// Helper function to save config
+function saveConfig(config, showSaveMessage = false) {
+  chrome.storage.local.set({ config }, () => {
+    if (showSaveMessage) {
+      const btn = document.getElementById('save_btn');
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+      }, 1000);
+    }
+  });
 }
