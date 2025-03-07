@@ -1,3 +1,32 @@
+// Helper function to create account entry
+function createAccountEntry(accountId = '', accountName = '') {
+  const entry = document.createElement('div');
+  entry.className = 'account-entry';
+
+  const idInput = document.createElement('input');
+  idInput.type = 'text';
+  idInput.className = 'account-id';
+  idInput.placeholder = 'Account ID';
+  idInput.value = accountId;
+
+  const nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.className = 'account-name';
+  nameInput.placeholder = 'Account Name';
+  nameInput.value = accountName;
+
+  const removeBtn = document.createElement('button');
+  removeBtn.className = 'remove-btn';
+  removeBtn.textContent = '×';
+  removeBtn.onclick = () => entry.remove();
+
+  entry.appendChild(idInput);
+  entry.appendChild(nameInput);
+  entry.appendChild(removeBtn);
+
+  return entry;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Load saved settings
   chrome.storage.local.get('config', (c) => {
@@ -9,8 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('favicon').checked = config['favicon'] !== 'disabled';
 
     // Set account info
+    const accountList = document.getElementById('account_list');
+    accountList.innerHTML = ''; // Clear existing entries
+
     if (config['info']) {
-      document.getElementById('info_area').value = JSON.stringify(config['info'], null, 2);
+      Object.entries(config['info']).forEach(([accountId, accountName]) => {
+        accountList.appendChild(createAccountEntry(accountId, accountName));
+      });
+    } else {
+      accountList.appendChild(createAccountEntry('123456789012', 'PROD'));
     }
 
     // Load theme preference
@@ -28,20 +64,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Add Account button
+  document.getElementById('add_account_btn').addEventListener('click', () => {
+    const accountList = document.getElementById('account_list');
+    accountList.appendChild(createAccountEntry());
+  });
+
   // Save account info
   document.getElementById('save_btn').addEventListener('click', async () => {
     const config = await getCurrentConfig();
+    const accountEntries = document.querySelectorAll('.account-entry');
+    const info = {};
 
-    try {
-      const info = document.getElementById('info_area').value.trim();
-      if (info) {
-        config['info'] = JSON.parse(info);
+    accountEntries.forEach(entry => {
+      const accountId = entry.querySelector('.account-id').value.trim();
+      const accountName = entry.querySelector('.account-name').value.trim();
+
+      if (accountId && accountName) {
+        info[accountId] = accountName;
       }
-    } catch (e) {
-      alert('Invalid JSON format in Account Info');
+    });
+
+    if (Object.keys(info).length === 0) {
+      alert('Please add at least one valid account');
       return;
     }
 
+    config['info'] = info;
     saveConfig(config, true);
   });
 
@@ -79,9 +128,6 @@ function getCurrentConfig() {
   return new Promise(resolve => {
     chrome.storage.local.get('config', (c) => {
       const config = c.config !== undefined ? c.config : {};
-      if (!config.info) {
-        config.info = {"123456789012": "PROD"};
-      }
       resolve(config);
     });
   });

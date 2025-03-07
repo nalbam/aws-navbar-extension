@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2025-03-08
+
+### Added
+- Account Info UI 개선:
+  - Account ID와 Name을 위한 전용 입력 필드
+  - 계정 추가/삭제 버튼
+  - 기본값 (123456789012: PROD) 자동 설정
+
+### Changed
+- Account Info 관리 방식 변경:
+  - JSON 텍스트 입력에서 전용 UI로 변경
+  - 직관적인 계정 정보 입력 방식
+  - 실시간 유효성 검사
+
+### Fixed
+- Account Info 입력 오류 방지
+- JSON 유효성 검사 개선
+
 ## [1.8.6] - 2025-03-08
 
 ### Added

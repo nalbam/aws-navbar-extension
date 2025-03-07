@@ -123,42 +123,78 @@ input:checked + .slider:before {
   transform: translateX(20px);
 }
 
-/* Account Info Textarea */
+/* Account Info */
 .account-info {
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  gap: 12px;
 }
 
 .account-info .setting-control {
   width: 100%;
-  padding-right: 8px;
 }
 
-#info_area {
+.account-entry {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
   width: 100%;
-  height: 100px;
+}
+
+.account-entry input {
   padding: 8px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
   font-size: 13px;
-  line-height: 1.4;
-  resize: none;
   color: var(--text-color);
   background-color: var(--input-bg);
-  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+  transition: all 0.3s;
 }
 
-#info_area:focus {
+.account-entry input:focus {
   outline: none;
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.1);
 }
 
-#info_area::placeholder {
-  color: var(--text-color);
-  opacity: 0.5;
+.account-entry .account-id {
+  width: 140px;
+}
+
+.account-entry .account-name {
+  flex-grow: 1;
+}
+
+.account-entry .remove-btn {
+  padding: 8px;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: #dc3545;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.account-entry .remove-btn:hover {
+  background-color: #c82333;
+}
+
+.secondary-btn {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--accent-color);
+  border-radius: var(--border-radius);
+  background-color: transparent;
+  color: var(--accent-color);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.secondary-btn:hover {
+  background-color: var(--accent-color);
+  color: white;
 }
 
 /* Save Button */
