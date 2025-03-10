@@ -203,13 +203,25 @@ chrome.storage.local.get('config', (c) => {
       // aws service
       let region = undefined;
       let svc = undefined;
-      const re = /^https:\/\/([a-z0-9-]+)?(?:\.)?console\.aws\.amazon\.com\/([a-z0-9-]+)\/([a-z0-9]+(?=\/))?.*/;
+      const re = /^https:\/\/([a-z0-9-]+(?:\.[a-z0-9-]+)*)?\.?console\.aws\.amazon\.com\/([a-z0-9-]+)\/([a-z0-9]+(?=\/))?.*/;
       const m = re.exec(window.location.href);
       if (m !== undefined && m.length > 2) {
         if (city === 'Global') {
           region = 'global';
         } else {
-          region = m[1];
+          // Extract region from URL
+          const hostPart = m[1];
+          if (hostPart) {
+            // Check if there's a dot in the host part (account-string.region format)
+            const lastDotIndex = hostPart.lastIndexOf('.');
+            if (lastDotIndex !== -1) {
+              // Get the part after the last dot
+              region = hostPart.substring(lastDotIndex + 1);
+            } else {
+              // No dot, the whole host part is the region
+              region = hostPart;
+            }
+          }
         }
         svc = m[2];
         if (svc === 'codesuite' && m.length > 3) {

@@ -51,6 +51,7 @@ AWS Colorful Navbar is a browser extension that enhances the AWS Console navigat
 - Region flags are displayed next to the region selector
 - Supports all AWS regions with specific color schemes
 - Automatic region detection and display
+- Supports both standard URLs (region.console.aws.amazon.com) and account-specific URLs (account-string.region.console.aws.amazon.com)
 
 ### Account Management
 - Displays custom account information
