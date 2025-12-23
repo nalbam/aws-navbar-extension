@@ -205,9 +205,16 @@ chrome.storage.local.get('config', (c) => {
         // region flag
         if (config['flag'] !== 'disabled') {
           const regionButton = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]');
-          if (regionButton) {
-            const flag = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
-            regionButton.insertAdjacentHTML("beforeBegin", `<span style="line-height:0;margin-right:0.5em;"><img src="${flag}" style="width:20px;height:20px;"></span>`);
+          if (regionButton && regionButton.parentNode) {
+            const flagUrl = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
+            const flagContainer = document.createElement('span');
+            flagContainer.style.cssText = 'line-height:0;margin-right:0.5em;';
+            const flagImg = document.createElement('img');
+            flagImg.src = flagUrl;
+            flagImg.style.cssText = 'width:20px;height:20px;';
+            flagImg.alt = colors[region]['name'];
+            flagContainer.appendChild(flagImg);
+            regionButton.parentNode.insertBefore(flagContainer, regionButton);
           }
         }
       }
