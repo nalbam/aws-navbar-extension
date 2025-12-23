@@ -76,7 +76,7 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 ```
 
 ### Static Resources
-- `flags/` - Country flag images (20x20 PNG)
+- `flags/` - Country flag images (128x128 PNG, displayed at 20x20)
 - `icons/` - UI icons for popup (palette, flag, theme toggle)
 
 ### Manifest Versions

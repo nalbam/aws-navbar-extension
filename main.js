@@ -184,22 +184,32 @@ function getCurrentRegion() {
   return extractRegionFromUrl();
 }
 
-// Apply background color
-function applyBackgroundColor(config) {
-  const region = getCurrentRegion();
-  if (!region || !colors.hasOwnProperty(region)) return;
+// Get background gradient for region
+function getBackgroundForRegion(config, region) {
+  if (config['customColors'] && config['customColors'][region]) {
+    return buildGradient(config['customColors'][region]);
+  }
+  return getDefaultGradient(region);
+}
+
+// Apply navbar background color
+// @param {Object} config - Configuration object
+// @param {string} region - AWS region code (optional, will detect if not provided)
+// @param {boolean} withSnowfall - Whether to apply snowfall effect (default: false)
+function applyNavbarBackground(config, region = null, withSnowfall = false) {
+  // Get region if not provided (for live updates)
+  const targetRegion = region || getCurrentRegion();
+  if (!targetRegion || !colors.hasOwnProperty(targetRegion)) return;
 
   if (config['background'] === 'disabled') return;
 
-  let background = getDefaultGradient(region);
-  if (config['customColors'] && config['customColors'][region]) {
-    background = buildGradient(config['customColors'][region]);
-  }
-
   const navElement = document.querySelector(SELECTORS.NAV_ELEMENT);
   if (navElement) {
-    navElement.style.background = background;
-    if (isDebug) console.log(`Applied background: ${background}`);
+    navElement.style.background = getBackgroundForRegion(config, targetRegion);
+    if (withSnowfall) {
+      createSnowfall(navElement);
+    }
+    if (isDebug) console.log(`Applied background for ${targetRegion}`);
   }
 }
 
@@ -209,31 +219,13 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     try {
       const newConfig = validateConfig(changes.config.newValue);
       if (isDebug) console.log('Config changed, applying new colors...');
-      applyBackgroundColor(newConfig);
+      // Live update without snowfall (already created on init)
+      applyNavbarBackground(newConfig);
     } catch (error) {
       console.error('Error applying config changes:', error);
     }
   }
 });
-
-// Get background gradient for region
-function getBackgroundForRegion(config, region) {
-  if (config['customColors'] && config['customColors'][region]) {
-    return buildGradient(config['customColors'][region]);
-  }
-  return getDefaultGradient(region);
-}
-
-// Apply navbar background color with snowfall effect
-function applyNavbarBackground(config, region) {
-  if (config['background'] === 'disabled') return;
-
-  const navElement = document.querySelector(SELECTORS.NAV_ELEMENT);
-  if (navElement) {
-    navElement.style.background = getBackgroundForRegion(config, region);
-    createSnowfall(navElement);
-  }
-}
 
 // Insert country flag before region button
 function insertRegionFlag(config, region) {
@@ -280,7 +272,7 @@ function initializeAWS(config, retryCount = 0) {
   if (isDebug) console.log(`region: ${region}`);
 
   if (region && colors.hasOwnProperty(region)) {
-    applyNavbarBackground(config, region);
+    applyNavbarBackground(config, region, true); // withSnowfall = true on init
     insertRegionFlag(config, region);
   }
 }
