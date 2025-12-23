@@ -210,6 +210,15 @@ function getBackgroundForRegion(config, region) {
   return getDefaultGradient(region);
 }
 
+// Remove navbar background color
+function removeNavbarBackground() {
+  const navElement = getCachedElement('navElement', SELECTORS.NAV_ELEMENT);
+  if (navElement) {
+    navElement.style.background = '';
+    if (isDebug) console.log('Removed navbar background');
+  }
+}
+
 // Apply navbar background color
 // @param {Object} config - Configuration object
 // @param {string} region - AWS region code (optional, will detect if not provided)
@@ -219,7 +228,10 @@ function applyNavbarBackground(config, region = null, withSnowfall = false) {
   const targetRegion = region || getCurrentRegion();
   if (!targetRegion || !colors.hasOwnProperty(targetRegion)) return;
 
-  if (config['background'] === 'disabled') return;
+  if (config['background'] === 'disabled') {
+    removeNavbarBackground();
+    return;
+  }
 
   const navElement = getCachedElement('navElement', SELECTORS.NAV_ELEMENT);
   if (navElement) {
@@ -236,17 +248,36 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'local' && changes.config) {
     try {
       const newConfig = validateConfig(changes.config.newValue);
-      if (isDebug) console.log('Config changed, applying new colors...');
-      // Live update without snowfall (already created on init)
+      const region = getCurrentRegion();
+      if (isDebug) console.log('Config changed, applying updates...');
+
+      // Live update background (without snowfall - already created on init)
       applyNavbarBackground(newConfig);
+
+      // Live update flag
+      if (region && colors.hasOwnProperty(region)) {
+        insertRegionFlag(newConfig, region);
+      }
     } catch (error) {
       console.error('Error applying config changes:', error);
     }
   }
 });
 
+// Remove country flag from navbar
+function removeRegionFlag() {
+  const existingFlag = document.getElementById('aws-navbar-flag');
+  if (existingFlag) {
+    existingFlag.remove();
+    if (isDebug) console.log('Removed region flag');
+  }
+}
+
 // Insert country flag before region button
 function insertRegionFlag(config, region) {
+  // Remove existing flag first to prevent duplicates
+  removeRegionFlag();
+
   if (config['flag'] === 'disabled') return;
 
   const regionButton = getCachedElement('regionButton', SELECTORS.REGION_BUTTON);
