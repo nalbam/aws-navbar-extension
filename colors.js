@@ -9,7 +9,7 @@ const colors = {
   'ap-east-1': {
     country: 'hong-kong',
     name: 'Hong Kong',
-    colors: ['#cc0022', '#ffaabb', '#cc0022'],
+    colors: ['#cc0055', '#ff88aa', '#cc0055'],
     emoji: '🇭🇰'
   },
   'ap-east-2': {
@@ -93,13 +93,13 @@ const colors = {
   'ca-central-1': {
     country: 'canada',
     name: 'Canada (Central)',
-    colors: ['#ee0000', '#aa8888', '#ee0000'],
+    colors: ['#ee0000', '#dd6633', '#ee0000'],
     emoji: '🇨🇦'
   },
   'ca-west-1': {
     country: 'canada',
     name: 'Canada (Calgary)',
-    colors: ['#cc6666', '#ee0000', '#cc6666'],
+    colors: ['#dd6633', '#ee0000', '#dd6633'],
     emoji: '🇨🇦'
   },
   'eu-central-1': {
