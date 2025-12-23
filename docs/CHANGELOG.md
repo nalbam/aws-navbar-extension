@@ -9,6 +9,16 @@ All notable changes to this project will be documented in this file.
 - Gradient preview in popup
 - 2-4 color gradient support for each region
 - Reset to default functionality per region
+- Live color update (Apply button instantly updates navbar)
+- Shared color data module (colors.js)
+- Christmas season snow effect (Dec 20-26)
+- Support for new AWS regions:
+  - ap-east-2 (Taiwan - Taipei)
+  - ap-southeast-5 (Malaysia - Kuala Lumpur)
+  - ap-southeast-6 (New Zealand - Auckland)
+  - ap-southeast-7 (Thailand - Bangkok)
+  - ca-west-1 (Canada - Calgary)
+  - mx-central-1 (Mexico - Queretaro)
 
 ### Removed
 - Favicon feature (service-specific favicons)
@@ -83,9 +93,9 @@ All notable changes to this project will be documented in this file.
 ## Features (v2.0)
 
 ### Region Visualization
-- Custom color gradients for each AWS region
+- Custom color gradients for each AWS region (35+ regions supported)
 - User-customizable gradient colors (2-4 colors)
-- Region flags display
+- Region flags display (29 countries)
 - Support for all AWS global regions
 - Automatic region detection
 

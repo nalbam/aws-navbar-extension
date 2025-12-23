@@ -12,6 +12,12 @@ const colors = {
     colors: ['#cc0022', '#ffaabb', '#cc0022'],
     emoji: '🇭🇰'
   },
+  'ap-east-2': {
+    country: 'taiwan',
+    name: 'Taiwan (Taipei)',
+    colors: ['#ee0000', '#000088', '#ffffff'],
+    emoji: '🇹🇼'
+  },
   'ap-northeast-1': {
     country: 'japan',
     name: 'Japan (Tokyo)',
@@ -66,10 +72,34 @@ const colors = {
     colors: ['#002255', '#000088', '#ee3344'],
     emoji: '🇦🇺'
   },
+  'ap-southeast-5': {
+    country: 'malaysia',
+    name: 'Malaysia (Kuala Lumpur)',
+    colors: ['#cc0000', '#0033aa', '#ffcc00'],
+    emoji: '🇲🇾'
+  },
+  'ap-southeast-6': {
+    country: 'new-zealand',
+    name: 'New Zealand (Auckland)',
+    colors: ['#002277', '#ee0000', '#ffffff'],
+    emoji: '🇳🇿'
+  },
+  'ap-southeast-7': {
+    country: 'thailand',
+    name: 'Thailand (Bangkok)',
+    colors: ['#ee0000', '#ffffff', '#002277'],
+    emoji: '🇹🇭'
+  },
   'ca-central-1': {
     country: 'canada',
-    name: 'Canada',
+    name: 'Canada (Central)',
     colors: ['#ee0000', '#dddddd', '#ee0000'],
+    emoji: '🇨🇦'
+  },
+  'ca-west-1': {
+    country: 'canada',
+    name: 'Canada (Calgary)',
+    colors: ['#dddddd', '#ee0000', '#dddddd'],
     emoji: '🇨🇦'
   },
   'eu-central-1': {
@@ -155,6 +185,12 @@ const colors = {
     name: 'UAE',
     colors: ['#009955', '#ee0000', '#009955'],
     emoji: '🇦🇪'
+  },
+  'mx-central-1': {
+    country: 'mexico',
+    name: 'Mexico (Queretaro)',
+    colors: ['#006847', '#ffffff', '#ce1126'],
+    emoji: '🇲🇽'
   },
   'sa-east-1': {
     country: 'brazil',
