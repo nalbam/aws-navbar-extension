@@ -37,12 +37,17 @@ aws-navbar-extension/
 - Key data structures:
   - `colors`: Maps region codes → country, default gradient, emoji
   - `langs`: Korean/Japanese region name translations
+  - `domCache`: Cached DOM elements for performance
 - Key functions:
   - `buildGradient()`: Builds CSS gradient from custom color config
+  - `getCachedElement()`: Returns cached DOM element or queries and caches it
+  - `removeNavbarBackground()`: Removes navbar background (for live toggle)
+  - `removeRegionFlag()`: Removes flag element (for live toggle)
 - Features:
   - Region detection via URL regex (handles `account-string.region.console.aws.amazon.com` format)
   - Navbar background color customization (default or custom)
   - Region flag display next to region selector
+  - Live toggle updates (Background/Flag changes apply instantly without refresh)
 - Retry mechanism (3 attempts) for region selector detection
 - Debug logging with `isDebug` flag
 
@@ -62,11 +67,14 @@ aws-navbar-extension/
 - Responsive design with theme support
 
 ### 4. Shared Utilities (utils.js)
-- Shared validation functions used by both main.js and popup.js
+- Shared validation and performance functions used by both main.js and popup.js
+- Key constants:
+  - `HEX_COLOR_REGEX`: Pre-compiled regex for hex color validation
 - Key functions:
   - `isValidHexColor()`: Validates hex color format (#RRGGBB)
   - `isValidRegion()`: Validates region code exists in colors object
   - `validateConfig()`: Validates and sanitizes config structure
+  - `debounce()`: Limits function execution rate for performance
 
 ### 5. Background Script (background.js)
 - Minimal initialization on extension install
@@ -138,7 +146,13 @@ aws-navbar-extension/
 - Asynchronous storage operations
 - Efficient resource loading
 - Retry mechanism for region detection
-- Optimized DOM operations
+- Optimized DOM operations:
+  - DOM element caching (`domCache`) to avoid repeated querySelector calls
+  - DocumentFragment for batch DOM updates (region dropdown, snowflakes)
+  - Debounced color preview updates (50ms delay)
+  - Batched style assignments using `cssText`
+  - Pre-compiled regex patterns
+- Config caching with storage change listener invalidation
 
 ### Security
 - Minimal permissions required:
@@ -148,18 +162,21 @@ aws-navbar-extension/
 - Input validation for color values
 
 ### User Experience
-- Instant settings application
+- Instant settings application (no page refresh needed)
+- Live toggle updates for Background and Flag settings
 - Auto-save for toggles
 - Real-time preview for colors
 - Visual feedback for actions
 - Smooth transitions
 - Responsive interface
+- Accessible UI with ARIA labels and roles
 
 ### Error Handling
 - Color validation (hex format)
 - Region selector retry mechanism
 - Graceful fallbacks to default colors
-- Clear error messages
+- Flag image error handling with emoji fallback
+- Clear error messages with visual feedback
 
 ## Development
 

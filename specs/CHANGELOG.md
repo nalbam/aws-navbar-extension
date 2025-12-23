@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2025-12-24
+
+### Added
+- Live toggle updates: Background and Flag settings apply instantly without page refresh
+- Debounce utility function for performance optimization
+- DOM element caching to reduce repeated querySelector calls
+- Accessible UI with ARIA labels, roles, and visually-hidden helper class
+- Flag image error handling with emoji fallback
+
+### Changed
+- Snowfall animation improved for more natural effect:
+  - Added gentle left/right sway motion
+  - Smooth fade-in and fade-out transitions
+  - Slower animation speed (4-8 seconds)
+- Color preview updates now debounced (50ms delay)
+- Region dropdown uses DocumentFragment for single DOM update
+- Snowflakes use DocumentFragment and batched cssText for better performance
+- Pre-compiled regex patterns to avoid recompilation on each call
+- Config caching with storage change listener invalidation
+
+### Fixed
+- Duplicate flag insertion prevented with removeRegionFlag() call
+- Storage type consistency (all using chrome.storage.local)
+
 ## [2.0.0] - 2025-12-23
 
 ### Added
