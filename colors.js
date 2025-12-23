@@ -15,7 +15,7 @@ const colors = {
   'ap-east-2': {
     country: 'taiwan',
     name: 'Taiwan (Taipei)',
-    colors: ['#ee0000', '#000088', '#aaaacc'],
+    colors: ['#000088', '#ee0000', '#aaaacc'],
     emoji: '🇹🇼'
   },
   'ap-northeast-1': {
