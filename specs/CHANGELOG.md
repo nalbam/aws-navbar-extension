@@ -93,11 +93,12 @@ All notable changes to this project will be documented in this file.
 ## Features (v2.0)
 
 ### Region Visualization
-- Custom color gradients for each AWS region (35+ regions supported)
+- Custom color gradients for each AWS region (38 regions)
 - User-customizable gradient colors (2-4 colors)
 - Region flags display (29 countries)
 - Support for all AWS global regions
 - Automatic region detection
+- Christmas season snow effect (Dec 20-26)
 
 ### Color Customization
 - Per-region color picker UI

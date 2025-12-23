@@ -8,9 +8,11 @@ AWS Colorful Navbar is a browser extension that enhances AWS Console by displayi
 
 ## Documentation
 
-- `docs/ARCHITECTURE.md` - Detailed architecture and feature documentation
-- `docs/CHANGELOG.md` - Version history and release notes
+- `specs/ARCHITECTURE.md` - Detailed architecture and feature documentation
+- `specs/CHANGELOG.md` - Version history and release notes
+- `specs/STORE_DESCRIPTION.md` - Chrome Web Store description
 - `flags/README.md` - Supported regions and flag mappings
+- `docs/` - GitHub Pages homepage
 
 ## Development Commands
 
@@ -83,12 +85,10 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 
 ## Adding New AWS Regions
 
-1. Add region entry to `colors` object in `main.js` with:
+1. Add region entry to `colors` object in `colors.js` with:
    - `country`: matching flag filename (without .png)
-   - `background`: CSS gradient string
+   - `name`: region display name
+   - `colors`: array of hex color strings (2-4 colors for gradient)
    - `emoji`: country flag emoji
-2. Add same region to `defaultColors` in `popup.js` with:
-   - `colors`: array of hex color strings
-   - `country`: display name
-   - `emoji`: country flag emoji
-3. Add flag image to `flags/` directory if new country
+2. Add flag image to `flags/` directory if new country (see `flags/README.md` for download instructions)
+3. Update `flags/README.md` with the new region

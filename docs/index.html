@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Colorful Navbar - Browser Extension</title>
+  <meta name="description" content="Identify AWS regions instantly with colorful navbar gradients and country flags. Customize colors, prevent deployment mistakes.">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <img src="icon.png" alt="AWS Colorful Navbar" width="40" height="40">
+        <span>AWS Colorful Navbar</span>
+      </div>
+      <nav class="nav">
+        <a href="#features">Features</a>
+        <a href="#regions">Regions</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/nalbam/aws-navbar-extension" target="_blank">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Identify AWS Regions<br><span class="gradient-text">At a Glance</span></h1>
+      <p class="hero-description">
+        Stop deploying to the wrong region. AWS Colorful Navbar adds visual indicators
+        to your AWS Console with colorful gradients and country flags.
+      </p>
+      <div class="hero-buttons">
+        <a href="https://chrome.google.com/webstore/detail/aws-colorful-navbar/kgifmgnlchjjippdpkblbdlfidcpceme" class="btn btn-primary" target="_blank">
+          Install for Chrome
+        </a>
+        <a href="https://addons.mozilla.org/firefox/addon/aws-colorful-navbar/" class="btn btn-secondary" target="_blank">
+          Install for Firefox
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="preview">
+    <div class="container">
+      <div class="preview-bar">
+        <div class="preview-item" style="background: linear-gradient(to right, #dd0022, #0000aa);">
+          <span class="flag">&#127472;&#127479;</span>
+          <span>Seoul</span>
+        </div>
+        <div class="preview-item" style="background: linear-gradient(to right, #0000aa, #ee2244);">
+          <span class="flag">&#127482;&#127480;</span>
+          <span>N. Virginia</span>
+        </div>
+        <div class="preview-item" style="background: linear-gradient(to right, #222222, #ee4400, #dd9900);">
+          <span class="flag">&#127465;&#127466;</span>
+          <span>Frankfurt</span>
+        </div>
+        <div class="preview-item" style="background: linear-gradient(to right, #aa8888, #dd0044, #aa8888);">
+          <span class="flag">&#127471;&#127477;</span>
+          <span>Tokyo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="features">
+    <div class="container">
+      <h2>Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">&#127912;</div>
+          <h3>Dynamic Gradients</h3>
+          <p>Each region displays a unique color gradient inspired by its country's flag. Instantly recognize your current region.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#127988;</div>
+          <h3>Country Flags</h3>
+          <p>Flags appear next to the region selector. 29 countries and 38+ AWS regions supported.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#127912;</div>
+          <h3>Custom Colors</h3>
+          <p>Customize gradient colors with the built-in color picker. Choose 2-4 colors per region.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#9889;</div>
+          <h3>Real-time Updates</h3>
+          <p>Changes apply instantly. No page refresh needed.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#127763;</div>
+          <h3>Dark/Light Theme</h3>
+          <p>Popup interface supports both dark and light themes.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128274;</div>
+          <h3>Privacy Focused</h3>
+          <p>No data collection. No external requests. Completely local.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="regions" class="regions">
+    <div class="container">
+      <h2>Supported Regions</h2>
+      <p class="regions-description">38+ AWS regions across 29 countries</p>
+      <div class="regions-grid">
+        <div class="region-group">
+          <h4>Americas</h4>
+          <ul>
+            <li>&#127482;&#127480; US East (N. Virginia, Ohio)</li>
+            <li>&#127482;&#127480; US West (N. California, Oregon)</li>
+            <li>&#127464;&#127462; Canada (Central, Calgary)</li>
+            <li>&#127463;&#127479; Brazil (Sao Paulo)</li>
+            <li>&#127474;&#127485; Mexico (Queretaro)</li>
+          </ul>
+        </div>
+        <div class="region-group">
+          <h4>Europe</h4>
+          <ul>
+            <li>&#127465;&#127466; Germany (Frankfurt)</li>
+            <li>&#127468;&#127463; United Kingdom (London)</li>
+            <li>&#127467;&#127479; France (Paris)</li>
+            <li>&#127470;&#127466; Ireland (Dublin)</li>
+            <li>&#127480;&#127466; Sweden (Stockholm)</li>
+            <li>&#127470;&#127481; Italy (Milan)</li>
+            <li>&#127466;&#127480; Spain (Spain)</li>
+            <li>&#127464;&#127469; Switzerland (Zurich)</li>
+          </ul>
+        </div>
+        <div class="region-group">
+          <h4>Asia Pacific</h4>
+          <ul>
+            <li>&#127471;&#127477; Japan (Tokyo, Osaka)</li>
+            <li>&#127472;&#127479; South Korea (Seoul)</li>
+            <li>&#127469;&#127472; Hong Kong</li>
+            <li>&#127481;&#127484; Taiwan (Taipei)</li>
+            <li>&#127480;&#127468; Singapore</li>
+            <li>&#127470;&#127475; India (Mumbai, Hyderabad)</li>
+            <li>&#127462;&#127482; Australia (Sydney, Melbourne)</li>
+            <li>&#127470;&#127465; Indonesia (Jakarta)</li>
+            <li>&#127474;&#127486; Malaysia (Kuala Lumpur)</li>
+            <li>&#127481;&#127469; Thailand (Bangkok)</li>
+            <li>&#127475;&#127487; New Zealand (Auckland)</li>
+          </ul>
+        </div>
+        <div class="region-group">
+          <h4>Middle East & Africa</h4>
+          <ul>
+            <li>&#127462;&#127466; UAE (UAE)</li>
+            <li>&#127463;&#127469; Bahrain (Bahrain)</li>
+            <li>&#127470;&#127473; Israel (Tel Aviv)</li>
+            <li>&#127487;&#127462; South Africa (Cape Town)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="install" class="install">
+    <div class="container">
+      <h2>Installation</h2>
+      <div class="install-options">
+        <div class="install-card">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" alt="Chrome" width="64" height="64">
+          <h3>Chrome / Edge</h3>
+          <p>Install from Chrome Web Store</p>
+          <a href="https://chrome.google.com/webstore/detail/aws-colorful-navbar/kgifmgnlchjjippdpkblbdlfidcpceme" class="btn btn-primary" target="_blank">Install</a>
+        </div>
+        <div class="install-card">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" alt="Firefox" width="64" height="64">
+          <h3>Firefox</h3>
+          <p>Install from Firefox Add-ons</p>
+          <a href="https://addons.mozilla.org/firefox/addon/aws-colorful-navbar/" class="btn btn-primary" target="_blank">Install</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <img src="icon.png" alt="AWS Colorful Navbar" width="32" height="32">
+          <span>AWS Colorful Navbar</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/nalbam/aws-navbar-extension" target="_blank">GitHub</a>
+          <a href="https://github.com/nalbam/aws-navbar-extension/issues" target="_blank">Issues</a>
+          <a href="https://github.com/nalbam/aws-navbar-extension/blob/main/LICENSE" target="_blank">License</a>
+        </div>
+      </div>
+      <p class="copyright">Open Source Project by <a href="https://github.com/nalbam" target="_blank">nalbam</a></p>
+    </div>
+  </footer>
+</body>
+</html>

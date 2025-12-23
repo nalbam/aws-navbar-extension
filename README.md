@@ -44,8 +44,8 @@ See [flags/README.md](flags/README.md) for a complete list of supported regions 
 
 ## Documentation
 
-* [Architecture](docs/ARCHITECTURE.md) - Technical architecture and component details
-* [Changelog](docs/CHANGELOG.md) - Version history and release notes
+* [Architecture](specs/ARCHITECTURE.md) - Technical architecture and component details
+* [Changelog](specs/CHANGELOG.md) - Version history and release notes
 
 ## For Developers
 

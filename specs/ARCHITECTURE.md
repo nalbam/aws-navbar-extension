@@ -8,14 +8,16 @@ AWS Colorful Navbar is a browser extension that enhances the AWS Console navigat
 aws-navbar-extension/
 ├── manifest.json          # Chrome/Edge Manifest V3
 ├── manifest-v2.json       # Firefox Manifest V2
+├── colors.js              # Shared color data for all regions
 ├── main.js                # Content script (injected into AWS Console)
 ├── background.js          # Background service worker
 ├── popup.html             # Settings popup UI
 ├── popup.js               # Popup logic with color customization
 ├── css/popup.css          # Popup styles
-├── flags/                 # Country flag images (20x20 PNG)
+├── flags/                 # Country flag images (128x128 PNG, 29 countries)
 ├── icons/                 # UI icons (theme toggle, palette, flag)
-├── docs/                  # Documentation
+├── docs/                  # GitHub Pages homepage
+├── specs/                 # Documentation (ARCHITECTURE, CHANGELOG, etc.)
 ├── VERSION                # Current version number
 └── package.sh             # Release packaging script
 ```
@@ -83,18 +85,19 @@ aws-navbar-extension/
 ```
 
 ### 6. Static Resources
-- `flags/`: Country flag images (23 countries)
+- `flags/`: Country flag images (29 countries, 128x128 PNG)
 - `icons/`: UI icons (theme toggle, palette, flag)
+- `colors.js`: Shared color data (38 regions)
 
 ## Features
 
 ### Region Visualization
-- Each AWS region has a unique default color gradient
+- 38 AWS regions with unique default color gradients
 - User can customize gradient colors per region (2-4 colors)
-- Region flags are displayed next to the region selector
-- Supports all AWS regions with specific color schemes
-- Automatic region detection and display
+- Region flags displayed next to the region selector (29 countries)
+- Automatic region detection from URL
 - Supports both standard URLs and account-specific URLs
+- Christmas season snow effect (Dec 20-26)
 
 ### Color Customization (v2.0)
 - Per-region color picker UI
