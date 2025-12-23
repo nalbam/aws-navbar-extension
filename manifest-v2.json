@@ -27,6 +27,7 @@
       ],
       "js": [
         "colors.js",
+        "utils.js",
         "main.js"
       ]
     }

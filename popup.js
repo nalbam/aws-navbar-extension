@@ -1,22 +1,8 @@
-// colors.js is loaded before this script
+// colors.js and utils.js are loaded before this script
 
 let currentRegion = null;
 let currentColors = [];
 let cachedConfig = null;
-
-// ============================================
-// Validation Utilities
-// ============================================
-
-// Validate hex color format
-function isValidHexColor(color) {
-  return typeof color === 'string' && /^#[0-9A-Fa-f]{6}$/.test(color);
-}
-
-// Validate region code exists in colors object
-function isValidRegion(region) {
-  return region && typeof region === 'string' && colors.hasOwnProperty(region);
-}
 
 // Show error message to user
 function showError(message) {

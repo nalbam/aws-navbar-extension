@@ -9,6 +9,7 @@ aws-navbar-extension/
 ├── manifest.json          # Chrome/Edge Manifest V3
 ├── manifest-v2.json       # Firefox Manifest V2
 ├── colors.js              # Shared color data for all regions
+├── utils.js               # Shared validation utilities
 ├── main.js                # Content script (injected into AWS Console)
 ├── background.js          # Background service worker
 ├── popup.html             # Settings popup UI
@@ -60,11 +61,18 @@ aws-navbar-extension/
   - `defaultColors`: Default gradient colors for all regions
 - Responsive design with theme support
 
-### 4. Background Script (background.js)
-- Minimal initialization on extension install
-- Storage sync initialization
+### 4. Shared Utilities (utils.js)
+- Shared validation functions used by both main.js and popup.js
+- Key functions:
+  - `isValidHexColor()`: Validates hex color format (#RRGGBB)
+  - `isValidRegion()`: Validates region code exists in colors object
+  - `validateConfig()`: Validates and sanitizes config structure
 
-### 5. Configuration Storage
+### 5. Background Script (background.js)
+- Minimal initialization on extension install
+- Local storage initialization
+
+### 6. Configuration Storage
 - `chrome.storage.local.config`: Feature settings and custom colors
 - `localStorage.theme`: Theme preference (dark/light)
 - Config structure:
@@ -84,7 +92,7 @@ aws-navbar-extension/
 }
 ```
 
-### 6. Static Resources
+### 7. Static Resources
 - `flags/`: Country flag images (29 countries, 128x128 PNG)
 - `icons/`: UI icons (theme toggle, palette, flag)
 - `colors.js`: Shared color data (38 regions)
@@ -159,10 +167,12 @@ aws-navbar-extension/
 ```bash
 ./package.sh  # Creates release packages
 ```
-- Updates version from `VERSION` file into manifest.json
+- **Version Management**: The `VERSION` file is the single source of truth for version numbers
+  - `manifest.json` version is automatically updated from `VERSION` during build
+  - Do NOT manually edit version in manifest files
 - Generates two zip files in `./release/`:
-  - `aws-navbar-extension-{version}.zip` (Manifest V3)
-  - `aws-navbar-extension-{version}-mv2.zip` (Manifest V2)
+  - `aws-navbar-extension-{version}.zip` (Manifest V3 for Chrome/Edge)
+  - `aws-navbar-extension-{version}-mv2.zip` (Manifest V2 for Firefox)
 - Requires `jq` for JSON processing
 
 ### Local Testing
