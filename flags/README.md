@@ -1,6 +1,72 @@
 # AWS Region Flags
 
-* <https://emojipedia.org/flags>
+## Source
+
+Flag images are from **Google Noto Color Emoji** via [Emojipedia](https://emojipedia.org/flags).
+
+## How to Download
+
+### URL Pattern
+
+```
+https://em-content.zobj.net/source/google/439/flag-{country-name}_{unicode}.png
+```
+
+### Examples
+
+```bash
+# Country flags
+curl -sL "https://em-content.zobj.net/source/google/439/flag-south-korea_1f1f0-1f1f7.png" -o south-korea.png
+curl -sL "https://em-content.zobj.net/source/google/439/flag-japan_1f1ef-1f1f5.png" -o japan.png
+curl -sL "https://em-content.zobj.net/source/google/439/flag-united-states_1f1fa-1f1f8.png" -o united-states.png
+
+# Global (globe emoji)
+curl -sL "https://em-content.zobj.net/source/google/439/globe-showing-asia-australia_1f30f.png" -o global.png
+```
+
+### Unicode Reference
+
+| Country Code | Unicode |
+|--------------|---------|
+| AU (Australia) | 1f1e6-1f1fa |
+| BH (Bahrain) | 1f1e7-1f1ed |
+| BR (Brazil) | 1f1e7-1f1f7 |
+| CA (Canada) | 1f1e8-1f1e6 |
+| CH (Switzerland) | 1f1e8-1f1ed |
+| DE (Germany) | 1f1e9-1f1ea |
+| ES (Spain) | 1f1ea-1f1f8 |
+| FR (France) | 1f1eb-1f1f7 |
+| GB (United Kingdom) | 1f1ec-1f1e7 |
+| HK (Hong Kong) | 1f1ed-1f1f0 |
+| ID (Indonesia) | 1f1ee-1f1e9 |
+| IE (Ireland) | 1f1ee-1f1ea |
+| IL (Israel) | 1f1ee-1f1f1 |
+| IN (India) | 1f1ee-1f1f3 |
+| IT (Italy) | 1f1ee-1f1f9 |
+| JP (Japan) | 1f1ef-1f1f5 |
+| KR (South Korea) | 1f1f0-1f1f7 |
+| MX (Mexico) | 1f1f2-1f1fd |
+| MY (Malaysia) | 1f1f2-1f1fe |
+| NZ (New Zealand) | 1f1f3-1f1ff |
+| SE (Sweden) | 1f1f8-1f1ea |
+| SG (Singapore) | 1f1f8-1f1ec |
+| TH (Thailand) | 1f1f9-1f1ed |
+| TW (Taiwan) | 1f1f9-1f1fc |
+| AE (UAE) | 1f1e6-1f1ea |
+| US (United States) | 1f1fa-1f1f8 |
+| ZA (South Africa) | 1f1ff-1f1e6 |
+
+### Resize to 128x128
+
+```bash
+# macOS (using sips)
+for f in *.png; do sips -z 128 128 "$f" --out "$f"; done
+
+# Linux (using ImageMagick)
+for f in *.png; do convert "$f" -resize 128x128 "$f"; done
+```
+
+## Flag List
 
 | Country | Flag | AWS Regions |
 |---------|------|-------------|
