@@ -23,7 +23,7 @@
 }
 
 body {
-  width: 400px;
+  width: 360px;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
   color: var(--text-color);
@@ -37,7 +37,7 @@ body {
 }
 
 .popup-header {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 2px solid var(--accent-color);
 }
@@ -52,7 +52,7 @@ body {
 .settings-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .setting-item {
@@ -123,66 +123,154 @@ input:checked + .slider:before {
   transform: translateX(20px);
 }
 
-/* Account Info */
-.account-info {
+/* Divider */
+.divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 4px 0;
+}
+
+/* Color Section */
+.color-section {
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
-}
-
-.account-info .setting-control {
-  width: 100%;
-}
-
-.account-entry {
-  display: flex;
   gap: 8px;
-  margin-bottom: 8px;
+}
+
+.color-section .setting-label {
+  font-weight: 500;
+}
+
+.full-width {
   width: 100%;
 }
 
-.account-entry input {
-  padding: 8px;
+/* Region Select */
+#region-select {
+  width: 100%;
+  padding: 10px 12px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: 13px;
   color: var(--text-color);
   background-color: var(--input-bg);
-  transition: all 0.3s;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.account-entry input:focus {
+#region-select:focus {
   outline: none;
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.1);
 }
 
-.account-entry .account-id {
-  width: 140px;
-}
-
-.account-entry .account-name {
-  flex-grow: 1;
-}
-
-.account-entry .remove-btn {
-  padding: 8px;
-  border: none;
+/* Color Editor */
+.color-editor {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: var(--input-bg);
   border-radius: var(--border-radius);
+}
+
+.color-editor.hidden {
+  display: none;
+}
+
+/* Preview Container */
+.preview-container {
+  margin-bottom: 12px;
+}
+
+.color-preview {
+  height: 32px;
+  border-radius: var(--border-radius);
+  background: linear-gradient(to right, #ccc, #888);
+}
+
+/* Color Inputs */
+.color-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.color-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-input-group label {
+  width: 60px;
+  font-size: 12px;
+  color: var(--text-color);
+}
+
+.color-picker {
+  width: 40px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: var(--bg-color);
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.color-picker::-webkit-color-swatch {
+  border-radius: 2px;
+  border: none;
+}
+
+.hex-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  text-transform: uppercase;
+}
+
+.hex-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.remove-color-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
   background-color: #dc3545;
   color: white;
+  font-size: 16px;
   cursor: pointer;
-  font-size: 13px;
   transition: background-color 0.2s;
 }
 
-.account-entry .remove-btn:hover {
+.remove-color-btn:hover {
   background-color: #c82333;
 }
 
+/* Color Actions */
+.color-actions {
+  margin-top: 8px;
+}
+
+.small-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
 .secondary-btn {
-  width: 100%;
-  padding: 8px;
+  padding: 8px 16px;
   border: 1px solid var(--accent-color);
   border-radius: var(--border-radius);
   background-color: transparent;
@@ -197,36 +285,55 @@ input:checked + .slider:before {
   color: white;
 }
 
-/* Save Button */
-#save_btn {
-  width: 100%;
-  padding: 10px;
+.secondary-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondary-btn.disabled:hover {
+  background-color: transparent;
+  color: var(--accent-color);
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.action-buttons button {
+  flex: 1;
+}
+
+.primary-btn {
+  padding: 10px 16px;
   border: none;
   border-radius: var(--border-radius);
   background-color: var(--accent-color);
   color: white;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
   transition: background-color 0.2s;
 }
 
-#save_btn:hover {
+.primary-btn:hover {
   background-color: #e68a00;
 }
 
-#save_btn:active {
+.primary-btn:active {
   background-color: #cc7a00;
+}
+
+.primary-btn.success {
+  background-color: #28a745;
 }
 
 /* Theme Toggle Button */
 .theme-toggle {
   position: absolute;
-  bottom: 16px;
+  top: 16px;
   right: 16px;
   width: 32px;
   height: 32px;
@@ -247,17 +354,15 @@ input:checked + .slider:before {
 }
 
 .theme-toggle .icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 /* Version */
 .version {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 12px;
+  margin-top: 16px;
+  text-align: center;
+  font-size: 11px;
   color: var(--text-color);
-  opacity: 0.7;
+  opacity: 0.5;
 }

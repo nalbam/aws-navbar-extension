@@ -36,48 +36,44 @@
         </div>
       </div>
 
-      <div class="setting-item">
+      <div class="divider"></div>
+
+      <div class="setting-item color-section">
         <div class="setting-label">
-          <img src="icons/image.ico" alt="Favicon" class="icon">
-          <span>Favicon</span>
+          <span>Region Colors</span>
         </div>
-        <div class="setting-control">
-          <label class="toggle">
-            <input type="checkbox" id="favicon">
-            <span class="slider"></span>
-          </label>
+        <div class="setting-control full-width">
+          <select id="region-select">
+            <option value="">Select Region...</option>
+          </select>
         </div>
       </div>
 
-      <div class="setting-item account-info">
-        <div class="setting-label">
-          <img src="icons/key.ico" alt="Account Info" class="icon">
-          <span>Account Info</span>
+      <div id="color-editor" class="color-editor hidden">
+        <div class="preview-container">
+          <div id="color-preview" class="color-preview"></div>
         </div>
-        <div class="setting-control" id="account_list">
-          <!-- Account entries will be added here dynamically -->
-        </div>
-        <div class="setting-control">
-          <button id="add_account_btn" class="secondary-btn">
-            <span>+ Add Account</span>
-          </button>
-        </div>
-      </div>
 
-      <div class="setting-item">
-        <div class="setting-control">
-          <button id="save_btn">
-            <img src="icons/floppy-disk.ico" alt="Save" class="icon">
-            Save
-          </button>
+        <div id="color-inputs" class="color-inputs">
+          <!-- Color inputs will be added dynamically -->
+        </div>
+
+        <div class="color-actions">
+          <button id="add-color-btn" class="secondary-btn small-btn">+ Add Color</button>
+        </div>
+
+        <div class="action-buttons">
+          <button id="reset-btn" class="secondary-btn">Reset</button>
+          <button id="apply-btn" class="primary-btn">Apply</button>
         </div>
       </div>
     </div>
     <button id="theme-toggle" class="theme-toggle">
       <img src="icons/sun.ico" alt="Theme" class="icon" id="theme-icon">
     </button>
-    <div class="version">v1.0.0</div>
+    <div class="version">v2.0.0</div>
   </div>
+  <script src="colors.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

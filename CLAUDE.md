@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-AWS Colorful Navbar is a browser extension that enhances AWS Console by displaying region-based navbar colors, country flags, account info labels, and service-specific favicons.
+AWS Colorful Navbar is a browser extension that enhances AWS Console by displaying region-based navbar colors with customizable gradients and country flags.
 
 ## Documentation
 
@@ -33,16 +33,18 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 
 **Content Script (`main.js`)**
 - Injected into AWS Console pages (`*://*.console.aws.amazon.com/*`)
-- Detects region from URL using regex, handles both standard URLs (`region.console.aws.amazon.com`) and account-specific URLs (`account-string.region.console.aws.amazon.com`)
-- Applies visual customizations based on `config` from `chrome.storage.local`
-- `colors` object maps AWS region codes to country names, CSS gradients, and emojis
-- `langs` object handles region name translations for Korean/Japanese
+- Detects region from URL using regex (handles `account-string.region.console.aws.amazon.com` format)
+- Applies navbar colors: custom colors from config or default gradients
+- `colors` object maps AWS region codes to country names, default CSS gradients, and emojis
+- `buildGradient()` function builds CSS gradient from custom color config
 
 **Popup Interface (`popup.js`, `popup.html`, `css/popup.css`)**
-- Settings UI for toggling features (background, flag, favicon)
-- Account info management with dynamic entry creation
+- Settings UI for toggling Background and Flag features
+- Region selector dropdown for color customization
+- Color picker UI (2-4 gradient colors per region)
+- Real-time gradient preview
+- Reset to default per region
 - Theme toggle with localStorage persistence
-- Auto-saves toggle changes immediately
 
 **Background Script (`background.js`)**
 - Minimal initialization on extension install
@@ -51,7 +53,7 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 
 | Storage Type | Purpose |
 |--------------|---------|
-| `chrome.storage.local.config` | Feature toggles and account info mappings |
+| `chrome.storage.local.config` | Feature toggles and custom colors |
 | `localStorage.theme` | Dark/light theme preference |
 
 ### Config Structure
@@ -59,18 +61,21 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 {
   "background": "enabled" | "disabled",
   "flag": "enabled" | "disabled",
-  "favicon": "enabled" | "disabled",
-  "info": {
-    "123456789012": "PROD",  // account_id (no hyphens) → display label
-    "987654321098": "DEV"
+  "customColors": {
+    "us-east-1": {
+      "color1": "#0000aa",
+      "color2": "#ee2244",
+      "color3": null,  // optional
+      "color4": null   // optional
+    }
+    // Only customized regions are stored
   }
 }
 ```
 
 ### Static Resources
 - `flags/` - Country flag images (20x20 PNG)
-- `svgs/` - AWS service icons for favicons
-- `icons/` - UI icons for popup
+- `icons/` - UI icons for popup (palette, flag, theme toggle)
 
 ### Manifest Versions
 - `manifest.json` - Manifest V3 (Chrome, Edge)
@@ -82,4 +87,8 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
    - `country`: matching flag filename (without .png)
    - `background`: CSS gradient string
    - `emoji`: country flag emoji
-2. Add flag image to `flags/` directory if new country
+2. Add same region to `defaultColors` in `popup.js` with:
+   - `colors`: array of hex color strings
+   - `country`: display name
+   - `emoji`: country flag emoji
+3. Add flag image to `flags/` directory if new country

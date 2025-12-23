@@ -1,0 +1,210 @@
+// Shared color data for all AWS regions
+const colors = {
+  'af-south-1': {
+    country: 'south-africa',
+    name: 'South Africa',
+    colors: ['#aa6600', '#dd0000', '#008866', '#334488'],
+    emoji: '🇿🇦'
+  },
+  'ap-east-1': {
+    country: 'hong-kong',
+    name: 'Hong Kong',
+    colors: ['#cc0022', '#ffaabb', '#cc0022'],
+    emoji: '🇭🇰'
+  },
+  'ap-northeast-1': {
+    country: 'japan',
+    name: 'Japan (Tokyo)',
+    colors: ['#dddddd', '#dd0044', '#dddddd'],
+    emoji: '🇯🇵'
+  },
+  'ap-northeast-2': {
+    country: 'south-korea',
+    name: 'South Korea',
+    colors: ['#dd0022', '#0000aa'],
+    emoji: '🇰🇷'
+  },
+  'ap-northeast-3': {
+    country: 'japan',
+    name: 'Japan (Osaka)',
+    colors: ['#dddddd', '#cc0044', '#bb7700'],
+    emoji: '🇯🇵'
+  },
+  'ap-south-1': {
+    country: 'india',
+    name: 'India (Mumbai)',
+    colors: ['#f98000', '#bbbbee', '#009900'],
+    emoji: '🇮🇳'
+  },
+  'ap-south-2': {
+    country: 'india',
+    name: 'India (Hyderabad)',
+    colors: ['#f98000', '#009900', '#bbbbee'],
+    emoji: '🇮🇳'
+  },
+  'ap-southeast-1': {
+    country: 'singapore',
+    name: 'Singapore',
+    colors: ['#eebbbb', '#ff3344', '#ccccaa'],
+    emoji: '🇸🇬'
+  },
+  'ap-southeast-2': {
+    country: 'australia',
+    name: 'Australia (Sydney)',
+    colors: ['#002255', '#ee3344', '#000088'],
+    emoji: '🇦🇺'
+  },
+  'ap-southeast-3': {
+    country: 'indonesia',
+    name: 'Indonesia',
+    colors: ['#ee0000', '#dddddd'],
+    emoji: '🇮🇩'
+  },
+  'ap-southeast-4': {
+    country: 'australia',
+    name: 'Australia (Melbourne)',
+    colors: ['#002255', '#000088', '#ee3344'],
+    emoji: '🇦🇺'
+  },
+  'ca-central-1': {
+    country: 'canada',
+    name: 'Canada',
+    colors: ['#ee0000', '#dddddd', '#ee0000'],
+    emoji: '🇨🇦'
+  },
+  'eu-central-1': {
+    country: 'germany',
+    name: 'Germany',
+    colors: ['#222222', '#ee4400', '#dd9900'],
+    emoji: '🇩🇪'
+  },
+  'eu-central-2': {
+    country: 'switzerland',
+    name: 'Switzerland (Zurich)',
+    colors: ['#dd0033', '#eeeeee', '#dd0022'],
+    emoji: '🇨🇭'
+  },
+  'eu-central-3': {
+    country: 'switzerland',
+    name: 'Switzerland',
+    colors: ['#eeeeee', '#dd0033', '#eeeeee'],
+    emoji: '🇨🇭'
+  },
+  'eu-north-1': {
+    country: 'sweden',
+    name: 'Sweden',
+    colors: ['#0055aa', '#ffcc00', '#0044aa'],
+    emoji: '🇸🇪'
+  },
+  'eu-south-1': {
+    country: 'italy',
+    name: 'Italy (Milan)',
+    colors: ['#008844', '#aaaaaa', '#cc1133'],
+    emoji: '🇮🇹'
+  },
+  'eu-south-2': {
+    country: 'spain',
+    name: 'Spain',
+    colors: ['#cc1122', '#ffbb00', '#cc1122'],
+    emoji: '🇪🇸'
+  },
+  'eu-south-3': {
+    country: 'italy',
+    name: 'Italy',
+    colors: ['#cc1133', '#aaaaaa', '#008844'],
+    emoji: '🇮🇹'
+  },
+  'eu-west-1': {
+    country: 'ireland',
+    name: 'Ireland',
+    colors: ['#009955', '#aaaaaa', '#ee7700'],
+    emoji: '🇮🇪'
+  },
+  'eu-west-2': {
+    country: 'united-kingdom',
+    name: 'United Kingdom',
+    colors: ['#224477', '#ee3344', '#1166aa'],
+    emoji: '🇬🇧'
+  },
+  'eu-west-3': {
+    country: 'france',
+    name: 'France',
+    colors: ['#005599', '#aaaaaa', '#ee2222'],
+    emoji: '🇫🇷'
+  },
+  'il-central-1': {
+    country: 'israel',
+    name: 'Israel',
+    colors: ['#0038b8', '#ffffff'],
+    emoji: '🇮🇱'
+  },
+  'me-central-1': {
+    country: 'uae',
+    name: 'UAE',
+    colors: ['#ee0000', '#009955', '#aaaaaa'],
+    emoji: '🇦🇪'
+  },
+  'me-south-1': {
+    country: 'bahrain',
+    name: 'Bahrain',
+    colors: ['#aa9999', '#ee1144', '#aa1133'],
+    emoji: '🇧🇭'
+  },
+  'me-west-1': {
+    country: 'uae',
+    name: 'UAE',
+    colors: ['#009955', '#ee0000', '#009955'],
+    emoji: '🇦🇪'
+  },
+  'sa-east-1': {
+    country: 'brazil',
+    name: 'Brazil',
+    colors: ['#00aa55', '#ffee00', '#008844'],
+    emoji: '🇧🇷'
+  },
+  'us-east-1': {
+    country: 'united-states',
+    name: 'US East (N. Virginia)',
+    colors: ['#0000aa', '#ee2244'],
+    emoji: '🇺🇸'
+  },
+  'us-east-2': {
+    country: 'united-states',
+    name: 'US East (Ohio)',
+    colors: ['#0000aa', '#44aa44'],
+    emoji: '🇺🇸'
+  },
+  'us-west-1': {
+    country: 'united-states',
+    name: 'US West (N. California)',
+    colors: ['#0000aa', '#dd9900'],
+    emoji: '🇺🇸'
+  },
+  'us-west-2': {
+    country: 'united-states',
+    name: 'US West (Oregon)',
+    colors: ['#0000aa', '#4466ee'],
+    emoji: '🇺🇸'
+  },
+  'global': {
+    country: 'global',
+    name: 'Global',
+    colors: ['#0077dd', '#119955'],
+    emoji: '🌍'
+  },
+};
+
+// Helper function to build gradient from color array
+function buildGradient(colorArray) {
+  const colorList = Array.isArray(colorArray) ? colorArray :
+    [colorArray.color1, colorArray.color2, colorArray.color3, colorArray.color4].filter(c => c && c !== null);
+  return `linear-gradient(to right, ${colorList.join(', ')})`;
+}
+
+// Get default gradient for a region
+function getDefaultGradient(region) {
+  if (colors[region]) {
+    return buildGradient(colors[region].colors);
+  }
+  return null;
+}

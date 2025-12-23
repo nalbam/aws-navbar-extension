@@ -8,9 +8,8 @@
 ## Features
 
 * Region-based navigation bar color customization
+* **Custom color themes per region (2.0)**
 * Region flag display next to region selector
-* Service-specific favicon updates
-* Account information display
 * Dark/Light theme support
 * Auto-save settings
 * Support for all AWS global regions
@@ -28,8 +27,7 @@ The extension supports the following configuration options:
 
 * `background`: Enable/disable navbar color customization
 * `flag`: Enable/disable region flag display
-* `favicon`: Enable/disable service-specific favicon
-* `info`: Custom account information display (JSON format)
+* `customColors`: Custom gradient colors per region (2-4 colors)
 * `theme`: Dark/Light mode preference
 
 ## Supported Regions

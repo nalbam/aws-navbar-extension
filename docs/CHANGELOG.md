@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2025-12-23
+
+### Added
+- Custom color themes per region with color picker UI
+- Gradient preview in popup
+- 2-4 color gradient support for each region
+- Reset to default functionality per region
+
+### Removed
+- Favicon feature (service-specific favicons)
+- Account Info feature (account information display)
+- `svgs/` directory (200+ service icons)
+
+### Changed
+- Simplified popup UI focused on color customization
+- Reduced extension size significantly
+- Updated config structure with `customColors` support
+
 ## [1.10.0] - 2025-12-23
 
 ### Changed
@@ -62,25 +80,20 @@ All notable changes to this project will be documented in this file.
 - JSON validation handling
 - Added default account info when not configured
 
-## Features Evolution
+## Features (v2.0)
 
 ### Region Visualization
 - Custom color gradients for each AWS region
+- User-customizable gradient colors (2-4 colors)
 - Region flags display
 - Support for all AWS global regions
 - Automatic region detection
 
-### Account Management
-- Account information display
-- Account ID detection and mapping
-- Custom account labels
-- JSON configuration
-
-### Service Integration
-- Dynamic favicon updates
-- Support for AWS service icons
-- Special handling for composite services
-- Automatic service detection
+### Color Customization
+- Per-region color picker UI
+- Real-time gradient preview
+- Reset to default per region
+- Persistent custom color settings
 
 ### Theme System
 - Dark/Light mode toggle

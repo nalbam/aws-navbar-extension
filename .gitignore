@@ -28,3 +28,13 @@ release/
 
 # Package
 *.zip
+
+# backup files
+*.bak
+*.backup
+
+# prompt
+.prompt-*.md
+.prompt.md
+prompt-*.md
+prompt.md

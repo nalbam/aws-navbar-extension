@@ -1,6 +1,6 @@
 # Architecture
 
-AWS Colorful Navbar is a browser extension that enhances the AWS Console navigation experience by providing visual cues for different regions and services.
+AWS Colorful Navbar is a browser extension that enhances the AWS Console navigation experience by providing visual cues for different regions.
 
 ## Project Structure
 
@@ -11,11 +11,10 @@ aws-navbar-extension/
 ├── main.js                # Content script (injected into AWS Console)
 ├── background.js          # Background service worker
 ├── popup.html             # Settings popup UI
-├── popup.js               # Popup logic
+├── popup.js               # Popup logic with color customization
 ├── css/popup.css          # Popup styles
 ├── flags/                 # Country flag images (20x20 PNG)
-├── svgs/                  # AWS service icons
-├── icons/                 # UI icons
+├── icons/                 # UI icons (theme toggle, palette, flag)
 ├── docs/                  # Documentation
 ├── VERSION                # Current version number
 └── package.sh             # Release packaging script
@@ -33,25 +32,30 @@ aws-navbar-extension/
 ### 2. Content Script (main.js)
 - Injected into all AWS Console pages
 - Key data structures:
-  - `colors`: Maps region codes → country, gradient, emoji
+  - `colors`: Maps region codes → country, default gradient, emoji
   - `langs`: Korean/Japanese region name translations
+- Key functions:
+  - `buildGradient()`: Builds CSS gradient from custom color config
 - Features:
   - Region detection via URL regex (handles `account-string.region.console.aws.amazon.com` format)
-  - Navbar background color customization
+  - Navbar background color customization (default or custom)
   - Region flag display next to region selector
-  - Account information display (mapped by account ID)
-  - Service-specific favicon updates
 - Retry mechanism (3 attempts) for region selector detection
 - Debug logging with `isDebug` flag
 
 ### 3. Popup Interface (popup.html, popup.js, css/popup.css)
 - Settings management interface
 - Features:
-  - Toggle switches with auto-save functionality
-  - Account information entry management (add/remove)
-  - Account ID validation (prevents empty entries)
+  - Toggle switches for Background and Flag
+  - Region selector dropdown (30+ regions)
+  - Color picker UI with 2-4 gradient colors
+  - Real-time gradient preview
+  - Reset to default per region
+  - Apply button to save custom colors
   - Dark/Light theme switcher
   - Version display from manifest
+- Key data:
+  - `defaultColors`: Default gradient colors for all regions
 - Responsive design with theme support
 
 ### 4. Background Script (background.js)
@@ -59,44 +63,45 @@ aws-navbar-extension/
 - Storage sync initialization
 
 ### 5. Configuration Storage
-- `chrome.storage.local.config`: Feature settings and account mappings
+- `chrome.storage.local.config`: Feature settings and custom colors
 - `localStorage.theme`: Theme preference (dark/light)
 - Config structure:
 ```javascript
 {
   "background": "enabled" | "disabled",
   "flag": "enabled" | "disabled",
-  "favicon": "enabled" | "disabled",
-  "info": { "account_id": "label", ... }
+  "customColors": {
+    "us-east-1": {
+      "color1": "#0000aa",
+      "color2": "#ee2244",
+      "color3": null,
+      "color4": null
+    }
+    // Only customized regions are stored
+  }
 }
 ```
 
 ### 6. Static Resources
 - `flags/`: Country flag images (23 countries)
-- `svgs/`: AWS service icons for favicons (200+ services)
-- `icons/`: UI icons (theme toggle, save, etc.)
+- `icons/`: UI icons (theme toggle, palette, flag)
 
 ## Features
 
 ### Region Visualization
-- Each AWS region has a unique color gradient
+- Each AWS region has a unique default color gradient
+- User can customize gradient colors per region (2-4 colors)
 - Region flags are displayed next to the region selector
 - Supports all AWS regions with specific color schemes
 - Automatic region detection and display
-- Supports both standard URLs (region.console.aws.amazon.com) and account-specific URLs (account-string.region.console.aws.amazon.com)
+- Supports both standard URLs and account-specific URLs
 
-### Account Management
-- Displays custom account information
-- Account ID detection and mapping
-- JSON-based configuration with default values
-- Real-time validation
-- Fallback to default account info when not configured
-
-### Service Integration
-- Dynamic favicon updates based on current AWS service
-- Support for all major AWS services
-- Special handling for composite services (e.g., CodeSuite)
-- Automatic service detection
+### Color Customization (v2.0)
+- Per-region color picker UI
+- 2-4 gradient colors supported
+- Real-time preview
+- Reset to default per region
+- Persistent storage of custom colors
 
 ### Theme System
 - Dark/Light mode support
@@ -115,8 +120,8 @@ aws-navbar-extension/
 ### Storage
 - Uses chrome.storage.local for extension settings
 - Uses localStorage for theme preference
-- Minimal storage footprint
-- Automatic data validation
+- Minimal storage footprint (only custom colors stored)
+- Backward compatible with v1.x config
 
 ### Performance
 - Asynchronous storage operations
@@ -129,19 +134,20 @@ aws-navbar-extension/
   - activeTab: For current tab manipulation
   - storage: For configuration storage
 - Host permissions limited to AWS Console domains
-- Input validation for JSON data
+- Input validation for color values
 
 ### User Experience
 - Instant settings application
-- Auto-save functionality
+- Auto-save for toggles
+- Real-time preview for colors
 - Visual feedback for actions
 - Smooth transitions
 - Responsive interface
 
 ### Error Handling
-- JSON validation for account info
+- Color validation (hex format)
 - Region selector retry mechanism
-- Graceful fallbacks
+- Graceful fallbacks to default colors
 - Clear error messages
 
 ## Development
