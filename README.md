@@ -44,6 +44,11 @@ See [flags/README.md](flags/README.md) for a complete list of supported regions 
 
 ![after](images/aws-navbar-extension-01.png)
 
+## Documentation
+
+* [Architecture](docs/ARCHITECTURE.md) - Technical architecture and component details
+* [Changelog](docs/CHANGELOG.md) - Version history and release notes
+
 ## For Developers
 
 ### Installation
@@ -57,6 +62,7 @@ See [flags/README.md](flags/README.md) for a complete list of supported regions 
 * Clone the repository
 * Make changes to the source code
 * Test locally using the unpacked extension
+* Run `./package.sh` to create release packages (requires `jq`)
 * Submit pull requests for improvements
 
 ## Contributing

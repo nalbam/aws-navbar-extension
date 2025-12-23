@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.10.0] - 2025-12-23
+
+### Changed
+- Enhanced AWS Console URL region detection
+- Improved support for account-specific URLs (`account-string.region.console.aws.amazon.com`)
+
+## [1.9.1] - 2025-03-08
+
+### Added
+- Version display in popup with dynamic version retrieval from manifest
+
+### Changed
+- Account ID validation improvements
+- Prevent empty account entries
+
 ## [1.9.0] - 2025-03-08
 
 ### Added
