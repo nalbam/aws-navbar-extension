@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] - 2025-12-24
+
+### Fixed
+- Firefox MV2 manifest: removed `host_permissions` (MV3 only), added to `permissions`
+- Firefox MV2 manifest: added `browser_specific_settings.gecko` with id and data_collection_permissions
+- package.sh: added `utils.js` to package items
+- package.sh: fixed manifest.json being overwritten after MV2 packaging (now backs up and restores)
+
 ## [2.1.0] - 2025-12-24
 
 ### Added
