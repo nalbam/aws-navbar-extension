@@ -8,11 +8,18 @@
   },
   "permissions": [
     "activeTab",
-    "storage"
-  ],
-  "host_permissions": [
+    "storage",
     "*://*.console.aws.amazon.com/*"
   ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "aws-colorful-navbar@nalbam.github.io",
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": false
+      }
+    }
+  },
   "browser_action": {
     "default_icon": {
       "128": "icon.png"

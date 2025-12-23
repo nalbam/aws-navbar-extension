@@ -74,14 +74,16 @@ _package() {
   cat ./manifest.json | jq '.version = $VERSION' --arg VERSION $VERSION > ./manifest.json.tmp
   mv ./manifest.json.tmp ./manifest.json
 
-  ITEMS="manifest.json icon.png colors.js main.js background.js popup.html popup.js css flags icons"
+  ITEMS="manifest.json icon.png colors.js utils.js main.js background.js popup.html popup.js css flags icons"
 
   # mv3
   zip -r ${RUN_PATH}/release/$REPONAME-$VERSION.zip $ITEMS
 
-  # mv2
+  # mv2 (backup and restore manifest.json)
+  cp ./manifest.json ./manifest.json.bak
   cat ./manifest-v2.json | jq '.version = $VERSION' --arg VERSION $VERSION > ./manifest.json
   zip -r ${RUN_PATH}/release/$REPONAME-$VERSION-mv2.zip $ITEMS
+  mv ./manifest.json.bak ./manifest.json
 }
 
 ################################################################################
