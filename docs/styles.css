@@ -336,6 +336,105 @@ a:hover {
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* Content Pages (Privacy, etc.) */
+.content-page {
+  padding: 120px 0 80px;
+}
+
+.content-page .container {
+  max-width: 800px;
+}
+
+.content-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.content-header h1 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.content-header .subtitle {
+  color: var(--text-light);
+  font-size: 16px;
+}
+
+.content-body h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 40px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary);
+  color: var(--secondary);
+}
+
+.content-body h2:first-child {
+  margin-top: 0;
+}
+
+.content-body p {
+  color: var(--text-light);
+  margin-bottom: 16px;
+  line-height: 1.8;
+}
+
+.content-body ul {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+.content-body li {
+  color: var(--text-light);
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+
+.content-body code {
+  background: var(--bg-alt);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--primary-dark);
+}
+
+.content-body strong {
+  color: var(--text);
+}
+
+.highlight-box {
+  background: linear-gradient(135deg, rgba(255, 153, 0, 0.1), rgba(236, 114, 17, 0.1));
+  border-left: 4px solid var(--primary);
+  padding: 20px 24px;
+  border-radius: 0 8px 8px 0;
+  margin: 24px 0;
+}
+
+.highlight-box p {
+  margin: 0;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.icon-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.icon-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.icon-list li::before {
+  content: "✓";
+  color: var(--primary);
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .hero h1 {
@@ -362,5 +461,22 @@ a:hover {
 
   .features-grid {
     grid-template-columns: 1fr;
+  }
+
+  .content-page {
+    padding: 100px 0 60px;
+  }
+
+  .content-header h1 {
+    font-size: 32px;
+  }
+
+  .content-body h2 {
+    font-size: 20px;
+    margin: 32px 0 12px;
+  }
+
+  .highlight-box {
+    padding: 16px 20px;
   }
 }
