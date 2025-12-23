@@ -1,11 +1,31 @@
 // colors.js is loaded before this script
 
-// Check if it's Christmas season (Dec 20 - Dec 26)
+// ============================================
+// Constants - DOM Selectors
+// ============================================
+const SELECTORS = {
+  REGION_BUTTON: '[data-testid="awsc-nav-regions-menu-button"]',
+  REGION_BUTTON_SPAN: '[data-testid="awsc-nav-regions-menu-button"]>span',
+  NAV_ELEMENT: '#awsc-navigation-container>div>header>nav',
+};
+
+// ============================================
+// Constants - Configuration
+// ============================================
+const CONFIG = {
+  MAX_RETRY_COUNT: 3,
+  RETRY_DELAY_MS: 1000,
+  CHRISTMAS_START_DAY: 20,
+  CHRISTMAS_END_DAY: 26,
+  SNOWFLAKE_COUNT: 15,
+};
+
+// Check if it's Christmas season
 function isChristmasSeason() {
   const now = new Date();
   const month = now.getMonth(); // 0-11
   const day = now.getDate();
-  return month === 11 && day >= 20 && day <= 26; // December 20-26
+  return month === 11 && day >= CONFIG.CHRISTMAS_START_DAY && day <= CONFIG.CHRISTMAS_END_DAY;
 }
 
 // Create snowfall effect on navbar
@@ -51,9 +71,8 @@ function createSnowfall(navElement) {
 
   // Create snowflakes
   const snowflakes = ['❄', '❅', '❆', '✻', '✼', '❉'];
-  const flakeCount = 15;
 
-  for (let i = 0; i < flakeCount; i++) {
+  for (let i = 0; i < CONFIG.SNOWFLAKE_COUNT; i++) {
     const flake = document.createElement('span');
     flake.className = 'aws-snowflake';
     flake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
@@ -81,31 +100,42 @@ const langs = {
   },
 }
 
-const isDebug = true;
+const isDebug = false;
 
-// Get current region from URL
-function getCurrentRegion() {
-  const cityElement = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]>span');
-  if (!cityElement) return null;
+// ============================================
+// Region Detection Utilities
+// ============================================
 
-  let city = cityElement.innerText;
-  const lang = document.documentElement.lang;
-  if (langs.hasOwnProperty(lang) && langs[lang].hasOwnProperty(city)) {
-    city = langs[lang][city];
-  }
-
-  if (city === 'Global') return 'global';
-
+// Extract region code from AWS Console URL
+function extractRegionFromUrl() {
   const re = /^https:\/\/([a-z0-9-]+(?:\.[a-z0-9-]+)*)?\.?console\.aws\.amazon\.com\/.*/;
-  const m = re.exec(window.location.href);
-  if (m) {
-    const hostPart = m[1];
-    if (hostPart) {
-      const lastDotIndex = hostPart.lastIndexOf('.');
-      return lastDotIndex !== -1 ? hostPart.substring(lastDotIndex + 1) : hostPart;
-    }
+  const match = re.exec(window.location.href);
+  if (match && match[1]) {
+    const hostPart = match[1];
+    const lastDotIndex = hostPart.lastIndexOf('.');
+    return lastDotIndex !== -1 ? hostPart.substring(lastDotIndex + 1) : hostPart;
   }
   return null;
+}
+
+// Translate city name based on language
+function translateCity(city) {
+  const lang = document.documentElement.lang;
+  if (langs.hasOwnProperty(lang) && langs[lang].hasOwnProperty(city)) {
+    return langs[lang][city];
+  }
+  return city;
+}
+
+// Get current region from URL and city element
+function getCurrentRegion() {
+  const cityElement = document.querySelector(SELECTORS.REGION_BUTTON_SPAN);
+  if (!cityElement) return null;
+
+  const city = translateCity(cityElement.innerText);
+  if (city === 'Global') return 'global';
+
+  return extractRegionFromUrl();
 }
 
 // Apply background color
@@ -120,7 +150,7 @@ function applyBackgroundColor(config) {
     background = buildGradient(config['customColors'][region]);
   }
 
-  const navElement = document.querySelector("#awsc-navigation-container>div>header>nav");
+  const navElement = document.querySelector(SELECTORS.NAV_ELEMENT);
   if (navElement) {
     navElement.style.background = background;
     if (isDebug) console.log(`Applied background: ${background}`);
@@ -136,93 +166,71 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   }
 });
 
+// Get background gradient for region
+function getBackgroundForRegion(config, region) {
+  if (config['customColors'] && config['customColors'][region]) {
+    return buildGradient(config['customColors'][region]);
+  }
+  return getDefaultGradient(region);
+}
+
+// Apply navbar background color with snowfall effect
+function applyNavbarBackground(config, region) {
+  if (config['background'] === 'disabled') return;
+
+  const navElement = document.querySelector(SELECTORS.NAV_ELEMENT);
+  if (navElement) {
+    navElement.style.background = getBackgroundForRegion(config, region);
+    createSnowfall(navElement);
+  }
+}
+
+// Insert country flag before region button
+function insertRegionFlag(config, region) {
+  if (config['flag'] === 'disabled') return;
+
+  const regionButton = document.querySelector(SELECTORS.REGION_BUTTON);
+  if (regionButton && regionButton.parentNode) {
+    const flagUrl = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
+    const flagContainer = document.createElement('span');
+    flagContainer.style.cssText = 'line-height:0;margin-right:0.5em;';
+    const flagImg = document.createElement('img');
+    flagImg.src = flagUrl;
+    flagImg.style.cssText = 'width:20px;height:20px;';
+    flagImg.alt = colors[region]['name'];
+    flagContainer.appendChild(flagImg);
+    regionButton.parentNode.insertBefore(flagContainer, regionButton);
+  }
+}
+
+// Initialize AWS Console customization with retry mechanism
+function initializeAWS(config, retryCount = 0) {
+  const cityElement = document.querySelector(SELECTORS.REGION_BUTTON_SPAN);
+  if (!cityElement) {
+    if (retryCount < CONFIG.MAX_RETRY_COUNT) {
+      console.log(`Region selector not found, retrying... (${retryCount + 1}/${CONFIG.MAX_RETRY_COUNT})`);
+      setTimeout(() => initializeAWS(config, retryCount + 1), CONFIG.RETRY_DELAY_MS);
+      return;
+    }
+    console.error(`Region selector not found after ${CONFIG.MAX_RETRY_COUNT} retries`);
+    return;
+  }
+
+  const region = getCurrentRegion();
+  if (isDebug) console.log(`region: ${region}`);
+
+  if (region && colors.hasOwnProperty(region)) {
+    applyNavbarBackground(config, region);
+    insertRegionFlag(config, region);
+  }
+}
+
 // load
 chrome.storage.local.get('config', (c) => {
   try {
-    const config = c.config !== undefined ? c.config : {};
+    const config = c.config ?? {};
     if (isDebug) console.log(`config: ${JSON.stringify(config, null, 2)}`);
-
-    const initializeAWS = (retryCount = 0) => {
-      const cityElement = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]>span');
-      if (!cityElement) {
-        if (retryCount < 3) {
-          console.log(`Region selector not found, retrying... (${retryCount + 1}/3)`);
-          setTimeout(() => initializeAWS(retryCount + 1), 1000);
-          return;
-        }
-        console.error('Region selector not found after 3 retries');
-        return;
-      }
-
-      let city = cityElement.innerText;
-
-      // lang
-      const lang = document.documentElement.lang;
-      if (langs.hasOwnProperty(lang) && langs[lang].hasOwnProperty(city)) {
-        city = langs[lang][city];
-        if (isDebug) console.log(`city: ${city}`);
-      }
-
-      // Extract region from URL
-      let region = undefined;
-      const re = /^https:\/\/([a-z0-9-]+(?:\.[a-z0-9-]+)*)?\.?console\.aws\.amazon\.com\/.*/;
-      const m = re.exec(window.location.href);
-      if (m) {
-        if (city === 'Global') {
-          region = 'global';
-        } else {
-          const hostPart = m[1];
-          if (hostPart) {
-            const lastDotIndex = hostPart.lastIndexOf('.');
-            if (lastDotIndex !== -1) {
-              region = hostPart.substring(lastDotIndex + 1);
-            } else {
-              region = hostPart;
-            }
-          }
-        }
-      }
-
-      if (isDebug) console.log(`region: ${region}`);
-
-      if (colors.hasOwnProperty(region)) {
-        // Get background color (custom or default)
-        let background = getDefaultGradient(region);
-        if (config['customColors'] && config['customColors'][region]) {
-          background = buildGradient(config['customColors'][region]);
-        }
-
-        // region header background
-        if (config['background'] !== 'disabled') {
-          const navElement = document.querySelector("#awsc-navigation-container>div>header>nav");
-          if (navElement) {
-            navElement.style.background = background;
-            // Christmas season snowfall effect
-            createSnowfall(navElement);
-          }
-        }
-
-        // region flag
-        if (config['flag'] !== 'disabled') {
-          const regionButton = document.querySelector('[data-testid="awsc-nav-regions-menu-button"]');
-          if (regionButton && regionButton.parentNode) {
-            const flagUrl = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
-            const flagContainer = document.createElement('span');
-            flagContainer.style.cssText = 'line-height:0;margin-right:0.5em;';
-            const flagImg = document.createElement('img');
-            flagImg.src = flagUrl;
-            flagImg.style.cssText = 'width:20px;height:20px;';
-            flagImg.alt = colors[region]['name'];
-            flagContainer.appendChild(flagImg);
-            regionButton.parentNode.insertBefore(flagContainer, regionButton);
-          }
-        }
-      }
-    };
-
-    // Start initialization
-    initializeAWS();
-
+    initializeAWS(config);
   } catch (error) {
     console.error('Error:', error);
   }
