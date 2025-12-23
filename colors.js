@@ -33,7 +33,7 @@ const colors = {
   'ap-northeast-3': {
     country: 'japan',
     name: 'Japan (Osaka)',
-    colors: ['#aa8888', '#cc0044', '#bb7700'],
+    colors: ['#cc0044', '#aa8888', '#cc0044'],
     emoji: '🇯🇵'
   },
   'ap-south-1': {
@@ -171,7 +171,7 @@ const colors = {
   'me-central-1': {
     country: 'uae',
     name: 'UAE',
-    colors: ['#ee0000', '#009955', '#888888'],
+    colors: ['#ee0000', '#009955', '#222222'],
     emoji: '🇦🇪'
   },
   'me-south-1': {
@@ -183,7 +183,7 @@ const colors = {
   'me-west-1': {
     country: 'uae',
     name: 'UAE',
-    colors: ['#009955', '#ee0000', '#009955'],
+    colors: ['#222222', '#009955', '#ee0000'],
     emoji: '🇦🇪'
   },
   'mx-central-1': {
@@ -195,7 +195,7 @@ const colors = {
   'sa-east-1': {
     country: 'brazil',
     name: 'Brazil',
-    colors: ['#00aa55', '#ffee00', '#008844'],
+    colors: ['#009944', '#ffee00', '#002288'],
     emoji: '🇧🇷'
   },
   'us-east-1': {
@@ -207,13 +207,13 @@ const colors = {
   'us-east-2': {
     country: 'united-states',
     name: 'US East (Ohio)',
-    colors: ['#0000aa', '#44aa44'],
+    colors: ['#0000aa', '#8888aa', '#cc2244'],
     emoji: '🇺🇸'
   },
   'us-west-1': {
     country: 'united-states',
     name: 'US West (N. California)',
-    colors: ['#0000aa', '#dd9900'],
+    colors: ['#cc2244', '#8888aa', '#0000aa'],
     emoji: '🇺🇸'
   },
   'us-west-2': {
