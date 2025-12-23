@@ -2,6 +2,7 @@
 
 let currentRegion = null;
 let currentColors = [];
+let cachedConfig = null;
 
 // ============================================
 // Validation Utilities
@@ -62,11 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (chrome.runtime.lastError) {
         console.error('Error loading config:', chrome.runtime.lastError);
       }
-      const config = result.config ?? {};
+      // Initialize cache
+      cachedConfig = result.config ?? {};
 
       // Set checkbox states
-      document.getElementById('background').checked = config['background'] !== 'disabled';
-      document.getElementById('flag').checked = config['flag'] !== 'disabled';
+      document.getElementById('background').checked = cachedConfig['background'] !== 'disabled';
+      document.getElementById('flag').checked = cachedConfig['flag'] !== 'disabled';
     } catch (error) {
       console.error('Error initializing settings:', error);
     }
@@ -164,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Theme toggle
+  // Theme toggle (hover effect handled by CSS)
   document.getElementById('theme-toggle').addEventListener('click', () => {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -172,19 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     updateThemeIcon(newTheme);
-  });
-
-  // Theme toggle hover effect
-  const themeToggle = document.getElementById('theme-toggle');
-  themeToggle.addEventListener('mouseenter', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const icon = document.getElementById('theme-icon');
-    icon.src = `icons/${currentTheme === 'dark' ? 'moon' : 'sun'}-hover.ico`;
-  });
-
-  themeToggle.addEventListener('mouseleave', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    updateThemeIcon(currentTheme);
   });
 });
 
@@ -214,69 +203,79 @@ async function loadRegionColors(region) {
   updatePreview();
 }
 
-function renderColorInputs() {
-  const container = document.getElementById('color-inputs');
-  container.innerHTML = '';
+// Create a single color input group element
+function createColorInputGroup(color, index, showRemoveBtn) {
+  const inputGroup = document.createElement('div');
+  inputGroup.className = 'color-input-group';
+  inputGroup.dataset.index = index;
 
-  currentColors.forEach((color, index) => {
-    const inputGroup = document.createElement('div');
-    inputGroup.className = 'color-input-group';
+  const label = document.createElement('label');
+  label.textContent = `Color ${index + 1}`;
 
-    const label = document.createElement('label');
-    label.textContent = `Color ${index + 1}`;
+  const colorInput = document.createElement('input');
+  colorInput.type = 'color';
+  colorInput.value = color;
+  colorInput.className = 'color-picker';
+  colorInput.addEventListener('input', (e) => {
+    currentColors[index] = e.target.value;
+    // Sync hex input
+    const hexInput = inputGroup.querySelector('.hex-input');
+    if (hexInput) hexInput.value = e.target.value;
+    updatePreview();
+  });
 
-    const colorInput = document.createElement('input');
-    colorInput.type = 'color';
-    colorInput.value = color;
-    colorInput.className = 'color-picker';
-    colorInput.addEventListener('input', (e) => {
-      currentColors[index] = e.target.value;
+  const hexInput = document.createElement('input');
+  hexInput.type = 'text';
+  hexInput.value = color;
+  hexInput.className = 'hex-input';
+  hexInput.maxLength = 7;
+  hexInput.addEventListener('input', (e) => {
+    const hex = e.target.value;
+    if (isValidHexColor(hex)) {
+      currentColors[index] = hex;
+      colorInput.value = hex;
+      updatePreview();
+    }
+  });
+
+  inputGroup.appendChild(label);
+  inputGroup.appendChild(colorInput);
+  inputGroup.appendChild(hexInput);
+
+  if (showRemoveBtn) {
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-color-btn';
+    removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', () => {
+      currentColors.splice(index, 1);
+      renderColorInputs();
       updatePreview();
     });
+    inputGroup.appendChild(removeBtn);
+  }
 
-    const hexInput = document.createElement('input');
-    hexInput.type = 'text';
-    hexInput.value = color;
-    hexInput.className = 'hex-input';
-    hexInput.maxLength = 7;
-    hexInput.addEventListener('input', (e) => {
-      const hex = e.target.value;
-      if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
-        currentColors[index] = hex;
-        colorInput.value = hex;
-        updatePreview();
-      }
-    });
+  return inputGroup;
+}
 
-    inputGroup.appendChild(label);
-    inputGroup.appendChild(colorInput);
-    inputGroup.appendChild(hexInput);
+function renderColorInputs() {
+  const container = document.getElementById('color-inputs');
+  const showRemoveBtn = currentColors.length > 2;
 
-    // Remove button (only if more than 2 colors)
-    if (currentColors.length > 2) {
-      const removeBtn = document.createElement('button');
-      removeBtn.className = 'remove-color-btn';
-      removeBtn.textContent = '×';
-      removeBtn.addEventListener('click', () => {
-        currentColors.splice(index, 1);
-        renderColorInputs();
-        updatePreview();
-      });
-      inputGroup.appendChild(removeBtn);
-    }
-
-    container.appendChild(inputGroup);
+  // Use DocumentFragment for batch DOM operations
+  const fragment = document.createDocumentFragment();
+  currentColors.forEach((color, index) => {
+    fragment.appendChild(createColorInputGroup(color, index, showRemoveBtn));
   });
+
+  // Single DOM update
+  container.innerHTML = '';
+  container.appendChild(fragment);
 
   // Update add button state
   const addBtn = document.getElementById('add-color-btn');
-  if (currentColors.length >= 4) {
-    addBtn.disabled = true;
-    addBtn.classList.add('disabled');
-  } else {
-    addBtn.disabled = false;
-    addBtn.classList.remove('disabled');
-  }
+  const isMaxColors = currentColors.length >= 4;
+  addBtn.disabled = isMaxColors;
+  addBtn.classList.toggle('disabled', isMaxColors);
 }
 
 function updatePreview() {
@@ -289,7 +288,12 @@ function updateThemeIcon(theme) {
   icon.src = `icons/${theme === 'dark' ? 'moon' : 'sun'}.ico`;
 }
 
-function getCurrentConfig() {
+function getCurrentConfig(forceRefresh = false) {
+  // Return cached config if available and refresh not forced
+  if (cachedConfig !== null && !forceRefresh) {
+    return Promise.resolve(cachedConfig);
+  }
+
   return new Promise((resolve, reject) => {
     try {
       chrome.storage.local.get('config', (result) => {
@@ -297,8 +301,8 @@ function getCurrentConfig() {
           reject(new Error(chrome.runtime.lastError.message));
           return;
         }
-        const config = result.config ?? {};
-        resolve(config);
+        cachedConfig = result.config ?? {};
+        resolve(cachedConfig);
       });
     } catch (error) {
       reject(error);
@@ -307,9 +311,14 @@ function getCurrentConfig() {
 }
 
 function saveConfig(config, showSaveMessage = false) {
+  // Update cache immediately
+  cachedConfig = config;
+
   try {
     chrome.storage.local.set({ config }, () => {
       if (chrome.runtime.lastError) {
+        // Invalidate cache on error
+        cachedConfig = null;
         showError('Failed to save settings');
         return;
       }
@@ -325,6 +334,7 @@ function saveConfig(config, showSaveMessage = false) {
       }
     });
   } catch (error) {
+    cachedConfig = null;
     showError('Failed to save settings');
   }
 }
