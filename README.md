@@ -36,11 +36,11 @@ See [flags/README.md](flags/README.md) for a complete list of supported regions 
 
 ## Screenshots
 
-![aws navbar](images/screenshot.png)
+![aws navbar](docs/images/screenshot.png)
 
-![before](images/aws-navbar-extension-00.png)
+![before](docs/images/aws-navbar-extension-00.png)
 
-![after](images/aws-navbar-extension-01.png)
+![after](docs/images/aws-navbar-extension-01.png)
 
 ## Documentation
 

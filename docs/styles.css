@@ -154,27 +154,14 @@ a:hover {
   padding: 40px 0 80px;
 }
 
-.preview-bar {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
+.screenshot {
+  text-align: center;
 }
 
-.preview-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border-radius: 8px;
-  color: white;
-  font-weight: 500;
-  font-size: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.preview-item .flag {
-  font-size: 20px;
+.screenshot-img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
 /* Features */
