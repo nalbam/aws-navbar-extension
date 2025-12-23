@@ -32,55 +32,98 @@ function isChristmasSeason() {
 function createSnowfall(navElement) {
   if (!isChristmasSeason()) return;
 
+  // Prevent duplicate snow containers
+  if (document.getElementById('aws-snow-container')) return;
+
   // Add snow container
   const snowContainer = document.createElement('div');
   snowContainer.id = 'aws-snow-container';
   snowContainer.style.cssText = `
     position: absolute;
-    top: 0;
+    top: -30px;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% + 30px);
     overflow: hidden;
     pointer-events: none;
     z-index: 1000;
   `;
 
-  // Add CSS animation
+  // Add CSS animation - more natural snowfall with gentle sway
   const style = document.createElement('style');
+  style.id = 'aws-snow-styles';
   style.textContent = `
     @keyframes aws-snowfall {
       0% {
-        transform: translateY(-10px) rotate(0deg);
+        transform: translateY(-30px) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
         opacity: 1;
       }
+      50% {
+        transform: translateY(25px) translateX(10px) rotate(180deg);
+        opacity: 0.9;
+      }
+      80% {
+        opacity: 0.7;
+      }
       100% {
-        transform: translateY(50px) rotate(360deg);
-        opacity: 0.3;
+        transform: translateY(80px) translateX(-5px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    @keyframes aws-snowfall-alt {
+      0% {
+        transform: translateY(-30px) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(25px) translateX(-10px) rotate(-180deg);
+        opacity: 0.9;
+      }
+      80% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(80px) translateX(5px) rotate(-360deg);
+        opacity: 0;
       }
     }
     .aws-snowflake {
       position: absolute;
+      top: 0;
       color: white;
-      text-shadow: 0 0 3px rgba(255,255,255,0.8);
-      animation: aws-snowfall linear infinite;
+      text-shadow: 0 0 4px rgba(255,255,255,0.9);
       user-select: none;
+      will-change: transform, opacity;
+    }
+    .aws-snowflake-left {
+      animation: aws-snowfall ease-in-out infinite;
+    }
+    .aws-snowflake-right {
+      animation: aws-snowfall-alt ease-in-out infinite;
     }
   `;
   document.head.appendChild(style);
 
-  // Create snowflakes
+  // Create snowflakes with varied properties
   const snowflakes = ['❄', '❅', '❆', '✻', '✼', '❉'];
 
   for (let i = 0; i < CONFIG.SNOWFLAKE_COUNT; i++) {
     const flake = document.createElement('span');
-    flake.className = 'aws-snowflake';
+    const isLeftSway = Math.random() > 0.5;
+    flake.className = `aws-snowflake ${isLeftSway ? 'aws-snowflake-left' : 'aws-snowflake-right'}`;
     flake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
     flake.style.left = `${Math.random() * 100}%`;
-    flake.style.fontSize = `${8 + Math.random() * 8}px`;
-    flake.style.animationDuration = `${2 + Math.random() * 3}s`;
-    flake.style.animationDelay = `${Math.random() * 3}s`;
-    flake.style.opacity = `${0.5 + Math.random() * 0.5}`;
+    flake.style.fontSize = `${8 + Math.random() * 10}px`;
+    // Slower animation: 4-8 seconds for more gentle fall
+    flake.style.animationDuration = `${4 + Math.random() * 4}s`;
+    // Staggered start times for natural effect
+    flake.style.animationDelay = `${Math.random() * 5}s`;
     snowContainer.appendChild(flake);
   }
 
