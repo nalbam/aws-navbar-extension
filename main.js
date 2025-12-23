@@ -200,11 +200,21 @@ function insertRegionFlag(config, region) {
   if (regionButton && regionButton.parentNode) {
     const flagUrl = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
     const flagContainer = document.createElement('span');
+    flagContainer.id = 'aws-navbar-flag';
     flagContainer.style.cssText = 'line-height:0;margin-right:0.5em;';
+
     const flagImg = document.createElement('img');
     flagImg.src = flagUrl;
     flagImg.style.cssText = 'width:20px;height:20px;';
     flagImg.alt = colors[region]['name'];
+
+    // Handle image load error - show emoji fallback
+    flagImg.onerror = () => {
+      flagContainer.textContent = colors[region]['emoji'] || '🌐';
+      flagContainer.style.cssText = 'margin-right:0.5em;font-size:16px;';
+      if (isDebug) console.log(`Flag image failed to load for ${region}, using emoji fallback`);
+    };
+
     flagContainer.appendChild(flagImg);
     regionButton.parentNode.insertBefore(flagContainer, regionButton);
   }

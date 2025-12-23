@@ -233,7 +233,7 @@ const colors = {
 // Helper function to build gradient from color array
 function buildGradient(colorArray) {
   const colorList = Array.isArray(colorArray) ? colorArray :
-    [colorArray.color1, colorArray.color2, colorArray.color3, colorArray.color4].filter(c => c && c !== null);
+    [colorArray.color1, colorArray.color2, colorArray.color3, colorArray.color4].filter(Boolean);
   return `linear-gradient(to right, ${colorList.join(', ')})`;
 }
 

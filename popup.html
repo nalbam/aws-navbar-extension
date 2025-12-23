@@ -1,77 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="css/popup.css">
 </head>
 <body>
-  <div class="popup-container">
+  <div class="popup-container" role="main">
     <header class="popup-header">
       <h1>AWS Colorful Navbar</h1>
     </header>
-    <div class="settings-container">
+    <div class="settings-container" role="form" aria-label="Extension settings">
       <div class="setting-item">
         <div class="setting-label">
-          <img src="icons/palette.ico" alt="Background" class="icon">
-          <span>Background</span>
+          <img src="icons/palette.ico" alt="" class="icon" aria-hidden="true">
+          <span id="background-label">Background</span>
         </div>
         <div class="setting-control">
           <label class="toggle">
-            <input type="checkbox" id="background">
-            <span class="slider"></span>
+            <input type="checkbox" id="background" aria-labelledby="background-label" aria-describedby="background-desc">
+            <span class="slider" role="presentation"></span>
+            <span id="background-desc" class="visually-hidden">Toggle navbar background color</span>
           </label>
         </div>
       </div>
 
       <div class="setting-item">
         <div class="setting-label">
-          <img src="icons/flag.ico" alt="Flag" class="icon">
-          <span>Show Flag</span>
+          <img src="icons/flag.ico" alt="" class="icon" aria-hidden="true">
+          <span id="flag-label">Show Flag</span>
         </div>
         <div class="setting-control">
           <label class="toggle">
-            <input type="checkbox" id="flag">
-            <span class="slider"></span>
+            <input type="checkbox" id="flag" aria-labelledby="flag-label" aria-describedby="flag-desc">
+            <span class="slider" role="presentation"></span>
+            <span id="flag-desc" class="visually-hidden">Toggle region flag display</span>
           </label>
         </div>
       </div>
 
-      <div class="divider"></div>
+      <div class="divider" role="separator"></div>
 
       <div class="setting-item color-section">
         <div class="setting-label">
-          <span>Region Colors</span>
+          <span id="region-label">Region Colors</span>
         </div>
         <div class="setting-control full-width">
-          <select id="region-select">
+          <select id="region-select" aria-labelledby="region-label">
             <option value="">Select Region...</option>
           </select>
         </div>
       </div>
 
-      <div id="color-editor" class="color-editor hidden">
+      <div id="color-editor" class="color-editor hidden" role="region" aria-label="Color customization">
         <div class="preview-container">
-          <div id="color-preview" class="color-preview"></div>
+          <div id="color-preview" class="color-preview" role="img" aria-label="Gradient preview"></div>
         </div>
 
-        <div id="color-inputs" class="color-inputs">
+        <div id="color-inputs" class="color-inputs" role="group" aria-label="Color inputs">
           <!-- Color inputs will be added dynamically -->
         </div>
 
         <div class="color-actions">
-          <button id="add-color-btn" class="secondary-btn small-btn">+ Add Color</button>
+          <button id="add-color-btn" class="secondary-btn small-btn" aria-label="Add another color to gradient">+ Add Color</button>
         </div>
 
         <div class="action-buttons">
-          <button id="reset-btn" class="secondary-btn">Reset</button>
-          <button id="apply-btn" class="primary-btn">Apply</button>
+          <button id="reset-btn" class="secondary-btn" aria-label="Reset to default colors">Reset</button>
+          <button id="apply-btn" class="primary-btn" aria-label="Apply custom colors">Apply</button>
         </div>
       </div>
     </div>
-    <button id="theme-toggle" class="theme-toggle">
-      <img src="icons/sun.ico" alt="Theme" class="icon" id="theme-icon">
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light theme">
+      <img src="icons/sun.ico" alt="" class="icon" id="theme-icon" aria-hidden="true">
     </button>
-    <div class="version"></div>
+    <div class="version" aria-label="Extension version"></div>
   </div>
   <script src="colors.js"></script>
   <script src="utils.js"></script>

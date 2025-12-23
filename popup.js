@@ -4,6 +4,14 @@ let currentRegion = null;
 let currentColors = [];
 let cachedConfig = null;
 
+// Listen for storage changes from other contexts (e.g., content script)
+// This invalidates the cache when config changes externally
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === 'local' && changes.config) {
+    cachedConfig = changes.config.newValue ?? {};
+  }
+});
+
 // Show error message to user
 function showError(message) {
   console.error(message);
@@ -191,17 +199,23 @@ async function loadRegionColors(region) {
 
 // Create a single color input group element
 function createColorInputGroup(color, index, showRemoveBtn) {
+  const colorNum = index + 1;
   const inputGroup = document.createElement('div');
   inputGroup.className = 'color-input-group';
   inputGroup.dataset.index = index;
+  inputGroup.setAttribute('role', 'group');
+  inputGroup.setAttribute('aria-label', `Color ${colorNum} settings`);
 
   const label = document.createElement('label');
-  label.textContent = `Color ${index + 1}`;
+  label.textContent = `Color ${colorNum}`;
+  label.id = `color-label-${index}`;
 
   const colorInput = document.createElement('input');
   colorInput.type = 'color';
   colorInput.value = color;
   colorInput.className = 'color-picker';
+  colorInput.setAttribute('aria-labelledby', `color-label-${index}`);
+  colorInput.setAttribute('aria-label', `Color ${colorNum} picker`);
   colorInput.addEventListener('input', (e) => {
     currentColors[index] = e.target.value;
     // Sync hex input
@@ -215,6 +229,8 @@ function createColorInputGroup(color, index, showRemoveBtn) {
   hexInput.value = color;
   hexInput.className = 'hex-input';
   hexInput.maxLength = 7;
+  hexInput.setAttribute('aria-label', `Color ${colorNum} hex value`);
+  hexInput.setAttribute('placeholder', '#000000');
   hexInput.addEventListener('input', (e) => {
     const hex = e.target.value;
     if (isValidHexColor(hex)) {
@@ -232,6 +248,7 @@ function createColorInputGroup(color, index, showRemoveBtn) {
     const removeBtn = document.createElement('button');
     removeBtn.className = 'remove-color-btn';
     removeBtn.textContent = '×';
+    removeBtn.setAttribute('aria-label', `Remove color ${colorNum}`);
     removeBtn.addEventListener('click', () => {
       currentColors.splice(index, 1);
       renderColorInputs();
