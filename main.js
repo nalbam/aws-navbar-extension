@@ -103,6 +103,65 @@ const langs = {
 const isDebug = false;
 
 // ============================================
+// Validation Utilities
+// ============================================
+
+// Validate hex color format
+function isValidHexColor(color) {
+  return typeof color === 'string' && /^#[0-9A-Fa-f]{6}$/.test(color);
+}
+
+// Validate region code exists in colors object
+function isValidRegion(region) {
+  return region && typeof region === 'string' && colors.hasOwnProperty(region);
+}
+
+// Validate and sanitize config structure
+function validateConfig(config) {
+  if (!config || typeof config !== 'object') {
+    return {};
+  }
+
+  const validConfig = {};
+
+  // Validate background setting
+  if (config.background === 'enabled' || config.background === 'disabled') {
+    validConfig.background = config.background;
+  }
+
+  // Validate flag setting
+  if (config.flag === 'enabled' || config.flag === 'disabled') {
+    validConfig.flag = config.flag;
+  }
+
+  // Validate customColors
+  if (config.customColors && typeof config.customColors === 'object') {
+    validConfig.customColors = {};
+    for (const region of Object.keys(config.customColors)) {
+      if (isValidRegion(region)) {
+        const regionColors = config.customColors[region];
+        if (regionColors && typeof regionColors === 'object') {
+          const validColors = {};
+          ['color1', 'color2', 'color3', 'color4'].forEach(key => {
+            if (regionColors[key] === null || isValidHexColor(regionColors[key])) {
+              validColors[key] = regionColors[key];
+            }
+          });
+          if (Object.keys(validColors).length > 0) {
+            validConfig.customColors[region] = validColors;
+          }
+        }
+      }
+    }
+    if (Object.keys(validConfig.customColors).length === 0) {
+      delete validConfig.customColors;
+    }
+  }
+
+  return validConfig;
+}
+
+// ============================================
 // Region Detection Utilities
 // ============================================
 
@@ -160,9 +219,13 @@ function applyBackgroundColor(config) {
 // Listen for storage changes (live update)
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'local' && changes.config) {
-    const newConfig = changes.config.newValue || {};
-    if (isDebug) console.log('Config changed, applying new colors...');
-    applyBackgroundColor(newConfig);
+    try {
+      const newConfig = validateConfig(changes.config.newValue);
+      if (isDebug) console.log('Config changed, applying new colors...');
+      applyBackgroundColor(newConfig);
+    } catch (error) {
+      console.error('Error applying config changes:', error);
+    }
   }
 });
 
@@ -225,13 +288,15 @@ function initializeAWS(config, retryCount = 0) {
   }
 }
 
-// load
-chrome.storage.local.get('config', (c) => {
+// Load config and initialize
+chrome.storage.local.get('config', (result) => {
   try {
-    const config = c.config ?? {};
+    const config = validateConfig(result.config);
     if (isDebug) console.log(`config: ${JSON.stringify(config, null, 2)}`);
     initializeAWS(config);
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error initializing AWS navbar:', error);
+    // Attempt initialization with empty config as fallback
+    initializeAWS({});
   }
 });

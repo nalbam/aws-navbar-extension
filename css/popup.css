@@ -330,6 +330,10 @@ input:checked + .slider:before {
   background-color: #28a745;
 }
 
+.primary-btn.error {
+  background-color: #dc3545;
+}
+
 /* Theme Toggle Button */
 .theme-toggle {
   position: absolute;

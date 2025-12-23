@@ -3,12 +3,48 @@
 let currentRegion = null;
 let currentColors = [];
 
+// ============================================
+// Validation Utilities
+// ============================================
+
+// Validate hex color format
+function isValidHexColor(color) {
+  return typeof color === 'string' && /^#[0-9A-Fa-f]{6}$/.test(color);
+}
+
+// Validate region code exists in colors object
+function isValidRegion(region) {
+  return region && typeof region === 'string' && colors.hasOwnProperty(region);
+}
+
+// Show error message to user
+function showError(message) {
+  console.error(message);
+  const btn = document.getElementById('apply-btn');
+  if (btn) {
+    const originalContent = btn.textContent;
+    btn.textContent = 'Error!';
+    btn.classList.add('error');
+    setTimeout(() => {
+      btn.textContent = originalContent;
+      btn.classList.remove('error');
+    }, 2000);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Set version from manifest
   fetch(chrome.runtime.getURL('manifest.json'))
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) throw new Error('Failed to load manifest');
+      return response.json();
+    })
     .then(manifest => {
       document.querySelector('.version').textContent = `v${manifest.version}`;
+    })
+    .catch(error => {
+      console.error('Error loading manifest:', error);
+      document.querySelector('.version').textContent = '';
     });
 
   // Populate region dropdown
@@ -21,14 +57,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Load saved settings
-  chrome.storage.local.get('config', (c) => {
-    const config = c.config !== undefined ? c.config : {};
+  chrome.storage.local.get('config', (result) => {
+    try {
+      if (chrome.runtime.lastError) {
+        console.error('Error loading config:', chrome.runtime.lastError);
+      }
+      const config = result.config ?? {};
 
-    // Set checkbox states
-    document.getElementById('background').checked = config['background'] !== 'disabled';
-    document.getElementById('flag').checked = config['flag'] !== 'disabled';
+      // Set checkbox states
+      document.getElementById('background').checked = config['background'] !== 'disabled';
+      document.getElementById('flag').checked = config['flag'] !== 'disabled';
+    } catch (error) {
+      console.error('Error initializing settings:', error);
+    }
 
-    // Load theme preference
+    // Load theme preference (outside try-catch as it's independent)
     const theme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', theme);
     updateThemeIcon(theme);
@@ -37,20 +80,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // Auto save on toggle changes
   ['background', 'flag'].forEach(id => {
     document.getElementById(id).addEventListener('change', async () => {
-      const config = await getCurrentConfig();
-      config[id] = document.getElementById(id).checked ? 'enabled' : 'disabled';
-      saveConfig(config);
+      try {
+        const config = await getCurrentConfig();
+        config[id] = document.getElementById(id).checked ? 'enabled' : 'disabled';
+        saveConfig(config);
+      } catch (error) {
+        showError('Failed to save settings');
+      }
     });
   });
 
   // Region select change
   document.getElementById('region-select').addEventListener('change', (e) => {
     const region = e.target.value;
-    if (region) {
+    if (region && isValidRegion(region)) {
       currentRegion = region;
-      loadRegionColors(region);
+      loadRegionColors(region).catch(error => {
+        showError('Failed to load region colors');
+      });
       document.getElementById('color-editor').classList.remove('hidden');
     } else {
+      currentRegion = null;
       document.getElementById('color-editor').classList.add('hidden');
     }
   });
@@ -66,7 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Reset button
   document.getElementById('reset-btn').addEventListener('click', async () => {
-    if (currentRegion) {
+    if (!currentRegion || !isValidRegion(currentRegion)) return;
+
+    try {
       const config = await getCurrentConfig();
       if (config.customColors && config.customColors[currentRegion]) {
         delete config.customColors[currentRegion];
@@ -75,24 +127,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         saveConfig(config);
       }
-      loadRegionColors(currentRegion);
+      await loadRegionColors(currentRegion);
+    } catch (error) {
+      showError('Failed to reset colors');
     }
   });
 
   // Apply button
   document.getElementById('apply-btn').addEventListener('click', async () => {
-    if (currentRegion && currentColors.length >= 2) {
+    if (!currentRegion || !isValidRegion(currentRegion)) {
+      showError('Invalid region selected');
+      return;
+    }
+
+    // Validate all colors
+    const validColors = currentColors.filter(c => isValidHexColor(c));
+    if (validColors.length < 2) {
+      showError('At least 2 valid colors required');
+      return;
+    }
+
+    try {
       const config = await getCurrentConfig();
       if (!config.customColors) {
         config.customColors = {};
       }
       config.customColors[currentRegion] = {
-        color1: currentColors[0] || null,
-        color2: currentColors[1] || null,
-        color3: currentColors[2] || null,
-        color4: currentColors[3] || null,
+        color1: validColors[0] || null,
+        color2: validColors[1] || null,
+        color3: validColors[2] || null,
+        color4: validColors[3] || null,
       };
       saveConfig(config, true);
+    } catch (error) {
+      showError('Failed to apply colors');
     }
   });
 
@@ -121,14 +189,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadRegionColors(region) {
+  if (!isValidRegion(region)) {
+    throw new Error(`Invalid region: ${region}`);
+  }
+
   const config = await getCurrentConfig();
 
   // Check if custom colors exist for this region
   if (config.customColors && config.customColors[region]) {
     const custom = config.customColors[region];
-    currentColors = [custom.color1, custom.color2, custom.color3, custom.color4].filter(c => c);
+    currentColors = [custom.color1, custom.color2, custom.color3, custom.color4]
+      .filter(c => c && isValidHexColor(c));
   } else {
     // Use default colors from shared colors.js
+    currentColors = [...colors[region].colors];
+  }
+
+  // Ensure at least 2 colors
+  if (currentColors.length < 2) {
     currentColors = [...colors[region].colors];
   }
 
@@ -212,25 +290,41 @@ function updateThemeIcon(theme) {
 }
 
 function getCurrentConfig() {
-  return new Promise(resolve => {
-    chrome.storage.local.get('config', (c) => {
-      const config = c.config !== undefined ? c.config : {};
-      resolve(config);
-    });
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.get('config', (result) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+        const config = result.config ?? {};
+        resolve(config);
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 
 function saveConfig(config, showSaveMessage = false) {
-  chrome.storage.local.set({ config }, () => {
-    if (showSaveMessage) {
-      const btn = document.getElementById('apply-btn');
-      const originalContent = btn.textContent;
-      btn.textContent = 'Applied!';
-      btn.classList.add('success');
-      setTimeout(() => {
-        btn.textContent = originalContent;
-        btn.classList.remove('success');
-      }, 1000);
-    }
-  });
+  try {
+    chrome.storage.local.set({ config }, () => {
+      if (chrome.runtime.lastError) {
+        showError('Failed to save settings');
+        return;
+      }
+      if (showSaveMessage) {
+        const btn = document.getElementById('apply-btn');
+        const originalContent = btn.textContent;
+        btn.textContent = 'Applied!';
+        btn.classList.add('success');
+        setTimeout(() => {
+          btn.textContent = originalContent;
+          btn.classList.remove('success');
+        }, 1000);
+      }
+    });
+  } catch (error) {
+    showError('Failed to save settings');
+  }
 }
