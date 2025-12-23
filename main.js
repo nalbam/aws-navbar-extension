@@ -110,22 +110,25 @@ function createSnowfall(navElement) {
   `;
   document.head.appendChild(style);
 
-  // Create snowflakes with varied properties
+  // Create snowflakes with varied properties using DocumentFragment
   const snowflakes = ['❄', '❅', '❆', '✻', '✼', '❉'];
+  const snowFragment = document.createDocumentFragment();
 
   for (let i = 0; i < CONFIG.SNOWFLAKE_COUNT; i++) {
     const flake = document.createElement('span');
     const isLeftSway = Math.random() > 0.5;
+    const left = Math.random() * 100;
+    const fontSize = 8 + Math.random() * 10;
+    const duration = 4 + Math.random() * 4;
+    const delay = Math.random() * 5;
+
     flake.className = `aws-snowflake ${isLeftSway ? 'aws-snowflake-left' : 'aws-snowflake-right'}`;
     flake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
-    flake.style.left = `${Math.random() * 100}%`;
-    flake.style.fontSize = `${8 + Math.random() * 10}px`;
-    // Slower animation: 4-8 seconds for more gentle fall
-    flake.style.animationDuration = `${4 + Math.random() * 4}s`;
-    // Staggered start times for natural effect
-    flake.style.animationDelay = `${Math.random() * 5}s`;
-    snowContainer.appendChild(flake);
+    // Batch style assignments using cssText (single style recalculation)
+    flake.style.cssText = `left:${left}%;font-size:${fontSize}px;animation-duration:${duration}s;animation-delay:${delay}s;`;
+    snowFragment.appendChild(flake);
   }
+  snowContainer.appendChild(snowFragment);
 
   // Make nav position relative for absolute positioning of snow
   navElement.style.position = 'relative';
@@ -144,6 +147,21 @@ const langs = {
 }
 
 const isDebug = false;
+
+// DOM element cache to avoid repeated querySelector calls
+const domCache = {
+  navElement: null,
+  regionButton: null,
+  regionButtonSpan: null,
+};
+
+// Get cached DOM element or query and cache it
+function getCachedElement(key, selector) {
+  if (!domCache[key]) {
+    domCache[key] = document.querySelector(selector);
+  }
+  return domCache[key];
+}
 
 // Note: Validation functions (isValidHexColor, isValidRegion, validateConfig)
 // are loaded from utils.js
@@ -175,7 +193,7 @@ function translateCity(city) {
 
 // Get current region from URL and city element
 function getCurrentRegion() {
-  const cityElement = document.querySelector(SELECTORS.REGION_BUTTON_SPAN);
+  const cityElement = getCachedElement('regionButtonSpan', SELECTORS.REGION_BUTTON_SPAN);
   if (!cityElement) return null;
 
   const city = translateCity(cityElement.innerText);
@@ -203,7 +221,7 @@ function applyNavbarBackground(config, region = null, withSnowfall = false) {
 
   if (config['background'] === 'disabled') return;
 
-  const navElement = document.querySelector(SELECTORS.NAV_ELEMENT);
+  const navElement = getCachedElement('navElement', SELECTORS.NAV_ELEMENT);
   if (navElement) {
     navElement.style.background = getBackgroundForRegion(config, targetRegion);
     if (withSnowfall) {
@@ -231,7 +249,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 function insertRegionFlag(config, region) {
   if (config['flag'] === 'disabled') return;
 
-  const regionButton = document.querySelector(SELECTORS.REGION_BUTTON);
+  const regionButton = getCachedElement('regionButton', SELECTORS.REGION_BUTTON);
   if (regionButton && regionButton.parentNode) {
     const flagUrl = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
     const flagContainer = document.createElement('span');

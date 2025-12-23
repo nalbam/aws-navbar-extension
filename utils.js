@@ -2,9 +2,25 @@
 // Shared Validation Utilities
 // ============================================
 
+// Pre-compiled regex patterns (avoid recompilation on each call)
+const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
+
 // Validate hex color format (#RRGGBB)
 function isValidHexColor(color) {
-  return typeof color === 'string' && /^#[0-9A-Fa-f]{6}$/.test(color);
+  return typeof color === 'string' && HEX_COLOR_REGEX.test(color);
+}
+
+// ============================================
+// Performance Utilities
+// ============================================
+
+// Debounce function to limit execution rate
+function debounce(func, wait) {
+  let timeoutId = null;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(this, args), wait);
+  };
 }
 
 // Validate region code exists in colors object

@@ -4,6 +4,9 @@ let currentRegion = null;
 let currentColors = [];
 let cachedConfig = null;
 
+// Debounced preview update for performance (50ms delay)
+const debouncedUpdatePreview = debounce(updatePreview, 50);
+
 // Listen for storage changes from other contexts (e.g., content script)
 // This invalidates the cache when config changes externally
 chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -42,14 +45,16 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('.version').textContent = '';
     });
 
-  // Populate region dropdown
+  // Populate region dropdown using DocumentFragment (single DOM update)
   const regionSelect = document.getElementById('region-select');
+  const regionFragment = document.createDocumentFragment();
   Object.keys(colors).sort().forEach(region => {
     const option = document.createElement('option');
     option.value = region;
     option.textContent = `${colors[region].emoji} ${region} - ${colors[region].name}`;
-    regionSelect.appendChild(option);
+    regionFragment.appendChild(option);
   });
+  regionSelect.appendChild(regionFragment);
 
   // Load saved settings
   chrome.storage.local.get('config', (result) => {
@@ -221,7 +226,7 @@ function createColorInputGroup(color, index, showRemoveBtn) {
     // Sync hex input
     const hexInput = inputGroup.querySelector('.hex-input');
     if (hexInput) hexInput.value = e.target.value;
-    updatePreview();
+    debouncedUpdatePreview();
   });
 
   const hexInput = document.createElement('input');
@@ -236,7 +241,7 @@ function createColorInputGroup(color, index, showRemoveBtn) {
     if (isValidHexColor(hex)) {
       currentColors[index] = hex;
       colorInput.value = hex;
-      updatePreview();
+      debouncedUpdatePreview();
     }
   });
 
