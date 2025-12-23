@@ -98,7 +98,7 @@ function getCurrentRegion() {
 
   const re = /^https:\/\/([a-z0-9-]+(?:\.[a-z0-9-]+)*)?\.?console\.aws\.amazon\.com\/.*/;
   const m = re.exec(window.location.href);
-  if (m !== undefined) {
+  if (m) {
     const hostPart = m[1];
     if (hostPart) {
       const lastDotIndex = hostPart.lastIndexOf('.');
@@ -167,7 +167,7 @@ chrome.storage.local.get('config', (c) => {
       let region = undefined;
       const re = /^https:\/\/([a-z0-9-]+(?:\.[a-z0-9-]+)*)?\.?console\.aws\.amazon\.com\/.*/;
       const m = re.exec(window.location.href);
-      if (m !== undefined) {
+      if (m) {
         if (city === 'Global') {
           region = 'global';
         } else {
