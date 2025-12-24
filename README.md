@@ -1,6 +1,6 @@
 # AWS Colorful Navbar
 
-> Change navbar color and flag according to AWS region
+> Identify AWS regions instantly with colorful navbar gradients and country flags.
 
 [![build](https://img.shields.io/github/actions/workflow/status/nalbam/aws-navbar-extension/push.yml?branch=main&style=for-the-badge&logo=github)](https://github.com/nalbam/aws-navbar-extension/actions/workflows/push.yml)
 [![release](https://img.shields.io/github/v/release/nalbam/aws-navbar-extension?style=for-the-badge&logo=github)](https://github.com/nalbam/aws-navbar-extension/releases)
