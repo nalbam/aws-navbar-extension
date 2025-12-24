@@ -250,6 +250,15 @@ a:hover {
   font-size: 14px;
 }
 
+.flag-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 8px;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 /* Install */
 .install {
   padding: 80px 0;
