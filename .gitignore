@@ -1,39 +1,70 @@
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows shortcuts
-*.lnk
-
-# Mac
+# OS - Mac
 .DS_Store
 
-# JetBrains
+# OS - Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# OS - Linux/Unix
+*.swp
+*.swo
+*~
+
+# IDE - JetBrains
 .idea/
 *.iml
 
-# Eclipse
+# IDE - VSCode
+.vscode/
+
+# IDE - Eclipse
 .settings/
 .metadata/
 
+# IDE - Sublime
+*.sublime-*
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+
 # Build
+dist/
+build/
 target/
 release/
-
-# Package
+*.crx
+*.pem
 *.zip
 
-# backup files
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# Backup
 *.bak
 *.backup
 
-# prompt
+# Extension specific
+.web-extension-id
+
+# Prompt
 .prompt-*.md
 .prompt.md
 prompt-*.md
