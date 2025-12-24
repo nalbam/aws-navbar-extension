@@ -1,11 +1,8 @@
 {
+  "manifest_version": 2,
   "name": "AWS Colorful Navbar",
   "description": "Identify AWS regions instantly with colorful navbar gradients and country flags.",
   "version": "2.1.0",
-  "manifest_version": 2,
-  "icons": {
-    "128": "icon.png"
-  },
   "permissions": [
     "activeTab",
     "storage",
@@ -16,13 +13,6 @@
       "id": "{da1fedb6-1027-40ea-9583-e08ef1dc2593}",
       "strict_min_version": "109.0"
     }
-  },
-  "browser_action": {
-    "default_icon": {
-      "128": "icon.png"
-    },
-    "default_popup": "popup.html",
-    "default_title": "AWS Colorful Navbar"
   },
   "content_scripts": [
     {
@@ -36,8 +26,18 @@
       ]
     }
   ],
+  "browser_action": {
+    "default_icon": {
+      "128": "icon.png"
+    },
+    "default_popup": "popup.html",
+    "default_title": "AWS Colorful Navbar"
+  },
   "web_accessible_resources": [
     "flags/*.png",
     "icons/*.ico"
-  ]
+  ],
+  "icons": {
+    "128": "icon.png"
+  }
 }
