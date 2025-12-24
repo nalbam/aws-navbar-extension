@@ -8,6 +8,9 @@ on:
     paths:
       - VERSION
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
