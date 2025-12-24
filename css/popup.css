@@ -37,6 +37,7 @@
 
 body {
   width: 420px;
+  max-height: 800px;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
   color: var(--text-color);
@@ -211,7 +212,7 @@ input:checked + .slider:before {
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  max-height: 350px;
+  max-height: 280px;
   overflow-y: auto;
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
