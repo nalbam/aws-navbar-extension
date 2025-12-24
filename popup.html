@@ -45,9 +45,15 @@
           <span id="region-label">Region Colors</span>
         </div>
         <div class="setting-control full-width">
-          <select id="region-select" aria-labelledby="region-label">
-            <option value="">Select Region...</option>
-          </select>
+          <div id="region-select" class="custom-select" role="combobox" aria-labelledby="region-label" aria-expanded="false" aria-haspopup="listbox" tabindex="0">
+            <div class="select-trigger">
+              <span class="select-text">Select Region...</span>
+              <span class="select-arrow">▼</span>
+            </div>
+            <ul class="select-options" role="listbox" aria-labelledby="region-label">
+              <!-- Options will be populated by JavaScript -->
+            </ul>
+          </div>
         </div>
       </div>
 

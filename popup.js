@@ -47,14 +47,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Populate region dropdown using DocumentFragment (single DOM update)
   const regionSelect = document.getElementById('region-select');
+  const optionsList = regionSelect.querySelector('.select-options');
   const regionFragment = document.createDocumentFragment();
+
   Object.keys(colors).sort().forEach(region => {
-    const option = document.createElement('option');
-    option.value = region;
-    option.textContent = `${colors[region].emoji} ${region} - ${colors[region].name}`;
-    regionFragment.appendChild(option);
+    const li = document.createElement('li');
+    li.className = 'select-option';
+    li.setAttribute('role', 'option');
+    li.setAttribute('data-value', region);
+    li.setAttribute('tabindex', '-1');
+
+    const flagImg = document.createElement('img');
+    flagImg.src = `flags/${colors[region].country}.png`;
+    flagImg.alt = '';
+    flagImg.className = 'region-flag';
+    flagImg.setAttribute('aria-hidden', 'true');
+
+    const textSpan = document.createElement('span');
+    textSpan.textContent = `${region} - ${colors[region].name}`;
+
+    li.appendChild(flagImg);
+    li.appendChild(textSpan);
+    regionFragment.appendChild(li);
   });
-  regionSelect.appendChild(regionFragment);
+
+  optionsList.appendChild(regionFragment);
 
   // Load saved settings
   chrome.storage.local.get('config', (result) => {
@@ -91,18 +108,85 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Region select change
-  document.getElementById('region-select').addEventListener('change', (e) => {
-    const region = e.target.value;
+  // Custom dropdown functionality
+  const selectTrigger = regionSelect.querySelector('.select-trigger');
+  const selectText = regionSelect.querySelector('.select-text');
+
+  // Toggle dropdown
+  const toggleDropdown = (open) => {
+    const isOpen = open !== undefined ? open : regionSelect.getAttribute('aria-expanded') !== 'true';
+    regionSelect.setAttribute('aria-expanded', isOpen);
+    regionSelect.classList.toggle('open', isOpen);
+  };
+
+  selectTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleDropdown();
+  });
+
+  // Handle option selection
+  optionsList.addEventListener('click', (e) => {
+    const option = e.target.closest('.select-option');
+    if (!option) return;
+
+    const region = option.getAttribute('data-value');
     if (region && isValidRegion(region)) {
+      // Update displayed text with flag
+      const flagImg = option.querySelector('.region-flag').cloneNode(true);
+      const text = option.querySelector('span').textContent;
+      selectText.innerHTML = '';
+      selectText.appendChild(flagImg);
+      selectText.appendChild(document.createTextNode(text));
+
+      // Update current region and load colors
       currentRegion = region;
       loadRegionColors(region).catch(error => {
         showError('Failed to load region colors');
       });
       document.getElementById('color-editor').classList.remove('hidden');
-    } else {
-      currentRegion = null;
-      document.getElementById('color-editor').classList.add('hidden');
+
+      // Update aria-selected
+      optionsList.querySelectorAll('.select-option').forEach(opt => {
+        opt.setAttribute('aria-selected', opt === option);
+        opt.classList.toggle('selected', opt === option);
+      });
+    }
+    toggleDropdown(false);
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!regionSelect.contains(e.target)) {
+      toggleDropdown(false);
+    }
+  });
+
+  // Keyboard navigation
+  regionSelect.addEventListener('keydown', (e) => {
+    const isOpen = regionSelect.getAttribute('aria-expanded') === 'true';
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleDropdown();
+    } else if (e.key === 'Escape' && isOpen) {
+      e.preventDefault();
+      toggleDropdown(false);
+    } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && isOpen) {
+      e.preventDefault();
+      const options = Array.from(optionsList.querySelectorAll('.select-option'));
+      const currentIndex = options.findIndex(opt => opt.classList.contains('focused'));
+
+      let nextIndex;
+      if (e.key === 'ArrowDown') {
+        nextIndex = currentIndex < options.length - 1 ? currentIndex + 1 : 0;
+      } else {
+        nextIndex = currentIndex > 0 ? currentIndex - 1 : options.length - 1;
+      }
+
+      options.forEach((opt, idx) => {
+        opt.classList.toggle('focused', idx === nextIndex);
+      });
+      options[nextIndex].scrollIntoView({ block: 'nearest' });
     }
   });
 

@@ -36,7 +36,7 @@
 }
 
 body {
-  width: 360px;
+  width: 420px;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
   color: var(--text-color);
@@ -158,8 +158,17 @@ input:checked + .slider:before {
   width: 100%;
 }
 
-/* Region Select */
-#region-select {
+/* Custom Select/Dropdown */
+.custom-select {
+  position: relative;
+  width: 100%;
+  user-select: none;
+}
+
+.select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--border-color);
@@ -171,10 +180,86 @@ input:checked + .slider:before {
   transition: all 0.2s;
 }
 
-#region-select:focus {
-  outline: none;
+.custom-select:focus .select-trigger,
+.select-trigger:hover {
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.1);
+}
+
+.custom-select:focus {
+  outline: none;
+}
+
+.select-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.select-arrow {
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+.custom-select.open .select-arrow {
+  transform: rotate(180deg);
+}
+
+.select-options {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 350px;
+  overflow-y: auto;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+}
+
+.custom-select.open .select-options {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.select-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  font-size: 13px;
+  color: var(--text-color);
+}
+
+.select-option:hover,
+.select-option.focused {
+  background-color: var(--input-bg);
+}
+
+.select-option.selected {
+  background-color: rgba(255, 153, 0, 0.1);
+  font-weight: 500;
+}
+
+.region-flag {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 /* Color Editor */
