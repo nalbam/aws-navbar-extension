@@ -11,7 +11,10 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "{da1fedb6-1027-40ea-9583-e08ef1dc2593}",
-      "strict_min_version": "109.0"
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
   "content_scripts": [
