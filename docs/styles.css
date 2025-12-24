@@ -48,6 +48,7 @@ a:hover {
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
   z-index: 100;
+  transition: background 0.3s ease;
 }
 
 .header .container {
@@ -64,6 +65,7 @@ a:hover {
   font-weight: 600;
   font-size: 18px;
   color: var(--secondary);
+  transition: color 0.3s ease;
 }
 
 .nav {
@@ -80,6 +82,106 @@ a:hover {
 .nav a:hover {
   color: var(--primary-dark);
   text-decoration: none;
+}
+
+/* Region Selector */
+.region-selector {
+  position: relative;
+  user-select: none;
+  margin-right: 16px;
+}
+
+.selector-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.selector-trigger:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.selector-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.selector-arrow {
+  font-size: 8px;
+  transition: transform 0.2s;
+  opacity: 0.8;
+}
+
+.region-selector[aria-expanded="true"] .selector-arrow {
+  transform: rotate(180deg);
+}
+
+.selector-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 380px;
+  max-height: 450px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+}
+
+.region-selector[aria-expanded="true"] .selector-options {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.selector-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.selector-option:hover {
+  background-color: var(--bg-alt);
+}
+
+.selector-option.selected {
+  background-color: rgba(255, 153, 0, 0.1);
+  font-weight: 500;
+}
+
+.selector-option .region-flag {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Hero */

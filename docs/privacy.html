@@ -7,6 +7,8 @@
   <meta name="description" content="Privacy Policy for AWS Colorful Navbar browser extension">
   <link rel="icon" type="image/png" href="icon.png">
   <link rel="stylesheet" href="styles.css">
+  <script src="colors.js"></script>
+  <script src="navbar-colors.js"></script>
 </head>
 <body>
   <header class="header">
@@ -18,6 +20,15 @@
         </a>
       </div>
       <nav class="nav">
+        <div id="region-selector" class="region-selector" role="combobox" aria-label="Select region" aria-expanded="false" tabindex="0">
+          <div class="selector-trigger">
+            <span class="selector-text" id="selected-region">Auto</span>
+            <span class="selector-arrow">▼</span>
+          </div>
+          <ul class="selector-options" role="listbox">
+            <!-- Options will be populated by JavaScript -->
+          </ul>
+        </div>
         <a href="index.html#features">Features</a>
         <a href="index.html#regions">Regions</a>
         <a href="index.html#install">Install</a>

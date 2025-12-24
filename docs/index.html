@@ -7,6 +7,8 @@
   <meta name="description" content="Identify AWS regions instantly with colorful navbar gradients and country flags. Customize colors, prevent deployment mistakes.">
   <link rel="icon" type="image/png" href="icon.png">
   <link rel="stylesheet" href="styles.css">
+  <script src="colors.js"></script>
+  <script src="navbar-colors.js"></script>
 </head>
 <body>
   <header class="header">
@@ -16,6 +18,15 @@
         <span>AWS Colorful Navbar</span>
       </div>
       <nav class="nav">
+        <div id="region-selector" class="region-selector" role="combobox" aria-label="Select region" aria-expanded="false" tabindex="0">
+          <div class="selector-trigger">
+            <span class="selector-text" id="selected-region">Auto</span>
+            <span class="selector-arrow">▼</span>
+          </div>
+          <ul class="selector-options" role="listbox">
+            <!-- Options will be populated by JavaScript -->
+          </ul>
+        </div>
         <a href="#features">Features</a>
         <a href="#regions">Regions</a>
         <a href="#install">Install</a>
