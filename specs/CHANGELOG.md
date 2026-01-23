@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2025-12-24
+
+### Added
+- Custom dropdown for region selection with improved accessibility
+- Dynamic color gradients preview in region selector dropdown
+
+### Changed
+- Refactored code structure for improved readability and maintainability
+- Adjusted popup body max-height for improved layout consistency
+
 ## [2.1.1] - 2025-12-24
 
 ### Fixed

@@ -37,8 +37,12 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 - Injected into AWS Console pages (`*://*.console.aws.amazon.com/*`)
 - Detects region from URL using regex (handles `account-string.region.console.aws.amazon.com` format)
 - Applies navbar colors: custom colors from config or default gradients
+- Uses `buildGradient()` from `colors.js` to build CSS gradient from custom color config
+
+**Shared Colors (`colors.js`)**
 - `colors` object maps AWS region codes to country names, default CSS gradients, and emojis
-- `buildGradient()` function builds CSS gradient from custom color config
+- `buildGradient()` function builds CSS linear-gradient from color array
+- `getDefaultGradient()` returns default gradient for a region
 
 **Popup Interface (`popup.js`, `popup.html`, `css/popup.css`)**
 - Settings UI for toggling Background and Flag features

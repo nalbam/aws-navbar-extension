@@ -15,7 +15,7 @@ aws-navbar-extension/
 ├── popup.html             # Settings popup UI
 ├── popup.js               # Popup logic with color customization
 ├── css/popup.css          # Popup styles
-├── flags/                 # Country flag images (128x128 PNG, 29 countries)
+├── flags/                 # Country flag images (128x128 PNG, 28 countries)
 ├── icons/                 # UI icons (theme toggle, palette, flag)
 ├── docs/                  # GitHub Pages homepage
 ├── specs/                 # Documentation (ARCHITECTURE, CHANGELOG, etc.)
@@ -35,14 +35,13 @@ aws-navbar-extension/
 ### 2. Content Script (main.js)
 - Injected into all AWS Console pages
 - Key data structures:
-  - `colors`: Maps region codes → country, default gradient, emoji
   - `langs`: Korean/Japanese region name translations
   - `domCache`: Cached DOM elements for performance
 - Key functions:
-  - `buildGradient()`: Builds CSS gradient from custom color config
   - `getCachedElement()`: Returns cached DOM element or queries and caches it
   - `removeNavbarBackground()`: Removes navbar background (for live toggle)
   - `removeRegionFlag()`: Removes flag element (for live toggle)
+  - `createSnowfall()`: Creates Christmas season snow effect (Dec 20-26)
 - Features:
   - Region detection via URL regex (handles `account-string.region.console.aws.amazon.com` format)
   - Navbar background color customization (default or custom)
@@ -55,15 +54,13 @@ aws-navbar-extension/
 - Settings management interface
 - Features:
   - Toggle switches for Background and Flag
-  - Region selector dropdown (30+ regions)
+  - Region selector dropdown (38 regions)
   - Color picker UI with 2-4 gradient colors
   - Real-time gradient preview
   - Reset to default per region
   - Apply button to save custom colors
   - Dark/Light theme switcher
   - Version display from manifest
-- Key data:
-  - `defaultColors`: Default gradient colors for all regions
 - Responsive design with theme support
 
 ### 4. Shared Utilities (utils.js)
@@ -101,16 +98,16 @@ aws-navbar-extension/
 ```
 
 ### 7. Static Resources
-- `flags/`: Country flag images (29 countries, 128x128 PNG)
+- `flags/`: Country flag images (28 countries, 128x128 PNG)
 - `icons/`: UI icons (theme toggle, palette, flag)
-- `colors.js`: Shared color data (38 regions)
+- `colors.js`: Shared color data (38 regions, `buildGradient()`, `getDefaultGradient()`)
 
 ## Features
 
 ### Region Visualization
 - 38 AWS regions with unique default color gradients
 - User can customize gradient colors per region (2-4 colors)
-- Region flags displayed next to the region selector (29 countries)
+- Region flags displayed next to the region selector (28 countries)
 - Automatic region detection from URL
 - Supports both standard URLs and account-specific URLs
 - Christmas season snow effect (Dec 20-26)

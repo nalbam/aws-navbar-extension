@@ -64,7 +64,8 @@ temp/
 # Extension specific
 .web-extension-id
 
-# Prompt
+# claude
+.claude/
 .prompt-*.md
 .prompt.md
 prompt-*.md
