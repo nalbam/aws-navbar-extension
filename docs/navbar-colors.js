@@ -110,30 +110,28 @@
       return;
     }
 
-    const gradient = buildGradient(regionData.colors);
+    // Same vivid theme as the extension: readable background behind white text.
+    const theme = getNavbarTheme(regionData.colors, 'vivid');
     const header = document.querySelector('.header');
 
     if (header) {
-      header.style.background = gradient;
+      header.style.background = theme.background;
       header.style.borderBottom = '1px solid rgba(255, 255, 255, 0.2)';
 
-      // Update text colors to white
       const logo = header.querySelector('.logo');
       const logoLink = logo ? logo.querySelector('a') : null;
       const navLinks = header.querySelectorAll('.nav a');
 
       if (logo) {
-        logo.style.color = '#ffffff';
+        logo.style.color = theme.foreground;
       }
       if (logoLink) {
-        logoLink.style.color = '#ffffff';
+        logoLink.style.color = theme.foreground;
       }
 
       navLinks.forEach(link => {
-        link.style.color = 'rgba(255, 255, 255, 0.9)';
+        link.style.color = theme.foreground;
       });
-
-      console.log(`Applied ${regionData.country} (${region}) gradient:`, gradient);
     }
   }
 
