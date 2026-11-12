@@ -191,14 +191,6 @@ input:checked + .slider:before {
   outline-offset: 2px;
 }
 
-/* Browsers without :has() (Firefox before 121) show the ring on any focus. */
-@supports not selector(:has(*)) {
-  .segmented:focus-within {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-  }
-}
-
 /* Divider */
 .divider {
   height: 1px;
