@@ -269,15 +269,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!currentRegion || !isValidRegion(currentRegion)) return;
 
     try {
+      const message = `Default colors restored for ${currentRegion}.`;
       const config = await getCurrentConfig();
-      if (config.customColors && config.customColors[currentRegion]) {
+      const stored = Boolean(config.customColors && config.customColors[currentRegion]);
+      if (stored) {
         delete config.customColors[currentRegion];
         if (Object.keys(config.customColors).length === 0) {
           delete config.customColors;
         }
-        saveConfig(config, `Default colors restored for ${currentRegion}.`);
+        // Shows the message after the save succeeds.
+        saveConfig(config, message);
       }
       await loadRegionColors(currentRegion);
+      // Nothing to save: the fields now show the defaults, which replaces any
+      // earlier error (for example, an invalid hex value).
+      if (!stored) showStatus(message, 'success');
     } catch (error) {
       showError('Failed to reset colors');
     }

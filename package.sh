@@ -18,20 +18,22 @@ ITEMS="icon.png colors.js utils.js main.js popup.html popup.js css flags icons"
 EXCLUDE="flags/README.md"
 
 mkdir -p target release
+# Staging directories for the packages, removed on success and on failure.
+WORK="$(mktemp -d)"
+trap 'rm -rf "${WORK}"' EXIT
 # The release step reads the version from target/VERSION.
 echo "${VERSION}" > target/VERSION
 
 # package <manifest> <zip file>
 package() {
-  local stage
-  stage="$(mktemp -d)"
+  local stage="${WORK}/$(basename "$2" .zip)"
+  mkdir "${stage}"
   # shellcheck disable=SC2086 # ITEMS is a word list
   cp -R ${ITEMS} "${stage}/"
   rm "${stage}/${EXCLUDE}"
   jq --arg version "${VERSION}" '.version = $version' "$1" > "${stage}/manifest.json"
   rm -f "$2"
   (cd "${stage}" && zip -qr "${ROOT}/$2" .)
-  rm -rf "${stage}"
   echo "+ $2"
 }
 
