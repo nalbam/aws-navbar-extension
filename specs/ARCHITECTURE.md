@@ -28,7 +28,7 @@ aws-navbar-extension/
 
 ### 1. Manifest (manifest.json)
 - Defines extension metadata, permissions, and resource access
-- Permissions: `activeTab`, `storage`
+- Permissions: `storage`
 - Host permissions: `*://*.console.aws.amazon.com/*`
 - Supports Manifest V3 specification (Chrome, Edge)
 - Manifest V2 (`manifest-v2.json`) for Firefox compatibility
@@ -164,7 +164,6 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 
 ### Security
 - Minimal permissions required:
-  - activeTab: For current tab manipulation
   - storage: For configuration storage
 - Host permissions limited to AWS Console domains
 - Input validation for color values
