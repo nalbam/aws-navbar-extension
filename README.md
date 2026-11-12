@@ -13,7 +13,7 @@
 * Custom color themes per region (2-4 colors)
 * Region flags next to the region selector and in the region menu
 * Works with the new AWS Console design and with the AWS account color
-* Works in every console language
+* Detects global services from the page title, independent of the console language text (checked in the Korean console)
 * Dark/Light popup theme, auto-save settings
 
 ## Installation
@@ -74,7 +74,7 @@ Subtle style (Seoul):
 * Clone the repository
 * Make changes to the source code
 * Test locally using the unpacked extension
-* Run the unit tests: `node --test 'tests/*.test.js'` (Node.js 20+, no dependencies)
+* Run the unit tests: `node --test 'tests/*.test.js'` (Node.js 22+, no dependencies)
 * After a change in `colors.js`, copy it to `docs/colors.js` (CI checks that they are equal)
 * Run `./package.sh` to create release packages (requires `jq`)
 * Submit pull requests for improvements

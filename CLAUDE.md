@@ -25,7 +25,7 @@ AWS Colorful Navbar is a browser extension that enhances AWS Console by displayi
 
 ### Tests
 ```bash
-node --test 'tests/*.test.js'  # Node.js 20+, no dependencies
+node --test 'tests/*.test.js'  # Node.js 22+ (glob support), no dependencies
 ```
 
 ### Packaging for Release

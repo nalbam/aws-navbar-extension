@@ -46,10 +46,10 @@ aws-navbar-extension/
 - Steps of `sync()`:
   1. `detectRegion(location.hostname, document.title)` (utils.js)
   2. `applyTheme()`: sets `--aws-navbar-bg`, `--aws-navbar-fg` and `--aws-navbar-accent` on the `nav` and adds the class `aws-navbar-themed`. One injected stylesheet (`#aws-navbar-styles`) uses these variables.
-  3. `markForeground()`: marks gray text and gray SVG shapes whose nearest painted ancestor is the navbar (`data-aws-navbar-color`, `-fill`, `-stroke`). The stylesheet gives marked elements the theme text color. Elements under another surface keep the AWS colors: menus, the search field (`#aws-unified-search-container`) and the AWS account color label. Colored items (logo smile, service icons, links) are not gray and are not marked.
+  3. `markForeground()`: marks gray text and gray SVG shapes whose nearest painted ancestor is the navbar (`data-aws-navbar-color`, `-fill`, `-stroke`). The stylesheet gives marked elements the theme text color. Elements under another surface keep the AWS colors: menus, the search field (`#aws-unified-search-container`) and the AWS account color label. A background color that cannot be parsed counts as a surface. Colored items (logo smile, service icons, links) are not gray and are not marked. The marks are measured with the theme class removed, so they follow the AWS colors and not the colors of earlier marks.
   4. `applyFlag()`: flag image before the region name in the region button. The image is decorative (`alt=""`, `aria-hidden`), because the button already names the region.
   5. `decorateRegionMenu()`: flag image before each region name in the region menu.
-  6. `createSnowfall()`: Christmas snow effect (Dec 20-26), in the theme text color.
+  6. `createSnowfall()`: Christmas snow effect (Dec 20-26), in the theme text color. Removed with the theme when the background is disabled.
 - Debug logging with `isDebug` flag
 
 #### AWS account color
@@ -133,7 +133,7 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 
 ### Region Detection
 - `detectRegion(hostname, title)`:
-  1. A page title that ends with `| Global` is a global service. The console runs global services on us-east-1 hosts, but it ends their titles with `| Global` in every console language (checked in the Korean console for IAM, CloudFront, Route 53, Billing and Organizations).
+  1. A page title that ends with `| Global` is a global service. The console runs global services on us-east-1 hosts, but it ends their titles with `| Global`. The suffix is not translated: the Korean console ends the titles of IAM, CloudFront, Route 53, Billing and Organizations with `| Global`. Other console languages are not checked.
   2. Else the region is the host name label before `.console.aws.amazon.com`: `<region>.console.aws.amazon.com` or `<account-alias>.<region>.console.aws.amazon.com`.
   3. Else no region: the extension does not change the page.
 
@@ -158,7 +158,7 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 
 ### Performance
 - One `sync()` reads the computed style of the navbar elements that are not under another surface (about 150 of about 950 elements in the navbar).
-- Measured in the Korean console (EC2 dashboard, Chrome, 2026-11-12), `sync()` with forced layout: median 0.6 ms, p90 1.6 ms. Right after AWS opens a menu (style recalculation): up to 8 ms. The previous version (2.2.2) applied once in 0.2 ms median and did not react to re-renders.
+- Measured in the Korean console (EC2 dashboard, Chrome, 2026-11-12), `sync()` with forced layout, 30 runs: median 0.8 ms, p90 1.8 ms, max 2.4 ms. Right after AWS opens a menu (style recalculation): up to 8 ms. The previous version (2.2.2) applied once in 0.2 ms median and did not react to re-renders.
 - Syncs are batched with `requestAnimationFrame`. A title observer reacts only to a title change, not to other `<head>` changes.
 - Debounced color preview updates in the popup (50ms delay)
 
@@ -201,7 +201,7 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 
 ### Tests
 ```bash
-node --test 'tests/*.test.js'   # Node.js 20+; no dependencies
+node --test 'tests/*.test.js'   # Node.js 22+ (glob support); no dependencies
 ```
 - `tests/colors.test.js`: every default region gradient and extreme custom colors keep a 4.5:1 contrast in both styles; every region has a flag image
 - `tests/utils.test.js`: region detection, config validation, region colors

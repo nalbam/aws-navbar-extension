@@ -16,7 +16,7 @@ Support for the new AWS Console design. The new navbar has a light background an
 ### Changed
 - The content script sets the navbar text and icon colors. Menus, the search field and the AWS account color label keep the AWS colors.
 - The content script re-applies the theme when AWS re-renders the navbar, when the page title changes and when the window is resized, instead of a single attempt with 3 retries
-- Global services are detected from the page title (`| Global`), in every console language. The Korean/Japanese region name table is removed; the Japanese entry used `jp` instead of the `lang` value `ja` and did not work.
+- Global services are detected from the page title suffix `| Global`, which the console does not translate (checked in the Korean console). The Korean/Japanese region name table is removed; the Japanese entry used `jp` instead of the `lang` value `ja` and did not work.
 - The region flag is decorative (`alt=""`, `aria-hidden`), so screen readers do not read an English country name inside the region button
 - The homepage header uses the same readable theme
 - Screenshots updated for the new console design

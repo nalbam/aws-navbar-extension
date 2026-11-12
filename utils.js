@@ -95,7 +95,8 @@ function getRegionColors(config, region) {
 
 // Return the region code that the console page shows, or null.
 // - Global services (IAM, CloudFront, ...) run on us-east-1 hosts, but the
-//   console ends their page title with "| Global" in every console language.
+//   console ends their page title with "| Global". The suffix is not
+//   translated: the Korean console shows "대시보드 | IAM | Global".
 // - Regional pages carry the region in the host name:
 //   <region>.console.aws.amazon.com or <account-alias>.<region>.console.aws.amazon.com
 function detectRegion(hostname, title) {

@@ -18,6 +18,7 @@ const SELECTORS = {
 
 const IDS = {
   STYLESHEET: 'aws-navbar-styles',
+  SNOW_STYLESHEET: 'aws-snow-styles',
   FLAG: 'aws-navbar-flag',
 };
 
@@ -76,12 +77,15 @@ function applyTheme(nav, region) {
   }
   ensureStylesheet();
   const theme = getNavbarTheme(getRegionColors(config, region), getNavbarStyle(config));
-  nav.classList.add(CLASSES.NAV);
   nav.dataset.awsNavbarStyle = theme.style;
   nav.style.setProperty('--aws-navbar-bg', theme.background);
   nav.style.setProperty('--aws-navbar-fg', theme.foreground);
   nav.style.setProperty('--aws-navbar-accent', theme.accent || 'none');
+  // Measure the AWS colors, not the theme colors of earlier marks: without
+  // the class, the mark rules do not apply. No paint happens in between.
+  nav.classList.remove(CLASSES.NAV);
   markForeground(nav);
+  nav.classList.add(CLASSES.NAV);
 }
 
 function clearTheme(nav) {
@@ -91,6 +95,7 @@ function clearTheme(nav) {
     nav.style.removeProperty(name);
   }
   setMarks(nav, new Map());
+  removeSnowfall(nav);
 }
 
 // Parse "rgb(r, g, b)" or "rgba(r, g, b, a)" into [r, g, b, a].
@@ -109,10 +114,12 @@ function isGray(value) {
   return Math.max(rgba[0], rgba[1], rgba[2]) - Math.min(rgba[0], rgba[1], rgba[2]) <= 24;
 }
 
+// A color that cannot be parsed (for example oklch()) counts as a surface,
+// so its text keeps the AWS colors.
 function hasOwnSurface(element, style) {
   if (style.backgroundImage !== 'none') return true;
   const background = parseCssColor(style.backgroundColor);
-  return (background !== null && background[3] > 0) || element.matches(SELECTORS.OWN_SURFACE);
+  return background === null || background[3] > 0 || element.matches(SELECTORS.OWN_SURFACE);
 }
 
 function hasOwnText(element) {
@@ -241,9 +248,34 @@ function isChristmasSeason() {
 
 function createSnowfall(nav) {
   if (!isChristmasSeason() || document.querySelector(SELECTORS.SNOW)) return;
+  ensureSnowStylesheet();
+  const container = document.createElement('div');
+  container.id = 'aws-snow-container';
+  container.setAttribute('aria-hidden', 'true');
+  const symbols = ['❄', '❅', '❆', '✻', '✼', '❉'];
+  for (let i = 0; i < CHRISTMAS.SNOWFLAKES; i++) {
+    const flake = document.createElement('span');
+    flake.className = `aws-snowflake ${Math.random() > 0.5 ? 'aws-snowflake-left' : 'aws-snowflake-right'}`;
+    flake.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    flake.style.cssText = `left:${Math.random() * 100}%;font-size:${8 + Math.random() * 10}px;` +
+      `animation-duration:${4 + Math.random() * 4}s;animation-delay:${Math.random() * 5}s;`;
+    container.appendChild(flake);
+  }
+  nav.style.position = 'relative';
+  nav.appendChild(container);
+}
 
+function removeSnowfall(nav) {
+  const container = nav.querySelector(SELECTORS.SNOW);
+  if (!container) return;
+  container.remove();
+  nav.style.removeProperty('position');
+}
+
+function ensureSnowStylesheet() {
+  if (document.getElementById(IDS.SNOW_STYLESHEET)) return;
   const style = document.createElement('style');
-  style.id = 'aws-snow-styles';
+  style.id = IDS.SNOW_STYLESHEET;
   style.textContent = `
     @keyframes aws-snowfall {
       0% { transform: translateY(-30px) translateX(0) rotate(0deg); opacity: 0; }
@@ -271,21 +303,6 @@ function createSnowfall(nav) {
     .aws-snowflake-right { animation: aws-snowfall-alt ease-in-out infinite; }
   `;
   document.head.appendChild(style);
-
-  const container = document.createElement('div');
-  container.id = 'aws-snow-container';
-  container.setAttribute('aria-hidden', 'true');
-  const symbols = ['❄', '❅', '❆', '✻', '✼', '❉'];
-  for (let i = 0; i < CHRISTMAS.SNOWFLAKES; i++) {
-    const flake = document.createElement('span');
-    flake.className = `aws-snowflake ${Math.random() > 0.5 ? 'aws-snowflake-left' : 'aws-snowflake-right'}`;
-    flake.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-    flake.style.cssText = `left:${Math.random() * 100}%;font-size:${8 + Math.random() * 10}px;` +
-      `animation-duration:${4 + Math.random() * 4}s;animation-delay:${Math.random() * 5}s;`;
-    container.appendChild(flake);
-  }
-  nav.style.position = 'relative';
-  nav.appendChild(container);
 }
 
 // ============================================
