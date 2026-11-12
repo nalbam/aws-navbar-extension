@@ -34,7 +34,11 @@ const MARKS = {
   STROKE: 'data-aws-navbar-stroke',
 };
 
-const CHRISTMAS = { MONTH: 11, START_DAY: 20, END_DAY: 26, SNOWFLAKES: 15 };
+const CHRISTMAS = {
+  MONTH: 11, START_DAY: 20, END_DAY: 26, SNOWFLAKES: 15,
+  // Set on the nav when the extension made it a containing block for the snow.
+  POSITION_MARK: 'data-aws-navbar-snow-position',
+};
 
 const isDebug = false;
 
@@ -264,7 +268,12 @@ function createSnowfall(nav) {
       `animation-duration:${4 + Math.random() * 4}s;animation-delay:${Math.random() * 5}s;`;
     container.appendChild(flake);
   }
-  nav.style.position = 'relative';
+  // The snow container is positioned against the nav. Change the nav only when
+  // AWS leaves it static: a sticky or fixed nav must keep its position.
+  if (getComputedStyle(nav).position === 'static') {
+    nav.style.position = 'relative';
+    nav.setAttribute(CHRISTMAS.POSITION_MARK, '');
+  }
   nav.appendChild(container);
 }
 
@@ -272,7 +281,10 @@ function removeSnowfall(nav) {
   const container = nav.querySelector(SELECTORS.SNOW);
   if (!container) return;
   container.remove();
-  nav.style.removeProperty('position');
+  if (nav.hasAttribute(CHRISTMAS.POSITION_MARK)) {
+    nav.style.removeProperty('position');
+    nav.removeAttribute(CHRISTMAS.POSITION_MARK);
+  }
 }
 
 function ensureSnowStylesheet() {
