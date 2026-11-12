@@ -186,12 +186,13 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 ./package.sh  # Creates release packages
 ```
 - **Version Management**: The `VERSION` file is the single source of truth for version numbers
-  - `manifest.json` version is automatically updated from `VERSION` during build
+  - `package.sh` writes the `VERSION` value into the `manifest.json` of each package. The manifests in the repository are not changed.
   - Do NOT manually edit version in manifest files
 - Generates two zip files in `./release/`:
   - `aws-navbar-extension-{version}.zip` (Manifest V3 for Chrome/Edge)
   - `aws-navbar-extension-{version}-mv2.zip` (Manifest V2 for Firefox)
-- Requires `jq` for JSON processing
+- Only the files that the extension uses are packaged (`flags/README.md` is not)
+- Requires `jq` and `zip`
 
 ### Tests
 ```bash

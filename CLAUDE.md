@@ -32,7 +32,7 @@ node --test  # Node.js 20+, finds tests/*.test.js; no dependencies
 ```bash
 ./package.sh  # Creates MV3 and MV2 zip files in ./release/
 ```
-Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
+Requires `jq` and `zip`. Writes the `VERSION` value into the packaged `manifest.json`; the repository manifests keep their version.
 
 ## Architecture
 

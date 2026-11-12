@@ -76,7 +76,7 @@ Subtle style (Seoul):
 * Test locally using the unpacked extension
 * Run the unit tests: `node --test` (Node.js 20+, no dependencies)
 * After a change in `colors.js`, copy it to `docs/colors.js` (CI checks that they are equal)
-* Run `./package.sh` to create release packages (requires `jq`)
+* Run `./package.sh` to create release packages (requires `jq` and `zip`)
 * Submit pull requests for improvements
 
 ## Contributing

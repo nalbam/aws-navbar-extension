@@ -35,8 +35,7 @@
     "default_title": "AWS Colorful Navbar"
   },
   "web_accessible_resources": [
-    "flags/*.png",
-    "icons/*.ico"
+    "flags/*.png"
   ],
   "icons": {
     "128": "icon.png"

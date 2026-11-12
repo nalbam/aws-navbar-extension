@@ -1,95 +1,39 @@
 #!/bin/bash
+# Build the release packages from the working tree:
+#   release/aws-navbar-extension-<VERSION>.zip      Manifest V3 (Chrome, Edge)
+#   release/aws-navbar-extension-<VERSION>-mv2.zip  Manifest V2 (Firefox)
+# The package version comes from VERSION. The working tree is not changed.
+# Requires: jq, zip.
+set -euo pipefail
 
-OS_NAME="$(uname | awk '{print tolower($0)}')"
+cd "$(dirname "$0")"
+ROOT="$(pwd)"
 
-SHELL_DIR=$(dirname $0)
+NAME="aws-navbar-extension"
+VERSION="$(cat VERSION)"
 
-RUN_PATH=${SHELL_DIR}
+# Files and directories that the extension uses. Each package gets its own
+# manifest.json. flags/README.md is documentation and is not packaged.
+ITEMS="icon.png colors.js utils.js main.js popup.html popup.js css flags icons"
+EXCLUDE="flags/README.md"
 
-REPOSITORY=${GITHUB_REPOSITORY}
+mkdir -p target release
+# The release step reads the version from target/VERSION.
+echo "${VERSION}" > target/VERSION
 
-USERNAME=${GITHUB_ACTOR}
-REPONAME=$(echo "${REPOSITORY}" | cut -d'/' -f2)
-
-################################################################################
-
-# command -v tput > /dev/null && TPUT=true
-TPUT=
-
-_echo() {
-  if [ "${TPUT}" != "" ] && [ "$2" != "" ]; then
-    echo -e "$(tput setaf $2)$1$(tput sgr0)"
-  else
-    echo -e "$1"
-  fi
+# package <manifest> <zip file>
+package() {
+  local stage
+  stage="$(mktemp -d)"
+  # shellcheck disable=SC2086 # ITEMS is a word list
+  cp -R ${ITEMS} "${stage}/"
+  rm "${stage}/${EXCLUDE}"
+  jq --arg version "${VERSION}" '.version = $version' "$1" > "${stage}/manifest.json"
+  rm -f "$2"
+  (cd "${stage}" && zip -qr "${ROOT}/$2" .)
+  rm -rf "${stage}"
+  echo "+ $2"
 }
 
-_result() {
-  echo
-  _echo "# $@" 4
-}
-
-_command() {
-  echo
-  _echo "$ $@" 3
-}
-
-_success() {
-  echo
-  _echo "+ $@" 2
-  exit 0
-}
-
-_error() {
-  echo
-  _echo "- $@" 1
-  exit 1
-}
-
-_replace() {
-  if [ "${OS_NAME}" == "darwin" ]; then
-    sed -i "" -e "$1" $2
-  else
-    sed -i -e "$1" $2
-  fi
-}
-
-_prepare() {
-  # chmod 755
-  find ./** | grep [.]sh | xargs chmod 755
-
-  # mkdir target
-  mkdir -p ${RUN_PATH}/target
-  mkdir -p ${RUN_PATH}/release
-}
-
-################################################################################
-
-_package() {
-  VERSION=$(cat ./VERSION)
-
-  echo $VERSION > ./target/VERSION
-
-  # Update version in manifest.json
-  cat ./manifest.json | jq '.version = $VERSION' --arg VERSION $VERSION > ./manifest.json.tmp
-  mv ./manifest.json.tmp ./manifest.json
-
-  ITEMS="manifest.json icon.png colors.js utils.js main.js popup.html popup.js css flags icons"
-
-  # mv3
-  zip -r ${RUN_PATH}/release/$REPONAME-$VERSION.zip $ITEMS
-
-  # mv2 (backup and restore manifest.json)
-  cp ./manifest.json ./manifest.json.bak
-  cat ./manifest-v2.json | jq '.version = $VERSION' --arg VERSION $VERSION > ./manifest.json
-  zip -r ${RUN_PATH}/release/$REPONAME-$VERSION-mv2.zip $ITEMS
-  mv ./manifest.json.bak ./manifest.json
-}
-
-################################################################################
-
-_prepare
-
-_package
-
-_success
+package manifest.json "release/${NAME}-${VERSION}.zip"
+package manifest-v2.json "release/${NAME}-${VERSION}-mv2.zip"
