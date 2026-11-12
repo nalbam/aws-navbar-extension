@@ -201,7 +201,7 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 
 ### Tests
 ```bash
-node --test 'tests/*.test.js'   # Node.js 22+ (glob support); no dependencies
+node --test   # Node.js 20+, finds tests/*.test.js; no dependencies
 ```
 - `tests/colors.test.js`: every default region gradient and extreme custom colors keep a 4.5:1 contrast in both styles; every region has a flag image
 - `tests/utils.test.js`: region detection, config validation, region colors

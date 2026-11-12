@@ -231,6 +231,9 @@ function decorateRegionMenu(nav) {
       if (!flag) {
         ensureStylesheet();
         name.prepend(createFlagImage(region, CLASSES.MENU_FLAG));
+      } else if (flag.src !== flagUrl(region)) {
+        // React can keep a menu row and change its region code.
+        flag.src = flagUrl(region);
       }
     }
   }

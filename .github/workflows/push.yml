@@ -28,7 +28,7 @@ jobs:
 
       - name: Unit tests
         run: |
-          node --test 'tests/*.test.js'
+          node --test
 
       - name: Package
         run: |

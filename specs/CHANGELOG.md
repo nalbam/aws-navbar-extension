@@ -11,7 +11,7 @@ Support for the new AWS Console design. The new navbar has a light background an
 - Readable navbar text: every gradient color has a contrast ratio of at least 4.5:1 with the text color (WCAG 2.x AA). Colors that are too light or too dark for the style are adjusted.
 - Popup: style selector, navbar preview with the readable colors, and a note when colors are adjusted
 - Flags in the region menu
-- Unit tests (`node --test 'tests/*.test.js'`) and a test workflow for pull requests
+- Unit tests (`node --test`) and a test workflow for pull requests
 
 ### Changed
 - The content script sets the navbar text and icon colors. Menus, the search field and the AWS account color label keep the AWS colors.
