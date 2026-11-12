@@ -1,340 +1,369 @@
-// colors.js is loaded before this script
+// Content script for the AWS Console.
+// colors.js and utils.js are loaded before this script.
+//
+// The script owns the navbar background and the text color drawn directly on it.
+// AWS renders the navbar with React and can re-render it at any time, so every
+// change goes through one idempotent sync() that a MutationObserver re-runs.
 
-// ============================================
-// Constants - DOM Selectors
-// ============================================
 const SELECTORS = {
+  NAV_CONTAINER_ID: 'awsc-navigation-container',
+  NAV: '#awsc-navigation-container header > nav',
   REGION_BUTTON: '[data-testid="awsc-nav-regions-menu-button"]',
-  REGION_BUTTON_SPAN: '[data-testid="awsc-nav-regions-menu-button"]>span',
-  NAV_ELEMENT: '#awsc-navigation-container>div>header>nav',
+  REGION_MENU: '[data-testid^="awsc-nav-more-menu-item-menu--regions"]',
+  // The search field draws its own surface (the input) beside its text, not
+  // behind it as an ancestor, so the whole field keeps the AWS colors.
+  OWN_SURFACE: '#aws-unified-search-container',
+  SNOW: '#aws-snow-container',
 };
 
-// ============================================
-// Constants - Configuration
-// ============================================
-const CONFIG = {
-  MAX_RETRY_COUNT: 3,
-  RETRY_DELAY_MS: 1000,
-  CHRISTMAS_START_DAY: 20,
-  CHRISTMAS_END_DAY: 26,
-  SNOWFLAKE_COUNT: 15,
+const IDS = {
+  STYLESHEET: 'aws-navbar-styles',
+  FLAG: 'aws-navbar-flag',
 };
 
-// Check if it's Christmas season
-function isChristmasSeason() {
-  const now = new Date();
-  const month = now.getMonth(); // 0-11
-  const day = now.getDate();
-  return month === 11 && day >= CONFIG.CHRISTMAS_START_DAY && day <= CONFIG.CHRISTMAS_END_DAY;
+const CLASSES = {
+  NAV: 'aws-navbar-themed',
+  MENU_FLAG: 'aws-navbar-menu-flag',
+};
+
+// Marks on elements that sit directly on the themed background.
+const MARKS = {
+  COLOR: 'data-aws-navbar-color',
+  FILL: 'data-aws-navbar-fill',
+  STROKE: 'data-aws-navbar-stroke',
+};
+
+const CHRISTMAS = { MONTH: 11, START_DAY: 20, END_DAY: 26, SNOWFLAKES: 15 };
+
+const isDebug = false;
+
+let config = {};
+let containerObserver = null;
+let syncScheduled = false;
+
+// ============================================
+// Stylesheet
+// ============================================
+
+function ensureStylesheet() {
+  if (document.getElementById(IDS.STYLESHEET)) return;
+  const nav = `nav.${CLASSES.NAV}`;
+  const style = document.createElement('style');
+  style.id = IDS.STYLESHEET;
+  style.textContent = `
+    ${nav} { background: var(--aws-navbar-bg) !important; }
+    ${nav}[data-aws-navbar-style="subtle"] {
+      background: var(--aws-navbar-accent) bottom / 100% ${ACCENT_BAND_HEIGHT} no-repeat, var(--aws-navbar-bg) !important;
+    }
+    ${nav} [${MARKS.COLOR}] { color: var(--aws-navbar-fg) !important; }
+    ${nav} [${MARKS.FILL}] { fill: var(--aws-navbar-fg) !important; }
+    ${nav} [${MARKS.STROKE}] { stroke: var(--aws-navbar-fg) !important; }
+    #${IDS.FLAG} { display: inline-flex; align-items: center; margin-right: 0.5em; line-height: 0; }
+    #${IDS.FLAG} img { width: 20px; height: 20px; }
+    .${CLASSES.MENU_FLAG} { width: 16px; height: 16px; margin-right: 6px; vertical-align: -3px; }
+  `;
+  document.head.appendChild(style);
 }
 
-// Create snowfall effect on navbar
-function createSnowfall(navElement) {
-  if (!isChristmasSeason()) return;
+// ============================================
+// Navbar theme
+// ============================================
 
-  // Prevent duplicate snow containers
-  if (document.getElementById('aws-snow-container')) return;
+function applyTheme(nav, region) {
+  if (!region || config.background === 'disabled') {
+    clearTheme(nav);
+    return;
+  }
+  ensureStylesheet();
+  const theme = getNavbarTheme(getRegionColors(config, region), getNavbarStyle(config));
+  nav.classList.add(CLASSES.NAV);
+  nav.dataset.awsNavbarStyle = theme.style;
+  nav.style.setProperty('--aws-navbar-bg', theme.background);
+  nav.style.setProperty('--aws-navbar-fg', theme.foreground);
+  nav.style.setProperty('--aws-navbar-accent', theme.accent || 'none');
+  markForeground(nav);
+}
 
-  // Add snow container
-  const snowContainer = document.createElement('div');
-  snowContainer.id = 'aws-snow-container';
-  snowContainer.style.cssText = `
-    position: absolute;
-    top: -30px;
-    left: 0;
-    width: 100%;
-    height: calc(100% + 30px);
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 1000;
-  `;
+function clearTheme(nav) {
+  nav.classList.remove(CLASSES.NAV);
+  delete nav.dataset.awsNavbarStyle;
+  for (const name of ['--aws-navbar-bg', '--aws-navbar-fg', '--aws-navbar-accent']) {
+    nav.style.removeProperty(name);
+  }
+  setMarks(nav, new Map());
+}
 
-  // Add CSS animation - more natural snowfall with gentle sway
+// Parse "rgb(r, g, b)" or "rgba(r, g, b, a)" into [r, g, b, a].
+function parseCssColor(value) {
+  const match = /^rgba?\(([^)]+)\)$/.exec(value);
+  if (!match) return null;
+  const parts = match[1].split(/[\s,/]+/).filter(Boolean).map(Number);
+  return [parts[0], parts[1], parts[2], parts.length > 3 ? parts[3] : 1];
+}
+
+// Gray text and icons belong to the navbar theme. Colored ones (links, logo
+// smile, badges) carry their own meaning and are left as AWS draws them.
+function isGray(value) {
+  const rgba = parseCssColor(value);
+  if (!rgba || rgba[3] === 0) return false;
+  return Math.max(rgba[0], rgba[1], rgba[2]) - Math.min(rgba[0], rgba[1], rgba[2]) <= 24;
+}
+
+function hasOwnSurface(element, style) {
+  if (style.backgroundImage !== 'none') return true;
+  const background = parseCssColor(style.backgroundColor);
+  return (background !== null && background[3] > 0) || element.matches(SELECTORS.OWN_SURFACE);
+}
+
+function hasOwnText(element) {
+  for (const node of element.childNodes) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) return true;
+  }
+  return false;
+}
+
+// Mark gray text and SVG shapes whose nearest painted ancestor is the navbar.
+// Elements under another surface (menus, search field, account color label)
+// keep the AWS colors. Subtrees under another surface are skipped.
+function markForeground(nav) {
+  const marks = new Map();
+  const walker = document.createTreeWalker(nav, NodeFilter.SHOW_ELEMENT, {
+    acceptNode(element) {
+      if (element.matches(SELECTORS.SNOW)) return NodeFilter.FILTER_REJECT;
+      return hasOwnSurface(element, getComputedStyle(element))
+        ? NodeFilter.FILTER_REJECT
+        : NodeFilter.FILTER_ACCEPT;
+    },
+  });
+  for (let element = walker.nextNode(); element; element = walker.nextNode()) {
+    const style = getComputedStyle(element);
+    const names = [];
+    if (element instanceof SVGElement) {
+      if (element.tagName !== 'svg') {
+        if (isGray(style.fill)) names.push(MARKS.FILL);
+        if (isGray(style.stroke)) names.push(MARKS.STROKE);
+      }
+    } else if (hasOwnText(element) && isGray(style.color)) {
+      names.push(MARKS.COLOR);
+    }
+    if (names.length > 0) marks.set(element, names);
+  }
+  setMarks(nav, marks);
+}
+
+// Apply the new marks and remove marks that no longer apply.
+function setMarks(nav, marks) {
+  const selector = Object.values(MARKS).map(name => `[${name}]`).join(',');
+  for (const element of nav.querySelectorAll(selector)) {
+    const names = marks.get(element) || [];
+    for (const name of Object.values(MARKS)) {
+      if (!names.includes(name)) element.removeAttribute(name);
+    }
+  }
+  for (const [element, names] of marks) {
+    for (const name of names) element.setAttribute(name, '');
+  }
+}
+
+// ============================================
+// Flags
+// ============================================
+
+function flagUrl(region) {
+  return chrome.runtime.getURL(`flags/${colors[region].country}.png`);
+}
+
+function createFlagImage(region, className) {
+  const image = document.createElement('img');
+  image.src = flagUrl(region);
+  image.alt = '';
+  image.setAttribute('aria-hidden', 'true');
+  if (className) image.className = className;
+  return image;
+}
+
+// Flag before the region name in the navbar region button.
+// The button already names the region, so the flag is decorative.
+function applyFlag(nav, region) {
+  const regionButton = nav.querySelector(SELECTORS.REGION_BUTTON);
+  const existing = document.getElementById(IDS.FLAG);
+  if (!region || config.flag === 'disabled' || !regionButton) {
+    if (existing) existing.remove();
+    return;
+  }
+  const url = flagUrl(region);
+  if (existing && existing.nextElementSibling === regionButton && existing.firstElementChild.src === url) {
+    return;
+  }
+  if (existing) existing.remove();
+
+  ensureStylesheet();
+  const container = document.createElement('span');
+  container.id = IDS.FLAG;
+  container.setAttribute('aria-hidden', 'true');
+  container.appendChild(createFlagImage(region));
+  regionButton.parentNode.insertBefore(container, regionButton);
+}
+
+// Flags before each region name in the region menu.
+// Menu item: a > span > [span name, span code]
+function decorateRegionMenu(nav) {
+  const showFlags = config.flag !== 'disabled';
+  for (const menu of nav.querySelectorAll(SELECTORS.REGION_MENU)) {
+    for (const link of menu.querySelectorAll('a')) {
+      const label = link.firstElementChild;
+      const name = label && label.firstElementChild;
+      const code = label && label.lastElementChild;
+      if (!name || name === code) continue;
+      const region = code.textContent.trim();
+      const flag = name.querySelector(`.${CLASSES.MENU_FLAG}`);
+      if (!showFlags || !isValidRegion(region)) {
+        if (flag) flag.remove();
+        continue;
+      }
+      if (!flag) {
+        ensureStylesheet();
+        name.prepend(createFlagImage(region, CLASSES.MENU_FLAG));
+      }
+    }
+  }
+}
+
+// ============================================
+// Christmas snow (Dec 20-26)
+// ============================================
+
+function isChristmasSeason() {
+  const now = new Date();
+  return now.getMonth() === CHRISTMAS.MONTH &&
+    now.getDate() >= CHRISTMAS.START_DAY && now.getDate() <= CHRISTMAS.END_DAY;
+}
+
+function createSnowfall(nav) {
+  if (!isChristmasSeason() || document.querySelector(SELECTORS.SNOW)) return;
+
   const style = document.createElement('style');
   style.id = 'aws-snow-styles';
   style.textContent = `
     @keyframes aws-snowfall {
-      0% {
-        transform: translateY(-30px) translateX(0) rotate(0deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      50% {
-        transform: translateY(25px) translateX(10px) rotate(180deg);
-        opacity: 0.9;
-      }
-      80% {
-        opacity: 0.7;
-      }
-      100% {
-        transform: translateY(80px) translateX(-5px) rotate(360deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(-30px) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      50% { transform: translateY(25px) translateX(10px) rotate(180deg); opacity: 0.9; }
+      80% { opacity: 0.7; }
+      100% { transform: translateY(80px) translateX(-5px) rotate(360deg); opacity: 0; }
     }
     @keyframes aws-snowfall-alt {
-      0% {
-        transform: translateY(-30px) translateX(0) rotate(0deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      50% {
-        transform: translateY(25px) translateX(-10px) rotate(-180deg);
-        opacity: 0.9;
-      }
-      80% {
-        opacity: 0.7;
-      }
-      100% {
-        transform: translateY(80px) translateX(5px) rotate(-360deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(-30px) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      50% { transform: translateY(25px) translateX(-10px) rotate(-180deg); opacity: 0.9; }
+      80% { opacity: 0.7; }
+      100% { transform: translateY(80px) translateX(5px) rotate(-360deg); opacity: 0; }
+    }
+    #aws-snow-container {
+      position: absolute; top: -30px; left: 0; width: 100%; height: calc(100% + 30px);
+      overflow: hidden; pointer-events: none; z-index: 1000;
     }
     .aws-snowflake {
-      position: absolute;
-      top: 0;
-      color: white;
-      text-shadow: 0 0 4px rgba(255,255,255,0.9);
-      user-select: none;
-      will-change: transform, opacity;
+      position: absolute; top: 0; user-select: none; will-change: transform, opacity;
+      color: var(--aws-navbar-fg, #ffffff);
     }
-    .aws-snowflake-left {
-      animation: aws-snowfall ease-in-out infinite;
-    }
-    .aws-snowflake-right {
-      animation: aws-snowfall-alt ease-in-out infinite;
-    }
+    .aws-snowflake-left { animation: aws-snowfall ease-in-out infinite; }
+    .aws-snowflake-right { animation: aws-snowfall-alt ease-in-out infinite; }
   `;
   document.head.appendChild(style);
 
-  // Create snowflakes with varied properties using DocumentFragment
-  const snowflakes = ['❄', '❅', '❆', '✻', '✼', '❉'];
-  const snowFragment = document.createDocumentFragment();
-
-  for (let i = 0; i < CONFIG.SNOWFLAKE_COUNT; i++) {
+  const container = document.createElement('div');
+  container.id = 'aws-snow-container';
+  container.setAttribute('aria-hidden', 'true');
+  const symbols = ['❄', '❅', '❆', '✻', '✼', '❉'];
+  for (let i = 0; i < CHRISTMAS.SNOWFLAKES; i++) {
     const flake = document.createElement('span');
-    const isLeftSway = Math.random() > 0.5;
-    const left = Math.random() * 100;
-    const fontSize = 8 + Math.random() * 10;
-    const duration = 4 + Math.random() * 4;
-    const delay = Math.random() * 5;
-
-    flake.className = `aws-snowflake ${isLeftSway ? 'aws-snowflake-left' : 'aws-snowflake-right'}`;
-    flake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
-    // Batch style assignments using cssText (single style recalculation)
-    flake.style.cssText = `left:${left}%;font-size:${fontSize}px;animation-duration:${duration}s;animation-delay:${delay}s;`;
-    snowFragment.appendChild(flake);
+    flake.className = `aws-snowflake ${Math.random() > 0.5 ? 'aws-snowflake-left' : 'aws-snowflake-right'}`;
+    flake.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    flake.style.cssText = `left:${Math.random() * 100}%;font-size:${8 + Math.random() * 10}px;` +
+      `animation-duration:${4 + Math.random() * 4}s;animation-delay:${Math.random() * 5}s;`;
+    container.appendChild(flake);
   }
-  snowContainer.appendChild(snowFragment);
-
-  // Make nav position relative for absolute positioning of snow
-  navElement.style.position = 'relative';
-  navElement.appendChild(snowContainer);
-
-  if (isDebug) console.log('🎄 Christmas snow effect enabled!');
+  nav.style.position = 'relative';
+  nav.appendChild(container);
 }
-
-const langs = {
-  'ko': {
-    '글로벌': 'Global',
-  },
-  'jp': {
-    'グローバル': 'Global',
-  },
-}
-
-const isDebug = false;
-
-// DOM element cache to avoid repeated querySelector calls
-const domCache = {
-  navElement: null,
-  regionButton: null,
-  regionButtonSpan: null,
-};
-
-// Get cached DOM element or query and cache it
-function getCachedElement(key, selector) {
-  if (!domCache[key]) {
-    domCache[key] = document.querySelector(selector);
-  }
-  return domCache[key];
-}
-
-// Note: Validation functions (isValidHexColor, isValidRegion, validateConfig)
-// are loaded from utils.js
 
 // ============================================
-// Region Detection Utilities
+// Sync
 // ============================================
 
-// Extract region code from AWS Console URL
-function extractRegionFromUrl() {
-  const re = /^https:\/\/([a-z0-9-]+(?:\.[a-z0-9-]+)*)?\.?console\.aws\.amazon\.com\/.*/;
-  const match = re.exec(window.location.href);
-  if (match && match[1]) {
-    const hostPart = match[1];
-    const lastDotIndex = hostPart.lastIndexOf('.');
-    return lastDotIndex !== -1 ? hostPart.substring(lastDotIndex + 1) : hostPart;
-  }
-  return null;
+function sync() {
+  syncScheduled = false;
+  const nav = document.querySelector(SELECTORS.NAV);
+  if (!nav) return;
+  const region = detectRegion(location.hostname, document.title);
+  if (isDebug) console.log(`[aws-navbar] sync region=${region}`);
+
+  // Our own DOM writes must not trigger another sync.
+  if (containerObserver) containerObserver.disconnect();
+  applyTheme(nav, region);
+  applyFlag(nav, region);
+  decorateRegionMenu(nav);
+  if (region && config.background !== 'disabled') createSnowfall(nav);
+  observeContainer();
 }
 
-// Translate city name based on language
-function translateCity(city) {
-  const lang = document.documentElement.lang;
-  if (langs.hasOwnProperty(lang) && langs[lang].hasOwnProperty(city)) {
-    return langs[lang][city];
-  }
-  return city;
+function scheduleSync() {
+  if (syncScheduled) return;
+  syncScheduled = true;
+  requestAnimationFrame(sync);
 }
 
-// Get current region from URL and city element
-function getCurrentRegion() {
-  const cityElement = getCachedElement('regionButtonSpan', SELECTORS.REGION_BUTTON_SPAN);
-  if (!cityElement) return null;
-
-  const city = translateCity(cityElement.innerText);
-  if (city === 'Global') return 'global';
-
-  return extractRegionFromUrl();
+function observeContainer() {
+  const container = document.getElementById(SELECTORS.NAV_CONTAINER_ID);
+  if (!container) return;
+  if (!containerObserver) containerObserver = new MutationObserver(scheduleSync);
+  containerObserver.observe(container, { childList: true, subtree: true, characterData: true });
 }
 
-// Get background gradient for region
-function getBackgroundForRegion(config, region) {
-  if (config['customColors'] && config['customColors'][region]) {
-    return buildGradient(config['customColors'][region]);
-  }
-  return getDefaultGradient(region);
-}
-
-// Remove navbar background color
-function removeNavbarBackground() {
-  const navElement = getCachedElement('navElement', SELECTORS.NAV_ELEMENT);
-  if (navElement) {
-    navElement.style.background = '';
-    if (isDebug) console.log('Removed navbar background');
-  }
-}
-
-// Apply navbar background color
-// @param {Object} config - Configuration object
-// @param {string} region - AWS region code (optional, will detect if not provided)
-// @param {boolean} withSnowfall - Whether to apply snowfall effect (default: false)
-function applyNavbarBackground(config, region = null, withSnowfall = false) {
-  // Get region if not provided (for live updates)
-  const targetRegion = region || getCurrentRegion();
-  if (!targetRegion || !colors.hasOwnProperty(targetRegion)) return;
-
-  if (config['background'] === 'disabled') {
-    removeNavbarBackground();
+// The console can render the navbar after this script runs.
+function whenContainerExists(callback) {
+  if (document.getElementById(SELECTORS.NAV_CONTAINER_ID)) {
+    callback();
     return;
   }
-
-  const navElement = getCachedElement('navElement', SELECTORS.NAV_ELEMENT);
-  if (navElement) {
-    navElement.style.background = getBackgroundForRegion(config, targetRegion);
-    if (withSnowfall) {
-      createSnowfall(navElement);
+  const observer = new MutationObserver(() => {
+    if (document.getElementById(SELECTORS.NAV_CONTAINER_ID)) {
+      observer.disconnect();
+      callback();
     }
-    if (isDebug) console.log(`Applied background for ${targetRegion}`);
-  }
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
 }
 
-// Listen for storage changes (live update)
+// Global services set "| Global" in the page title after the first render.
+// The head also receives style elements, so only a title change schedules a sync.
+function observeTitle() {
+  let lastTitle = document.title;
+  new MutationObserver(() => {
+    if (document.title === lastTitle) return;
+    lastTitle = document.title;
+    scheduleSync();
+  }).observe(document.head, { childList: true, subtree: true, characterData: true });
+}
+
+// ============================================
+// Start
+// ============================================
+
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'local' && changes.config) {
-    try {
-      const newConfig = validateConfig(changes.config.newValue);
-      const region = getCurrentRegion();
-      if (isDebug) console.log('Config changed, applying updates...');
-
-      // Live update background (without snowfall - already created on init)
-      applyNavbarBackground(newConfig);
-
-      // Live update flag
-      if (region && colors.hasOwnProperty(region)) {
-        insertRegionFlag(newConfig, region);
-      }
-    } catch (error) {
-      console.error('Error applying config changes:', error);
-    }
+    config = validateConfig(changes.config.newValue);
+    scheduleSync();
   }
 });
 
-// Remove country flag from navbar
-function removeRegionFlag() {
-  const existingFlag = document.getElementById('aws-navbar-flag');
-  if (existingFlag) {
-    existingFlag.remove();
-    if (isDebug) console.log('Removed region flag');
-  }
-}
-
-// Insert country flag before region button
-function insertRegionFlag(config, region) {
-  // Remove existing flag first to prevent duplicates
-  removeRegionFlag();
-
-  if (config['flag'] === 'disabled') return;
-
-  const regionButton = getCachedElement('regionButton', SELECTORS.REGION_BUTTON);
-  if (regionButton && regionButton.parentNode) {
-    const flagUrl = chrome.runtime.getURL(`flags/${colors[region]['country']}.png`);
-    const flagContainer = document.createElement('span');
-    flagContainer.id = 'aws-navbar-flag';
-    flagContainer.style.cssText = 'line-height:0;margin-right:0.5em;';
-
-    const flagImg = document.createElement('img');
-    flagImg.src = flagUrl;
-    flagImg.style.cssText = 'width:20px;height:20px;';
-    flagImg.alt = colors[region]['name'];
-
-    // Handle image load error - show emoji fallback
-    flagImg.onerror = () => {
-      flagContainer.textContent = colors[region]['emoji'] || '🌐';
-      flagContainer.style.cssText = 'margin-right:0.5em;font-size:16px;';
-      if (isDebug) console.log(`Flag image failed to load for ${region}, using emoji fallback`);
-    };
-
-    flagContainer.appendChild(flagImg);
-    regionButton.parentNode.insertBefore(flagContainer, regionButton);
-  }
-}
-
-// Initialize AWS Console customization with retry mechanism
-function initializeAWS(config, retryCount = 0) {
-  const cityElement = document.querySelector(SELECTORS.REGION_BUTTON_SPAN);
-  if (!cityElement) {
-    if (retryCount < CONFIG.MAX_RETRY_COUNT) {
-      console.log(`Region selector not found, retrying... (${retryCount + 1}/${CONFIG.MAX_RETRY_COUNT})`);
-      setTimeout(() => initializeAWS(config, retryCount + 1), CONFIG.RETRY_DELAY_MS);
-      return;
-    }
-    console.error(`Region selector not found after ${CONFIG.MAX_RETRY_COUNT} retries`);
-    return;
-  }
-
-  const region = getCurrentRegion();
-  if (isDebug) console.log(`region: ${region}`);
-
-  if (region && colors.hasOwnProperty(region)) {
-    applyNavbarBackground(config, region, true); // withSnowfall = true on init
-    insertRegionFlag(config, region);
-  }
-}
-
-// Load config and initialize
 chrome.storage.local.get('config', (result) => {
-  try {
-    const config = validateConfig(result.config);
-    if (isDebug) console.log(`config: ${JSON.stringify(config, null, 2)}`);
-    initializeAWS(config);
-  } catch (error) {
-    console.error('Error initializing AWS navbar:', error);
-    // Attempt initialization with empty config as fallback
-    initializeAWS({});
-  }
+  config = validateConfig(result.config);
+  whenContainerExists(() => {
+    observeTitle();
+    // The more menu collapses at small widths without a DOM change.
+    window.addEventListener('resize', debounce(scheduleSync, 150));
+    sync();
+  });
 });
