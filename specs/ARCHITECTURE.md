@@ -60,11 +60,12 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 - Features:
   - Toggle switches for Background and Flag
   - Navbar style selector (Vivid / Subtle)
-  - Region selector dropdown (34 regions and Global)
+  - Region selector dropdown (34 regions and Global). Keyboard: arrows, Home/End, Enter/Space to select, Escape or Tab to close
   - Color picker UI with 2-4 gradient colors
   - Real-time navbar preview with the readable theme colors, and a note when colors are adjusted
   - Reset to default per region
-  - Apply button to save custom colors
+  - Apply button to save custom colors. An invalid hex value blocks Apply.
+  - Status message (`role="status"`) for applied, reset and error results
   - Dark/Light theme switcher
   - Version display from manifest
 - Responsive design with theme support
@@ -172,13 +173,13 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 - Visual feedback for actions
 - Smooth transitions
 - Responsive interface
-- Accessible UI with ARIA labels and roles
+- Accessible UI: ARIA labels and roles, visible keyboard focus, text contrast of 4.5:1 or more
 
 ### Error Handling
 - Config values are validated; invalid values are dropped and the defaults apply
 - Color validation (hex format)
 - The content script does nothing on pages without a known region or without the AWS navbar
-- Clear error messages with visual feedback in the popup
+- Error messages in the popup status message; they stay until the next result
 
 ## Development
 
