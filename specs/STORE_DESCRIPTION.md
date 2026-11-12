@@ -36,7 +36,7 @@ AWS Colorful Navbar transforms your AWS Console experience with clear visual ind
 
 🏳️ Regional Flags
 • Country flags appear next to the region selector and in the region menu
-• 29 countries and 38+ AWS regions supported
+• All 34 commercial AWS regions (27 countries) and Global supported
 
 ⚡ Features
 • Real-time color updates
@@ -95,7 +95,7 @@ AWS Colorful Navbar는 명확한 시각적 표시로 AWS 콘솔 경험을 개선
 
 🏳️ 리전 국기
 • 리전 선택기 옆과 리전 메뉴에 국기 표시
-• 29개국 38개 이상 AWS 리전 지원
+• 모든 AWS 상용 리전 34개(27개국)와 Global 지원
 
 ⚡ 주요 기능
 • 실시간 색상 업데이트
