@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.3] - 2026-11-13
+
+### Changed
+- Firefox: the minimum version is now 140 (Firefox for Android: 142). These are the first versions that support `browser_specific_settings.gecko.data_collection_permissions`, so Firefox Add-ons no longer reports compatibility warnings for it.
+
+### Removed
+- The popup focus ring fallback for browsers without `:has()` (it was for Firefox before 121).
+
 ## [2.3.2] - 2026-11-13
 
 Permission and package cleanup after the Chrome Web Store review, and popup accessibility fixes.
