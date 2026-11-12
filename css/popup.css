@@ -137,6 +137,46 @@ input:checked + .slider:before {
   transform: translateX(20px);
 }
 
+/* Segmented control (navbar style) */
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.segment input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.segment span {
+  display: block;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--text-color);
+  background-color: var(--input-bg);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.segment + .segment span {
+  border-left: 1px solid var(--border-color);
+}
+
+.segment input:checked + span {
+  background-color: var(--accent-color);
+  color: #16191f;
+  font-weight: 600;
+}
+
+.segment input:focus-visible + span {
+  outline: 2px solid var(--accent-color);
+  outline-offset: -2px;
+}
+
 /* Divider */
 .divider {
   height: 1px;
@@ -280,10 +320,34 @@ input:checked + .slider:before {
   margin-bottom: 12px;
 }
 
-.color-preview {
-  height: 32px;
+/* Navbar preview: same background and text color as the AWS Console navbar */
+.navbar-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 12px;
   border-radius: var(--border-radius);
-  background: linear-gradient(to right, #ccc, #888);
+  font-size: 13px;
+}
+
+.navbar-preview-logo {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.5px;
+}
+
+.navbar-preview-region {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contrast-note {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--text-color);
+  opacity: 0.75;
 }
 
 /* Color Inputs */

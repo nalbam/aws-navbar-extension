@@ -2,6 +2,7 @@
 
 let currentRegion = null;
 let currentColors = [];
+let currentStyle = DEFAULT_NAVBAR_STYLE;
 let cachedConfig = null;
 
 // Debounced preview update for performance (50ms delay)
@@ -85,6 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Set checkbox states
       document.getElementById('background').checked = cachedConfig['background'] !== 'disabled';
       document.getElementById('flag').checked = cachedConfig['flag'] !== 'disabled';
+
+      // Set navbar style
+      currentStyle = getNavbarStyle(validateConfig(cachedConfig));
+      document.querySelector(`input[name="style"][value="${currentStyle}"]`).checked = true;
     } catch (error) {
       console.error('Error initializing settings:', error);
     }
@@ -101,6 +106,22 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const config = await getCurrentConfig();
         config[id] = document.getElementById(id).checked ? 'enabled' : 'disabled';
+        saveConfig(config);
+      } catch (error) {
+        showError('Failed to save settings');
+      }
+    });
+  });
+
+  // Navbar style (auto save)
+  document.querySelectorAll('input[name="style"]').forEach(input => {
+    input.addEventListener('change', async () => {
+      if (!input.checked) return;
+      currentStyle = input.value;
+      if (currentRegion) updatePreview();
+      try {
+        const config = await getCurrentConfig();
+        config.style = currentStyle;
         saveConfig(config);
       } catch (error) {
         showError('Failed to save settings');
@@ -266,21 +287,7 @@ async function loadRegionColors(region) {
   }
 
   const config = await getCurrentConfig();
-
-  // Check if custom colors exist for this region
-  if (config.customColors && config.customColors[region]) {
-    const custom = config.customColors[region];
-    currentColors = [custom.color1, custom.color2, custom.color3, custom.color4]
-      .filter(c => c && isValidHexColor(c));
-  } else {
-    // Use default colors from shared colors.js
-    currentColors = [...colors[region].colors];
-  }
-
-  // Ensure at least 2 colors
-  if (currentColors.length < 2) {
-    currentColors = [...colors[region].colors];
-  }
+  currentColors = getRegionColors(validateConfig(config), region);
 
   renderColorInputs();
   updatePreview();
@@ -370,9 +377,18 @@ function renderColorInputs() {
   addBtn.classList.toggle('disabled', isMaxColors);
 }
 
+// Show the navbar as the content script draws it: the style's readable
+// background and text color, not the raw picker colors.
 function updatePreview() {
+  const theme = getNavbarTheme(currentColors, currentStyle);
   const preview = document.getElementById('color-preview');
-  preview.style.background = buildGradient(currentColors);
+  preview.style.background = theme.accent
+    ? `${theme.accent} bottom / 100% ${ACCENT_BAND_HEIGHT} no-repeat, ${theme.background}`
+    : theme.background;
+  preview.style.color = theme.foreground;
+  document.getElementById('preview-flag').src = `flags/${colors[currentRegion].country}.png`;
+  document.getElementById('preview-name').textContent = colors[currentRegion].name;
+  document.getElementById('contrast-note').hidden = !theme.adjusted;
 }
 
 function updateThemeIcon(theme) {
