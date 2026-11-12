@@ -60,9 +60,6 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 - Reset to default per region
 - Theme toggle with localStorage persistence
 
-**Background Script (`background.js`)**
-- Minimal initialization on extension install
-
 ### Storage
 
 | Storage Type | Purpose |

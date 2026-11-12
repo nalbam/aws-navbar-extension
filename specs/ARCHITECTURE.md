@@ -11,7 +11,6 @@ aws-navbar-extension/
 ├── colors.js              # Region flag colors and navbar themes (shared)
 ├── utils.js               # Config, region color and region detection helpers (shared)
 ├── main.js                # Content script (injected into AWS Console)
-├── background.js          # Background service worker
 ├── popup.html             # Settings popup UI
 ├── popup.js               # Popup logic with color customization
 ├── css/popup.css          # Popup styles
@@ -80,11 +79,7 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
   - `detectRegion()`: Region shown by the console page (see Region Detection)
   - `debounce()`: Limits function execution rate
 
-### 5. Background Script (background.js)
-- Minimal initialization on extension install
-- Local storage initialization
-
-### 6. Configuration Storage
+### 5. Configuration Storage
 - `chrome.storage.local.config`: Feature settings and custom colors
 - `localStorage.theme`: Theme preference (dark/light)
 - Config structure:
@@ -105,7 +100,7 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 }
 ```
 
-### 7. Static Resources
+### 6. Static Resources
 - `flags/`: Country flag images (28 countries, 128x128 PNG)
 - `icons/`: UI icons (theme toggle, palette, flag)
 - `colors.js`: Shared color data (38 regions) and navbar themes (`getNavbarTheme()`)
