@@ -294,17 +294,20 @@ function createSnowfall(nav) {
 
 function sync() {
   syncScheduled = false;
-  const nav = document.querySelector(SELECTORS.NAV);
-  if (!nav) return;
-  const region = detectRegion(location.hostname, document.title);
-  if (isDebug) console.log(`[aws-navbar] sync region=${region}`);
-
   // Our own DOM writes must not trigger another sync.
   if (containerObserver) containerObserver.disconnect();
-  applyTheme(nav, region);
-  applyFlag(nav, region);
-  decorateRegionMenu(nav);
-  if (region && config.background !== 'disabled') createSnowfall(nav);
+
+  // The container can exist before React renders the nav inside it;
+  // the container observer then runs sync again.
+  const nav = document.querySelector(SELECTORS.NAV);
+  if (nav) {
+    const region = detectRegion(location.hostname, document.title);
+    if (isDebug) console.log(`[aws-navbar] sync region=${region}`);
+    applyTheme(nav, region);
+    applyFlag(nav, region);
+    decorateRegionMenu(nav);
+    if (region && config.background !== 'disabled') createSnowfall(nav);
+  }
   observeContainer();
 }
 
