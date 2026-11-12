@@ -8,8 +8,8 @@ AWS Colorful Navbar is a browser extension that enhances the AWS Console navigat
 aws-navbar-extension/
 ├── manifest.json          # Chrome/Edge Manifest V3
 ├── manifest-v2.json       # Firefox Manifest V2
-├── colors.js              # Shared color data for all regions
-├── utils.js               # Shared validation utilities
+├── colors.js              # Region flag colors and navbar themes (shared)
+├── utils.js               # Config, region color and region detection helpers (shared)
 ├── main.js                # Content script (injected into AWS Console)
 ├── background.js          # Background service worker
 ├── popup.html             # Settings popup UI
@@ -17,8 +17,9 @@ aws-navbar-extension/
 ├── css/popup.css          # Popup styles
 ├── flags/                 # Country flag images (128x128 PNG, 28 countries)
 ├── icons/                 # UI icons (theme toggle, palette, flag)
-├── docs/                  # GitHub Pages homepage
+├── docs/                  # GitHub Pages homepage (docs/colors.js is a copy of colors.js)
 ├── specs/                 # Documentation (ARCHITECTURE, CHANGELOG, etc.)
+├── tests/                 # Unit tests (node:test, no dependencies)
 ├── VERSION                # Current version number
 └── package.sh             # Release packaging script
 ```
@@ -34,29 +35,34 @@ aws-navbar-extension/
 
 ### 2. Content Script (main.js)
 - Injected into all AWS Console pages
-- Key data structures:
-  - `langs`: Korean/Japanese region name translations
-  - `domCache`: Cached DOM elements for performance
-- Key functions:
-  - `getCachedElement()`: Returns cached DOM element or queries and caches it
-  - `removeNavbarBackground()`: Removes navbar background (for live toggle)
-  - `removeRegionFlag()`: Removes flag element (for live toggle)
-  - `createSnowfall()`: Creates Christmas season snow effect (Dec 20-26)
-- Features:
-  - Region detection via URL regex (handles `account-string.region.console.aws.amazon.com` format)
-  - Navbar background color customization (default or custom)
-  - Region flag display next to region selector
-  - Live toggle updates (Background/Flag changes apply instantly without refresh)
-- Retry mechanism (3 attempts) for region selector detection
+- Owns the navbar background and the text color drawn directly on it. AWS renders the navbar with React and can re-render it at any time, so all changes go through one idempotent `sync()`.
+- `sync()` runs:
+  - once when `#awsc-navigation-container` exists (a MutationObserver waits for it)
+  - after DOM changes in the navigation container (MutationObserver, batched with `requestAnimationFrame`)
+  - after a page title change (global services set `| Global` after the first render)
+  - after a window resize (the AWS "more" menu collapses at small widths without a DOM change)
+  - after a config change in `chrome.storage.local`
+- `sync()` disconnects the container observer while it writes, so its own changes do not start another sync.
+- Steps of `sync()`:
+  1. `detectRegion(location.hostname, document.title)` (utils.js)
+  2. `applyTheme()`: sets `--aws-navbar-bg`, `--aws-navbar-fg` and `--aws-navbar-accent` on the `nav` and adds the class `aws-navbar-themed`. One injected stylesheet (`#aws-navbar-styles`) uses these variables.
+  3. `markForeground()`: marks gray text and gray SVG shapes whose nearest painted ancestor is the navbar (`data-aws-navbar-color`, `-fill`, `-stroke`). The stylesheet gives marked elements the theme text color. Elements under another surface keep the AWS colors: menus, the search field (`#aws-unified-search-container`) and the AWS account color label. A background color that cannot be parsed counts as a surface. Colored items (logo smile, service icons, links) are not gray and are not marked. The marks are measured with the theme class removed, so they follow the AWS colors and not the colors of earlier marks.
+  4. `applyFlag()`: flag image before the region name in the region button. The image is decorative (`alt=""`, `aria-hidden`), because the button already names the region.
+  5. `decorateRegionMenu()`: flag image before each region name in the region menu.
+  6. `createSnowfall()`: Christmas snow effect (Dec 20-26), in the theme text color. Removed with the theme when the background is disabled.
 - Debug logging with `isDebug` flag
+
+#### AWS account color
+The AWS Console can show an account color: a 4px stripe above the navbar and a colored account name label. The extension does not paint the stripe or the label. Use the account color to identify the account and the extension to identify the region.
 
 ### 3. Popup Interface (popup.html, popup.js, css/popup.css)
 - Settings management interface
 - Features:
   - Toggle switches for Background and Flag
+  - Navbar style selector (Vivid / Subtle)
   - Region selector dropdown (38 regions)
   - Color picker UI with 2-4 gradient colors
-  - Real-time gradient preview
+  - Real-time navbar preview with the readable theme colors, and a note when colors are adjusted
   - Reset to default per region
   - Apply button to save custom colors
   - Dark/Light theme switcher
@@ -64,14 +70,15 @@ aws-navbar-extension/
 - Responsive design with theme support
 
 ### 4. Shared Utilities (utils.js)
-- Shared validation and performance functions used by both main.js and popup.js
-- Key constants:
-  - `HEX_COLOR_REGEX`: Pre-compiled regex for hex color validation
+- Used by main.js and popup.js. Loaded after colors.js.
 - Key functions:
   - `isValidHexColor()`: Validates hex color format (#RRGGBB)
   - `isValidRegion()`: Validates region code exists in colors object
   - `validateConfig()`: Validates and sanitizes config structure
-  - `debounce()`: Limits function execution rate for performance
+  - `getNavbarStyle()`: Navbar style of a config (default `vivid`)
+  - `getRegionColors()`: Custom colors of a region when 2 or more are set, else the default flag colors
+  - `detectRegion()`: Region shown by the console page (see Region Detection)
+  - `debounce()`: Limits function execution rate
 
 ### 5. Background Script (background.js)
 - Minimal initialization on extension install
@@ -85,6 +92,7 @@ aws-navbar-extension/
 {
   "background": "enabled" | "disabled",
   "flag": "enabled" | "disabled",
+  "style": "vivid" | "subtle",   // default: "vivid"
   "customColors": {
     "us-east-1": {
       "color1": "#0000aa",
@@ -100,17 +108,34 @@ aws-navbar-extension/
 ### 7. Static Resources
 - `flags/`: Country flag images (28 countries, 128x128 PNG)
 - `icons/`: UI icons (theme toggle, palette, flag)
-- `colors.js`: Shared color data (38 regions, `buildGradient()`, `getDefaultGradient()`)
+- `colors.js`: Shared color data (38 regions) and navbar themes (`getNavbarTheme()`)
 
 ## Features
 
 ### Region Visualization
-- 38 AWS regions with unique default color gradients
+- 38 AWS regions with unique default color gradients inspired by their flags
+- Global services (IAM, CloudFront, Route 53, ...) use globe colors (ocean blue to land green)
 - User can customize gradient colors per region (2-4 colors)
-- Region flags displayed next to the region selector (28 countries)
-- Automatic region detection from URL
-- Supports both standard URLs and account-specific URLs
+- Region flags next to the region selector and in the region menu (28 countries)
 - Christmas season snow effect (Dec 20-26)
+
+### Navbar Styles and Readability
+- `colors` holds flag colors. A flag can contain white, yellow or navy, so the raw colors are not always readable behind text.
+- `getNavbarTheme(flagColors, style)` converts flag colors into a navbar theme:
+
+| Style | Text color | Background |
+|-------|------------|------------|
+| `vivid` (default) | white `#ffffff` | Flag colors. A color that is too light is mixed with black until it is readable. |
+| `subtle` | dark `#16191f` | Flag colors mixed 35% into white. A 4px band of the pure flag colors at the bottom. |
+
+- Contract: every gradient color has a contrast ratio of at least 4.5:1 with the text color (WCAG 2.x AA for normal text). The same function draws the popup preview and the homepage header.
+- The contrast is checked after 8-bit rounding, and the unit tests sample the rendered gradients.
+
+### Region Detection
+- `detectRegion(hostname, title)`:
+  1. A page title that ends with `| Global` is a global service. The console runs global services on us-east-1 hosts, but it ends their titles with `| Global`. The suffix is not translated: the Korean console ends the titles of IAM, CloudFront, Route 53, Billing and Organizations with `| Global`. Other console languages are not checked.
+  2. Else the region is the host name label before `.console.aws.amazon.com`: `<region>.console.aws.amazon.com` or `<account-alias>.<region>.console.aws.amazon.com`.
+  3. Else no region: the extension does not change the page.
 
 ### Color Customization (v2.0)
 - Per-region color picker UI
@@ -119,17 +144,9 @@ aws-navbar-extension/
 - Reset to default per region
 - Persistent storage of custom colors
 
-### Theme System
-- Dark/Light mode support
+### Popup Theme
+- Dark/Light mode for the popup
 - Theme persistence across sessions
-- Smooth transition animations
-- AWS-inspired color palette
-- Accessible color contrasts
-
-### Internationalization
-- Support for multiple languages (ko, jp)
-- Region name translations
-- Global region handling
 
 ## Technical Details
 
@@ -140,16 +157,10 @@ aws-navbar-extension/
 - Backward compatible with v1.x config
 
 ### Performance
-- Asynchronous storage operations
-- Efficient resource loading
-- Retry mechanism for region detection
-- Optimized DOM operations:
-  - DOM element caching (`domCache`) to avoid repeated querySelector calls
-  - DocumentFragment for batch DOM updates (region dropdown, snowflakes)
-  - Debounced color preview updates (50ms delay)
-  - Batched style assignments using `cssText`
-  - Pre-compiled regex patterns
-- Config caching with storage change listener invalidation
+- One `sync()` reads the computed style of the navbar elements that are not under another surface (about 150 of about 950 elements in the navbar).
+- Measured in the Korean console (EC2 dashboard, Chrome, 2026-11-12), `sync()` with forced layout, 30 runs: median 0.8 ms, p90 1.8 ms, max 2.4 ms. Right after AWS opens a menu (style recalculation): up to 8 ms. The previous version (2.2.2) applied once in 0.2 ms median and did not react to re-renders.
+- Syncs are batched with `requestAnimationFrame`. A title observer reacts only to a title change, not to other `<head>` changes.
+- Debounced color preview updates in the popup (50ms delay)
 
 ### Security
 - Minimal permissions required:
@@ -160,7 +171,7 @@ aws-navbar-extension/
 
 ### User Experience
 - Instant settings application (no page refresh needed)
-- Live toggle updates for Background and Flag settings
+- Live updates for Background, Flag and Style settings
 - Auto-save for toggles
 - Real-time preview for colors
 - Visual feedback for actions
@@ -169,11 +180,10 @@ aws-navbar-extension/
 - Accessible UI with ARIA labels and roles
 
 ### Error Handling
+- Config values are validated; invalid values are dropped and the defaults apply
 - Color validation (hex format)
-- Region selector retry mechanism
-- Graceful fallbacks to default colors
-- Flag image error handling with emoji fallback
-- Clear error messages with visual feedback
+- The content script does nothing on pages without a known region or without the AWS navbar
+- Clear error messages with visual feedback in the popup
 
 ## Development
 
@@ -189,11 +199,18 @@ aws-navbar-extension/
   - `aws-navbar-extension-{version}-mv2.zip` (Manifest V2 for Firefox)
 - Requires `jq` for JSON processing
 
+### Tests
+```bash
+node --test   # Node.js 20+, finds tests/*.test.js; no dependencies
+```
+- `tests/colors.test.js`: every default region gradient and extreme custom colors keep a 4.5:1 contrast in both styles; every region has a flag image
+- `tests/utils.test.js`: region detection, config validation, region colors
+
 ### Local Testing
 1. Chrome/Edge: `chrome://extensions` → Developer Mode → Load Unpacked
 2. Firefox: `about:debugging` → This Firefox → Load Temporary Add-on
 
 ### CI/CD
-- GitHub Actions workflow (`.github/workflows/push.yml`)
-- Triggers on `VERSION` file changes to `main` branch
-- Automatically packages and creates GitHub releases
+- `.github/workflows/test.yml`: on pull requests and pushes to `main`, runs the unit tests, checks the JavaScript syntax and the manifests, and checks that `docs/colors.js` equals `colors.js`
+- `.github/workflows/push.yml`: on `VERSION` changes to `main`, runs the unit tests, packages the extension and creates a GitHub release
+- Chrome Web Store and Firefox Add-ons uploads are manual

@@ -230,17 +230,108 @@ const colors = {
   },
 };
 
-// Helper function to build gradient from color array
-function buildGradient(colorArray) {
-  const colorList = Array.isArray(colorArray) ? colorArray :
-    [colorArray.color1, colorArray.color2, colorArray.color3, colorArray.color4].filter(Boolean);
+// Build a left-to-right CSS gradient from an array of hex colors.
+function buildGradient(colorList) {
   return `linear-gradient(to right, ${colorList.join(', ')})`;
 }
 
-// Get default gradient for a region
-function getDefaultGradient(region) {
-  if (colors[region]) {
-    return buildGradient(colors[region].colors);
+// ============================================
+// Navbar themes
+// ============================================
+//
+// The `colors` above are flag colors. They are not always readable behind text:
+// a flag can contain white, yellow or navy. A navbar style converts each flag
+// color into a background color that keeps the style's text color readable.
+//
+// Contract: every color of `background` has a contrast ratio of at least
+// MIN_TEXT_CONTRAST with `foreground` (WCAG 2.x AA for normal text).
+
+const MIN_TEXT_CONTRAST = 4.5;
+
+// mix: start ratio of `base` in the background color (0 = pure flag color).
+// When the start color is not readable, more `base` is mixed in until it is.
+const NAVBAR_STYLES = {
+  // Saturated flag colors with white text. Light colors are shaded.
+  vivid: { foreground: '#ffffff', base: '#000000', mix: 0 },
+  // Pastel flag colors with dark text, plus a thin band of the pure flag colors.
+  subtle: { foreground: '#16191f', base: '#ffffff', mix: 0.65 },
+};
+
+const DEFAULT_NAVBAR_STYLE = 'vivid';
+
+const ACCENT_BAND_HEIGHT = '4px';
+
+function hexToRgb(hex) {
+  return [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+}
+
+function rgbToHex(rgb) {
+  return '#' + rgb.map(v => v.toString(16).padStart(2, '0')).join('');
+}
+
+// Mix `a` toward `b` by ratio t (0 = a, 1 = b) in sRGB, rounded to 8-bit channels.
+function mixRgb(a, b, t) {
+  return a.map((v, i) => Math.round(v + (b[i] - v) * t));
+}
+
+// WCAG 2.x relative luminance of an sRGB color.
+function relativeLuminance(rgb) {
+  const [r, g, b] = rgb.map(v => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+// WCAG 2.x contrast ratio between two sRGB colors (1 to 21).
+function contrastRatio(a, b) {
+  const la = relativeLuminance(a);
+  const lb = relativeLuminance(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
+// Return the color nearest to `hex` (toward the style base) that is readable
+// behind the style foreground. Binary search on the mix ratio; each candidate
+// is tested after rounding, so the result always meets MIN_TEXT_CONTRAST.
+function readableColor(hex, style) {
+  const source = hexToRgb(hex);
+  const base = hexToRgb(style.base);
+  const foreground = hexToRgb(style.foreground);
+  const isReadable = t => contrastRatio(mixRgb(source, base, t), foreground) >= MIN_TEXT_CONTRAST;
+
+  if (isReadable(style.mix)) {
+    return rgbToHex(mixRgb(source, base, style.mix));
   }
-  return null;
+  let low = style.mix;
+  let high = 1;
+  for (let i = 0; i < 16; i++) {
+    const middle = (low + high) / 2;
+    if (isReadable(middle)) {
+      high = middle;
+    } else {
+      low = middle;
+    }
+  }
+  return rgbToHex(mixRgb(source, base, high));
+}
+
+// Convert flag colors into the navbar theme of a style.
+// Returns { style, foreground, background, accent, adjusted }:
+// - background: CSS gradient behind the navbar text
+// - accent: CSS gradient of the pure flag colors for the subtle band, or null
+// - adjusted: true when a color was changed beyond the style's normal mix
+function getNavbarTheme(flagColors, styleName) {
+  const style = NAVBAR_STYLES[styleName];
+  if (!style) {
+    throw new Error(`Unknown navbar style: ${styleName}`);
+  }
+  const backgroundColors = flagColors.map(hex => readableColor(hex, style));
+  const plainColors = flagColors.map(hex => rgbToHex(mixRgb(hexToRgb(hex), hexToRgb(style.base), style.mix)));
+  return {
+    style: styleName,
+    foreground: style.foreground,
+    background: buildGradient(backgroundColors),
+    accent: styleName === 'subtle' ? buildGradient(flagColors) : null,
+    adjusted: backgroundColors.some((hex, i) => hex !== plainColors[i]),
+  };
 }

@@ -23,6 +23,11 @@ AWS Colorful Navbar is a browser extension that enhances AWS Console by displayi
 # Firefox: Navigate to about:debugging → This Firefox → Load Temporary Add-on → Select manifest.json
 ```
 
+### Tests
+```bash
+node --test  # Node.js 20+, finds tests/*.test.js; no dependencies
+```
+
 ### Packaging for Release
 ```bash
 ./package.sh  # Creates MV3 and MV2 zip files in ./release/
@@ -35,20 +40,23 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 
 **Content Script (`main.js`)**
 - Injected into AWS Console pages (`*://*.console.aws.amazon.com/*`)
-- Detects region from URL using regex (handles `account-string.region.console.aws.amazon.com` format)
-- Applies navbar colors: custom colors from config or default gradients
-- Uses `buildGradient()` from `colors.js` to build CSS gradient from custom color config
+- One idempotent `sync()` applies the theme, the region flag and the region menu flags. MutationObservers re-run it when AWS re-renders the navbar or changes the page title.
+- Owns the navbar background and the gray text/icons drawn directly on it (`markForeground()`). Menus, the search field and the AWS account color label keep the AWS colors.
 
 **Shared Colors (`colors.js`)**
-- `colors` object maps AWS region codes to country names, default CSS gradients, and emojis
-- `buildGradient()` function builds CSS linear-gradient from color array
-- `getDefaultGradient()` returns default gradient for a region
+- `colors` object maps AWS region codes to country names, flag colors and emojis
+- `getNavbarTheme(flagColors, style)` returns the readable background, text color and accent band for `vivid` or `subtle` (contrast ≥ 4.5:1)
+- `docs/colors.js` must stay a copy of `colors.js`
+
+**Shared Utilities (`utils.js`)**
+- `detectRegion(hostname, title)`: `| Global` title suffix → `global`, else the region label of the host name
+- `validateConfig()`, `getRegionColors()`, `getNavbarStyle()`
 
 **Popup Interface (`popup.js`, `popup.html`, `css/popup.css`)**
-- Settings UI for toggling Background and Flag features
+- Settings UI for toggling Background and Flag features and choosing the navbar style
 - Region selector dropdown for color customization
 - Color picker UI (2-4 gradient colors per region)
-- Real-time gradient preview
+- Real-time navbar preview with the readable theme colors (same `getNavbarTheme()` as the content script)
 - Reset to default per region
 - Theme toggle with localStorage persistence
 
@@ -59,7 +67,7 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 
 | Storage Type | Purpose |
 |--------------|---------|
-| `chrome.storage.local.config` | Feature toggles and custom colors |
+| `chrome.storage.local.config` | Feature toggles, navbar style and custom colors |
 | `localStorage.theme` | Dark/light theme preference |
 
 ### Config Structure
@@ -67,6 +75,7 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 {
   "background": "enabled" | "disabled",
   "flag": "enabled" | "disabled",
+  "style": "vivid" | "subtle",  // default: "vivid"
   "customColors": {
     "us-east-1": {
       "color1": "#0000aa",

@@ -1,18 +1,21 @@
 // ============================================
-// Shared Validation Utilities
+// Shared Utilities (content script and popup)
 // ============================================
+// colors.js is loaded before this script.
 
-// Pre-compiled regex patterns (avoid recompilation on each call)
 const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
+
+const CUSTOM_COLOR_KEYS = ['color1', 'color2', 'color3', 'color4'];
 
 // Validate hex color format (#RRGGBB)
 function isValidHexColor(color) {
   return typeof color === 'string' && HEX_COLOR_REGEX.test(color);
 }
 
-// ============================================
-// Performance Utilities
-// ============================================
+// Validate region code exists in colors object
+function isValidRegion(region) {
+  return typeof region === 'string' && Object.prototype.hasOwnProperty.call(colors, region);
+}
 
 // Debounce function to limit execution rate
 function debounce(func, wait) {
@@ -23,12 +26,12 @@ function debounce(func, wait) {
   };
 }
 
-// Validate region code exists in colors object
-function isValidRegion(region) {
-  return region && typeof region === 'string' && colors.hasOwnProperty(region);
-}
+// ============================================
+// Config
+// ============================================
 
-// Validate and sanitize config structure
+// Validate and sanitize config structure.
+// Unknown keys and invalid values are dropped; callers apply the defaults.
 function validateConfig(config) {
   if (!config || typeof config !== 'object') {
     return {};
@@ -36,39 +39,75 @@ function validateConfig(config) {
 
   const validConfig = {};
 
-  // Validate background setting
-  if (config.background === 'enabled' || config.background === 'disabled') {
-    validConfig.background = config.background;
+  for (const key of ['background', 'flag']) {
+    if (config[key] === 'enabled' || config[key] === 'disabled') {
+      validConfig[key] = config[key];
+    }
   }
 
-  // Validate flag setting
-  if (config.flag === 'enabled' || config.flag === 'disabled') {
-    validConfig.flag = config.flag;
+  if (Object.prototype.hasOwnProperty.call(NAVBAR_STYLES, config.style)) {
+    validConfig.style = config.style;
   }
 
-  // Validate customColors
   if (config.customColors && typeof config.customColors === 'object') {
-    validConfig.customColors = {};
+    const customColors = {};
     for (const region of Object.keys(config.customColors)) {
-      if (isValidRegion(region)) {
-        const regionColors = config.customColors[region];
-        if (regionColors && typeof regionColors === 'object') {
-          const validColors = {};
-          ['color1', 'color2', 'color3', 'color4'].forEach(key => {
-            if (regionColors[key] === null || isValidHexColor(regionColors[key])) {
-              validColors[key] = regionColors[key];
-            }
-          });
-          if (Object.keys(validColors).length > 0) {
-            validConfig.customColors[region] = validColors;
-          }
+      const regionColors = config.customColors[region];
+      if (!isValidRegion(region) || !regionColors || typeof regionColors !== 'object') continue;
+      const validColors = {};
+      for (const key of CUSTOM_COLOR_KEYS) {
+        if (regionColors[key] === null || isValidHexColor(regionColors[key])) {
+          validColors[key] = regionColors[key];
         }
       }
+      if (Object.keys(validColors).length > 0) {
+        customColors[region] = validColors;
+      }
     }
-    if (Object.keys(validConfig.customColors).length === 0) {
-      delete validConfig.customColors;
+    if (Object.keys(customColors).length > 0) {
+      validConfig.customColors = customColors;
     }
   }
 
   return validConfig;
+}
+
+// Navbar style of a config (default when not set)
+function getNavbarStyle(config) {
+  return config.style || DEFAULT_NAVBAR_STYLE;
+}
+
+// Flag colors of a region: custom colors when at least 2 are set, else the defaults.
+function getRegionColors(config, region) {
+  const custom = config.customColors && config.customColors[region];
+  if (custom) {
+    const customList = CUSTOM_COLOR_KEYS.map(key => custom[key]).filter(isValidHexColor);
+    if (customList.length >= 2) {
+      return customList;
+    }
+  }
+  return [...colors[region].colors];
+}
+
+// ============================================
+// Region detection
+// ============================================
+
+// Return the region code that the console page shows, or null.
+// - Global services (IAM, CloudFront, ...) run on us-east-1 hosts, but the
+//   console ends their page title with "| Global". The suffix is not
+//   translated: the Korean console shows "대시보드 | IAM | Global".
+// - Regional pages carry the region in the host name:
+//   <region>.console.aws.amazon.com or <account-alias>.<region>.console.aws.amazon.com
+function detectRegion(hostname, title) {
+  if (/\|\s*Global\s*$/.test(title)) {
+    return 'global';
+  }
+  const suffix = '.console.aws.amazon.com';
+  if (!hostname.endsWith(suffix)) {
+    return null;
+  }
+  const labels = hostname.slice(0, -suffix.length).split('.');
+  const region = labels[labels.length - 1];
+  return region !== 'global' && isValidRegion(region) ? region : null;
 }

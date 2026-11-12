@@ -38,6 +38,22 @@
         </div>
       </div>
 
+      <div class="setting-item">
+        <div class="setting-label">
+          <span id="style-label">Style</span>
+        </div>
+        <div class="setting-control segmented" role="radiogroup" aria-labelledby="style-label">
+          <label class="segment">
+            <input type="radio" name="style" value="vivid">
+            <span>Vivid</span>
+          </label>
+          <label class="segment">
+            <input type="radio" name="style" value="subtle">
+            <span>Subtle</span>
+          </label>
+        </div>
+      </div>
+
       <div class="divider" role="separator"></div>
 
       <div class="setting-item color-section">
@@ -59,7 +75,14 @@
 
       <div id="color-editor" class="color-editor hidden" role="region" aria-label="Color customization">
         <div class="preview-container">
-          <div id="color-preview" class="color-preview" role="img" aria-label="Gradient preview"></div>
+          <div id="color-preview" class="navbar-preview" role="img" aria-label="Navbar preview">
+            <span class="navbar-preview-logo">aws</span>
+            <span class="navbar-preview-region">
+              <img id="preview-flag" class="region-flag" src="" alt="">
+              <span id="preview-name"></span>
+            </span>
+          </div>
+          <p id="contrast-note" class="contrast-note" hidden>Some colors are adjusted so the navbar text stays readable.</p>
         </div>
 
         <div id="color-inputs" class="color-inputs" role="group" aria-label="Color inputs">

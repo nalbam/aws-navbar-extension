@@ -25,11 +25,17 @@ AWS Colorful Navbar transforms your AWS Console experience with clear visual ind
 
 🎨 Dynamic Color Gradients
 • Each region displays a unique gradient inspired by its country's flag
+• Global services (IAM, CloudFront, Route 53) display globe colors
 • Instantly recognize your current region without reading text
 • Customize colors with the built-in color picker (2-4 colors)
 
+👁️ Readable by Design
+• Two styles: Vivid (flag colors, white text) and Subtle (pastel flag colors, dark text)
+• Navbar text keeps at least 4.5:1 contrast (WCAG AA) for every region and custom color
+• Made for the new AWS Console design; keeps the AWS account color
+
 🏳️ Regional Flags
-• Country flags appear next to the region selector
+• Country flags appear next to the region selector and in the region menu
 • 29 countries and 38+ AWS regions supported
 
 ⚡ Features
@@ -78,11 +84,17 @@ AWS Colorful Navbar는 명확한 시각적 표시로 AWS 콘솔 경험을 개선
 
 🎨 동적 색상 그라데이션
 • 각 리전마다 국기 색상 기반의 고유한 그라데이션 표시
+• 글로벌 서비스(IAM, CloudFront, Route 53)는 지구본 색상 표시
 • 텍스트를 읽지 않고도 현재 리전을 즉시 인식
 • 색상 선택기로 원하는 색상 커스터마이징 (2-4색)
 
+👁️ 읽기 쉬운 디자인
+• 두 가지 스타일: 선명(Vivid, 국기 색 + 흰 글자)과 은은(Subtle, 연한 국기 색 + 어두운 글자)
+• 모든 리전과 사용자 색상에서 네비바 글자 대비 4.5:1 이상 유지 (WCAG AA)
+• 새 AWS 콘솔 디자인 지원, AWS 계정 색상 유지
+
 🏳️ 리전 국기
-• 리전 선택기 옆에 국기 표시
+• 리전 선택기 옆과 리전 메뉴에 국기 표시
 • 29개국 38개 이상 AWS 리전 지원
 
 ⚡ 주요 기능

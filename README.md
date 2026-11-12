@@ -7,13 +7,14 @@
 
 ## Features
 
-* Region-based navigation bar color customization
-* **Custom color themes per region (2.0)**
-* Region flag display next to region selector
-* Dark/Light theme support
-* Auto-save settings
-* Support for all AWS global regions
-* Multi-language support (ko, jp)
+* Region-based navigation bar gradients inspired by country flags (globe colors for global services)
+* Two navbar styles: **Vivid** (flag colors, white text) and **Subtle** (pastel flag colors, dark text)
+* Readable navbar text: at least 4.5:1 contrast (WCAG AA) for every region and custom color
+* Custom color themes per region (2-4 colors)
+* Region flags next to the region selector and in the region menu
+* Works with the new AWS Console design and with the AWS account color
+* Detects global services from the page title, independent of the console language text (checked in the Korean console)
+* Dark/Light popup theme, auto-save settings
 
 ## Installation
 
@@ -27,8 +28,15 @@ The extension supports the following configuration options:
 
 * `background`: Enable/disable navbar color customization
 * `flag`: Enable/disable region flag display
+* `style`: Navbar style, `vivid` (default) or `subtle`
 * `customColors`: Custom gradient colors per region (2-4 colors)
-* `theme`: Dark/Light mode preference
+* `theme`: Dark/Light mode of the popup
+
+Colors that would make the navbar text hard to read are adjusted: Vivid darkens light colors, Subtle uses lighter tints. The popup preview shows the adjusted colors.
+
+### AWS account color
+
+The AWS Console can show an account color (a thin stripe above the navbar and a colored account name). The extension keeps it. Use the account color to identify the account and the extension to identify the region.
 
 ## Supported Regions
 
@@ -36,11 +44,17 @@ See [flags/README.md](flags/README.md) for a complete list of supported regions 
 
 ## Screenshots
 
-![aws navbar](docs/images/screenshot.png)
+Before (AWS Console default):
 
 ![before](docs/images/aws-navbar-extension-00.png)
 
-![after](docs/images/aws-navbar-extension-01.png)
+Vivid style (Seoul):
+
+![vivid](docs/images/aws-navbar-extension-01.png)
+
+Subtle style (Seoul):
+
+![subtle](docs/images/aws-navbar-extension-02.png)
 
 ## Documentation
 
@@ -60,6 +74,8 @@ See [flags/README.md](flags/README.md) for a complete list of supported regions 
 * Clone the repository
 * Make changes to the source code
 * Test locally using the unpacked extension
+* Run the unit tests: `node --test` (Node.js 20+, no dependencies)
+* After a change in `colors.js`, copy it to `docs/colors.js` (CI checks that they are equal)
 * Run `./package.sh` to create release packages (requires `jq`)
 * Submit pull requests for improvements
 
