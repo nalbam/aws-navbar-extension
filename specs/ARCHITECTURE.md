@@ -201,12 +201,13 @@ node --test   # Node.js 20+, finds tests/*.test.js; no dependencies
 ```
 - `tests/colors.test.js`: every default region gradient and extreme custom colors keep a 4.5:1 contrast in both styles; every region has a flag image
 - `tests/utils.test.js`: region detection, config validation, region colors
+- `tests/repo.test.js`: JavaScript syntax; `docs/colors.js` equals `colors.js`; every file that a manifest or `popup.html` loads exists and is in the `ITEMS` of `package.sh`; both manifests run the same content scripts; every flag image belongs to a region and has a homepage copy
 
 ### Local Testing
 1. Chrome/Edge: `chrome://extensions` → Developer Mode → Load Unpacked
 2. Firefox: `about:debugging` → This Firefox → Load Temporary Add-on
 
 ### CI/CD
-- `.github/workflows/test.yml`: on pull requests and pushes to `main`, runs the unit tests, checks the JavaScript syntax and the manifests, and checks that `docs/colors.js` equals `colors.js`
-- `.github/workflows/push.yml`: on `VERSION` changes to `main`, runs the unit tests, packages the extension and creates a GitHub release
+- `.github/workflows/test.yml`: on pull requests and pushes to `main`, runs `node --test`
+- `.github/workflows/push.yml`: on `VERSION` changes to `main`, runs `node --test`, packages the extension and creates a GitHub release. A failed test stops the release.
 - Chrome Web Store and Firefox Add-ons uploads are manual

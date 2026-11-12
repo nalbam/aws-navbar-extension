@@ -22,18 +22,8 @@ jobs:
         with:
           node-version: 22
 
-      - name: Check JavaScript syntax
-        run: |
-          for f in *.js docs/*.js tests/*.js; do node --check "$f"; done
-
-      - name: Check manifests
-        run: |
-          jq empty manifest.json manifest-v2.json
-
-      - name: Check docs/colors.js is a copy of colors.js
-        run: |
-          cmp colors.js docs/colors.js
-
+      # Includes the repository checks (tests/repo.test.js): syntax, manifests,
+      # packaged files and the docs/colors.js copy.
       - name: Unit tests
         run: |
           node --test
