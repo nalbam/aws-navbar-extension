@@ -4,8 +4,7 @@
   "description": "Identify AWS regions instantly with colorful navbar gradients and country flags.",
   "version": "2.1.0",
   "permissions": [
-    "storage",
-    "*://*.console.aws.amazon.com/*"
+    "storage"
   ],
   "browser_specific_settings": {
     "gecko": {
