@@ -31,7 +31,7 @@ aws-navbar-extension/
 - Host permissions: none. A content script declared in the manifest does not need one. Site access comes from the content script `matches` (`*://*.console.aws.amazon.com/*`); the browser shows it as access to read and change data on console.aws.amazon.com sites.
 - Web accessible resources: `flags/*.png` for AWS Console pages (the flag images that the content script adds)
 - Supports Manifest V3 specification (Chrome, Edge)
-- Manifest V2 (`manifest-v2.json`) for Firefox compatibility
+- Manifest V2 (`manifest-v2.json`) for Firefox compatibility. Minimum versions: Firefox 140 and Firefox for Android 142, the first versions that support `data_collection_permissions`.
 
 ### 2. Content Script (main.js)
 - Injected into all AWS Console pages
