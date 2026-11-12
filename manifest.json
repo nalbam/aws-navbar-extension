@@ -4,7 +4,6 @@
   "description": "Identify AWS regions instantly with colorful navbar gradients and country flags.",
   "version": "2.1.0",
   "permissions": [
-    "activeTab",
     "storage"
   ],
   "host_permissions": [

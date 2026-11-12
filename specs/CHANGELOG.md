@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.1] - 2026-11-12
+
+### Removed
+- `activeTab` permission from `manifest.json` and `manifest-v2.json` (not required; the extension uses host permissions and content scripts)
+
 ## [2.3.0] - 2026-11-12
 
 Support for the new AWS Console design. The new navbar has a light background and dark text, so the previous region gradients made the navbar text and icons hard to read.
