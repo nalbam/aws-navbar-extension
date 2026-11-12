@@ -114,12 +114,6 @@ const colors = {
     colors: ['#dd0033', '#aa8888', '#dd0022'],
     emoji: '🇨🇭'
   },
-  'eu-central-3': {
-    country: 'switzerland',
-    name: 'Switzerland',
-    colors: ['#cc6666', '#dd0033', '#cc6666'],
-    emoji: '🇨🇭'
-  },
   'eu-north-1': {
     country: 'sweden',
     name: 'Sweden',
@@ -137,12 +131,6 @@ const colors = {
     name: 'Spain',
     colors: ['#cc1122', '#ffbb00', '#cc1122'],
     emoji: '🇪🇸'
-  },
-  'eu-south-3': {
-    country: 'italy',
-    name: 'Italy',
-    colors: ['#cc1133', '#aaaaaa', '#008844'],
-    emoji: '🇮🇹'
   },
   'eu-west-1': {
     country: 'ireland',
@@ -179,12 +167,6 @@ const colors = {
     name: 'Bahrain',
     colors: ['#aa9999', '#ee1144', '#aa1133'],
     emoji: '🇧🇭'
-  },
-  'me-west-1': {
-    country: 'uae',
-    name: 'UAE',
-    colors: ['#222222', '#009955', '#ee0000'],
-    emoji: '🇦🇪'
   },
   'mx-central-1': {
     country: 'mexico',

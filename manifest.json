@@ -6,9 +6,6 @@
   "permissions": [
     "storage"
   ],
-  "host_permissions": [
-    "*://*.console.aws.amazon.com/*"
-  ],
   "content_scripts": [
     {
       "matches": [
@@ -31,8 +28,7 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "flags/*.png",
-        "icons/*.ico"
+        "flags/*.png"
       ],
       "matches": [
         "*://*.console.aws.amazon.com/*"

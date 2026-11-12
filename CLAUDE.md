@@ -32,7 +32,7 @@ node --test  # Node.js 20+, finds tests/*.test.js; no dependencies
 ```bash
 ./package.sh  # Creates MV3 and MV2 zip files in ./release/
 ```
-Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
+Requires `jq` and `zip`. Writes the `VERSION` value into the packaged `manifest.json`; the repository manifests keep their version.
 
 ## Architecture
 
@@ -59,9 +59,6 @@ Requires `jq` installed. Updates version from `VERSION` file into manifest.json.
 - Real-time navbar preview with the readable theme colors (same `getNavbarTheme()` as the content script)
 - Reset to default per region
 - Theme toggle with localStorage persistence
-
-**Background Script (`background.js`)**
-- Minimal initialization on extension install
 
 ### Storage
 

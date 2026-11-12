@@ -61,12 +61,12 @@
           <span id="region-label">Region Colors</span>
         </div>
         <div class="setting-control full-width">
-          <div id="region-select" class="custom-select" role="combobox" aria-labelledby="region-label" aria-expanded="false" aria-haspopup="listbox" tabindex="0">
+          <div id="region-select" class="custom-select" role="combobox" aria-labelledby="region-label" aria-expanded="false" aria-haspopup="listbox" aria-controls="region-options" tabindex="0">
             <div class="select-trigger">
               <span class="select-text">Select Region...</span>
-              <span class="select-arrow">▼</span>
+              <span class="select-arrow" aria-hidden="true">▼</span>
             </div>
-            <ul class="select-options" role="listbox" aria-labelledby="region-label">
+            <ul id="region-options" class="select-options" role="listbox" aria-labelledby="region-label">
               <!-- Options will be populated by JavaScript -->
             </ul>
           </div>
@@ -98,6 +98,7 @@
           <button id="apply-btn" class="primary-btn" aria-label="Apply custom colors">Apply</button>
         </div>
       </div>
+      <p id="status-message" class="status-message" role="status"></p>
     </div>
     <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light theme">
       <img src="icons/sun.ico" alt="" class="icon" id="theme-icon" aria-hidden="true">

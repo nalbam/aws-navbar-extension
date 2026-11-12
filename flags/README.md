@@ -82,7 +82,7 @@ for f in *.png; do convert "$f" -resize 128x128 "$f"; done
 | Indonesia | ![indonesia](indonesia.png) | ap-southeast-3 |
 | Ireland | ![ireland](ireland.png) | eu-west-1 |
 | Israel | ![israel](israel.png) | il-central-1 |
-| Italy | ![italy](italy.png) | eu-south-1, eu-south-3 |
+| Italy | ![italy](italy.png) | eu-south-1 |
 | Japan | ![japan](japan.png) | ap-northeast-1, ap-northeast-3 |
 | Malaysia | ![malaysia](malaysia.png) | ap-southeast-5 |
 | Mexico | ![mexico](mexico.png) | mx-central-1 |
@@ -92,9 +92,9 @@ for f in *.png; do convert "$f" -resize 128x128 "$f"; done
 | South Korea | ![south-korea](south-korea.png) | ap-northeast-2 |
 | Spain | ![spain](spain.png) | eu-south-2 |
 | Sweden | ![sweden](sweden.png) | eu-north-1 |
-| Switzerland | ![switzerland](switzerland.png) | eu-central-2, eu-central-3 |
+| Switzerland | ![switzerland](switzerland.png) | eu-central-2 |
 | Taiwan | ![taiwan](taiwan.png) | ap-east-2 |
 | Thailand | ![thailand](thailand.png) | ap-southeast-7 |
-| UAE | ![uae](uae.png) | me-central-1, me-west-1 |
+| UAE | ![uae](uae.png) | me-central-1 |
 | United Kingdom | ![united-kingdom](united-kingdom.png) | eu-west-2 |
 | United States | ![united-states](united-states.png) | us-east-1, us-east-2, us-west-1, us-west-2 |

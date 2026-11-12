@@ -11,11 +11,10 @@ aws-navbar-extension/
 ├── colors.js              # Region flag colors and navbar themes (shared)
 ├── utils.js               # Config, region color and region detection helpers (shared)
 ├── main.js                # Content script (injected into AWS Console)
-├── background.js          # Background service worker
 ├── popup.html             # Settings popup UI
 ├── popup.js               # Popup logic with color customization
 ├── css/popup.css          # Popup styles
-├── flags/                 # Country flag images (128x128 PNG, 28 countries)
+├── flags/                 # Country flag images (128x128 PNG: 27 countries and the globe)
 ├── icons/                 # UI icons (theme toggle, palette, flag)
 ├── docs/                  # GitHub Pages homepage (docs/colors.js is a copy of colors.js)
 ├── specs/                 # Documentation (ARCHITECTURE, CHANGELOG, etc.)
@@ -29,7 +28,8 @@ aws-navbar-extension/
 ### 1. Manifest (manifest.json)
 - Defines extension metadata, permissions, and resource access
 - Permissions: `storage`
-- Host permissions: `*://*.console.aws.amazon.com/*`
+- Host permissions: none. A content script declared in the manifest does not need one. Site access comes from the content script `matches` (`*://*.console.aws.amazon.com/*`); the browser shows it as access to read and change data on console.aws.amazon.com sites.
+- Web accessible resources: `flags/*.png` for AWS Console pages (the flag images that the content script adds)
 - Supports Manifest V3 specification (Chrome, Edge)
 - Manifest V2 (`manifest-v2.json`) for Firefox compatibility
 
@@ -60,11 +60,12 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 - Features:
   - Toggle switches for Background and Flag
   - Navbar style selector (Vivid / Subtle)
-  - Region selector dropdown (38 regions)
+  - Region selector dropdown (34 regions and Global). Keyboard: arrows, Home/End, Enter/Space to select, Escape or Tab to close
   - Color picker UI with 2-4 gradient colors
   - Real-time navbar preview with the readable theme colors, and a note when colors are adjusted
   - Reset to default per region
-  - Apply button to save custom colors
+  - Apply button to save custom colors. An invalid hex value blocks Apply.
+  - Status message (`role="status"`) for applied, reset and error results
   - Dark/Light theme switcher
   - Version display from manifest
 - Responsive design with theme support
@@ -80,11 +81,7 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
   - `detectRegion()`: Region shown by the console page (see Region Detection)
   - `debounce()`: Limits function execution rate
 
-### 5. Background Script (background.js)
-- Minimal initialization on extension install
-- Local storage initialization
-
-### 6. Configuration Storage
+### 5. Configuration Storage
 - `chrome.storage.local.config`: Feature settings and custom colors
 - `localStorage.theme`: Theme preference (dark/light)
 - Config structure:
@@ -105,18 +102,18 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 }
 ```
 
-### 7. Static Resources
-- `flags/`: Country flag images (28 countries, 128x128 PNG)
+### 6. Static Resources
+- `flags/`: Flag images (27 countries and the globe, 128x128 PNG)
 - `icons/`: UI icons (theme toggle, palette, flag)
-- `colors.js`: Shared color data (38 regions) and navbar themes (`getNavbarTheme()`)
+- `colors.js`: Shared color data (34 regions and Global) and navbar themes (`getNavbarTheme()`)
 
 ## Features
 
 ### Region Visualization
-- 38 AWS regions with unique default color gradients inspired by their flags
+- 34 AWS regions and Global with default color gradients inspired by their flags
 - Global services (IAM, CloudFront, Route 53, ...) use globe colors (ocean blue to land green)
 - User can customize gradient colors per region (2-4 colors)
-- Region flags next to the region selector and in the region menu (28 countries)
+- Region flags next to the region selector and in the region menu
 - Christmas season snow effect (Dec 20-26)
 
 ### Navbar Styles and Readability
@@ -165,7 +162,7 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 ### Security
 - Minimal permissions required:
   - storage: For configuration storage
-- Host permissions limited to AWS Console domains
+- No host permissions. Site access is limited to the content script matches (AWS Console domains).
 - Input validation for color values
 
 ### User Experience
@@ -176,13 +173,13 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 - Visual feedback for actions
 - Smooth transitions
 - Responsive interface
-- Accessible UI with ARIA labels and roles
+- Accessible UI: ARIA labels and roles, visible keyboard focus, text contrast of 4.5:1 or more
 
 ### Error Handling
 - Config values are validated; invalid values are dropped and the defaults apply
 - Color validation (hex format)
 - The content script does nothing on pages without a known region or without the AWS navbar
-- Clear error messages with visual feedback in the popup
+- Error messages in the popup status message; they stay until the next result
 
 ## Development
 
@@ -191,12 +188,13 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 ./package.sh  # Creates release packages
 ```
 - **Version Management**: The `VERSION` file is the single source of truth for version numbers
-  - `manifest.json` version is automatically updated from `VERSION` during build
+  - `package.sh` writes the `VERSION` value into the `manifest.json` of each package. The manifests in the repository are not changed.
   - Do NOT manually edit version in manifest files
 - Generates two zip files in `./release/`:
   - `aws-navbar-extension-{version}.zip` (Manifest V3 for Chrome/Edge)
   - `aws-navbar-extension-{version}-mv2.zip` (Manifest V2 for Firefox)
-- Requires `jq` for JSON processing
+- Only the files that the extension uses are packaged (`flags/README.md` is not)
+- Requires `jq` and `zip`
 
 ### Tests
 ```bash
@@ -204,12 +202,13 @@ node --test   # Node.js 20+, finds tests/*.test.js; no dependencies
 ```
 - `tests/colors.test.js`: every default region gradient and extreme custom colors keep a 4.5:1 contrast in both styles; every region has a flag image
 - `tests/utils.test.js`: region detection, config validation, region colors
+- `tests/repo.test.js`: JavaScript syntax; `docs/colors.js` equals `colors.js`; every file that a manifest or `popup.html` loads exists and is in the `ITEMS` of `package.sh`; both manifests run the same content scripts; every flag image belongs to a region and has a homepage copy
 
 ### Local Testing
 1. Chrome/Edge: `chrome://extensions` → Developer Mode → Load Unpacked
 2. Firefox: `about:debugging` → This Firefox → Load Temporary Add-on
 
 ### CI/CD
-- `.github/workflows/test.yml`: on pull requests and pushes to `main`, runs the unit tests, checks the JavaScript syntax and the manifests, and checks that `docs/colors.js` equals `colors.js`
-- `.github/workflows/push.yml`: on `VERSION` changes to `main`, runs the unit tests, packages the extension and creates a GitHub release
+- `.github/workflows/test.yml`: on pull requests and pushes to `main`, runs `node --test`
+- `.github/workflows/push.yml`: on `VERSION` changes to `main`, runs `node --test`, packages the extension and creates a GitHub release. A failed test stops the release.
 - Chrome Web Store and Firefox Add-ons uploads are manual

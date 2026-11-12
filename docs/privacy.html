@@ -42,7 +42,7 @@
     <div class="container">
       <div class="content-header">
         <h1>Privacy Policy</h1>
-        <p class="subtitle">Last updated: December 24, 2025</p>
+        <p class="subtitle">Last updated: November 13, 2026</p>
       </div>
 
       <div class="content-body">
@@ -64,21 +64,22 @@
         </ul>
 
         <h2>Local Storage</h2>
-        <p>The extension stores your preferences locally on your device using the browser's built-in storage API (<code>chrome.storage.local</code>). This includes:</p>
+        <p>The extension stores your preferences locally on your device with the browser's extension storage API (<code>chrome.storage.local</code>):</p>
         <ul>
           <li><strong>Background toggle</strong> — Enable/disable navbar color</li>
           <li><strong>Flag toggle</strong> — Enable/disable region flag display</li>
+          <li><strong>Navbar style</strong> — Vivid or Subtle</li>
           <li><strong>Custom colors</strong> — Your personalized gradient colors</li>
-          <li><strong>Theme preference</strong> — Dark or light mode setting</li>
         </ul>
+        <p>The dark or light theme of the settings popup is stored in the popup's own local storage (<code>localStorage</code>).</p>
         <p>This data never leaves your device and is not accessible to us or any third party.</p>
 
-        <h2>Permissions</h2>
-        <p>The extension requires minimal permissions to function:</p>
+        <h2>Permissions and Site Access</h2>
+        <p>The extension requests only one permission:</p>
         <ul>
           <li><strong>storage</strong> — To save your preferences locally</li>
-          <li><strong>Host permission</strong> — Limited to <code>*.console.aws.amazon.com</code> only</li>
         </ul>
+        <p>The manifest has no host permissions. The content script runs only on AWS Console pages (<code>*.console.aws.amazon.com</code>), so the browser shows that the extension can read and change data on those sites. The content script reads the page address and title to find the region, and changes only the navbar colors and flags. It does not store or send page content.</p>
 
         <h2>Third-Party Services</h2>
         <p>This extension does not use any third-party services, analytics, or tracking tools. All functionality is self-contained.</p>
