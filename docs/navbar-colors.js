@@ -93,13 +93,17 @@
     return findRegionByCountry(country);
   }
 
-  // Get selected region (from localStorage or auto-detect)
-  function getSelectedRegion() {
+  // Saved choice: 'auto' or a region in colors. A saved region that colors no
+  // longer has (for example, a removed region code) counts as 'auto'.
+  function getSavedChoice() {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && saved !== 'auto') {
-      return saved;
-    }
-    return getAutoRegion();
+    return saved && colors[saved] ? saved : 'auto';
+  }
+
+  // Region to show: the saved region, or the region of the browser language
+  function getSelectedRegion() {
+    const choice = getSavedChoice();
+    return choice === 'auto' ? getAutoRegion() : choice;
   }
 
   // Apply gradient to header
@@ -140,10 +144,9 @@
     const selectorText = document.getElementById('selected-region');
     if (!selectorText) return;
 
-    const saved = localStorage.getItem(STORAGE_KEY);
     selectorText.innerHTML = '';
 
-    if (!saved || saved === 'auto') {
+    if (getSavedChoice() === 'auto') {
       const autoRegion = getAutoRegion();
       const autoData = colors[autoRegion];
 
@@ -192,6 +195,7 @@
 
     // Create Auto option
     const autoLi = document.createElement('li');
+    autoLi.id = 'region-option-auto';
     autoLi.className = 'selector-option';
     autoLi.setAttribute('role', 'option');
     autoLi.setAttribute('data-value', 'auto');
@@ -215,6 +219,7 @@
 
     // Create divider
     const divider = document.createElement('li');
+    divider.setAttribute('aria-hidden', 'true');
     divider.style.height = '1px';
     divider.style.backgroundColor = 'var(--border)';
     divider.style.margin = '8px 0';
@@ -225,6 +230,7 @@
     sortedRegions.forEach(region => {
       const data = colors[region];
       const li = document.createElement('li');
+      li.id = `region-option-${region}`;
       li.className = 'selector-option';
       li.setAttribute('role', 'option');
       li.setAttribute('data-value', region);
@@ -250,14 +256,44 @@
     setupSelectorEvents(selector, optionsList);
   }
 
-  // Setup selector event listeners
+  // Setup selector event listeners. Keyboard focus stays on the combobox; the
+  // active option is the one that the arrow keys point to, and
+  // aria-activedescendant tells screen readers which one.
   function setupSelectorEvents(selector, optionsList) {
     const trigger = selector.querySelector('.selector-trigger');
+    const options = Array.from(optionsList.querySelectorAll('.selector-option'));
+    let activeIndex = -1;
 
-    // Toggle dropdown
+    const setActiveOption = (index) => {
+      activeIndex = index;
+      options.forEach((opt, i) => opt.classList.toggle('focused', i === index));
+      if (index >= 0) {
+        selector.setAttribute('aria-activedescendant', options[index].id);
+        options[index].scrollIntoView({ block: 'nearest' });
+      } else {
+        selector.removeAttribute('aria-activedescendant');
+      }
+    };
+
+    // Open or close the list. An opened list starts at the selected option.
     const toggleDropdown = (open) => {
       const isOpen = open !== undefined ? open : selector.getAttribute('aria-expanded') !== 'true';
       selector.setAttribute('aria-expanded', isOpen);
+      setActiveOption(isOpen ? options.findIndex(opt => opt.classList.contains('selected')) : -1);
+    };
+
+    const selectOption = (option) => {
+      const value = option.getAttribute('data-value');
+      localStorage.setItem(STORAGE_KEY, value);
+
+      const region = value === 'auto' ? getAutoRegion() : value;
+      applyHeaderGradient(region);
+      updateSelectorDisplay(region);
+
+      options.forEach(opt => {
+        opt.setAttribute('aria-selected', opt === option);
+        opt.classList.toggle('selected', opt === option);
+      });
     };
 
     trigger.addEventListener('click', (e) => {
@@ -265,26 +301,9 @@
       toggleDropdown();
     });
 
-    // Handle option selection
     optionsList.addEventListener('click', (e) => {
       const option = e.target.closest('.selector-option');
-      if (!option) return;
-
-      const value = option.getAttribute('data-value');
-      if (value) {
-        // Save selection
-        localStorage.setItem(STORAGE_KEY, value);
-
-        // Apply gradient
-        const region = value === 'auto' ? getAutoRegion() : value;
-        applyHeaderGradient(region);
-        updateSelectorDisplay(region);
-
-        // Update selected state
-        optionsList.querySelectorAll('.selector-option').forEach(opt => {
-          opt.classList.toggle('selected', opt === option);
-        });
-      }
+      if (option) selectOption(option);
       toggleDropdown(false);
     });
 
@@ -295,24 +314,59 @@
       }
     });
 
-    // Keyboard navigation
+    // Keyboard: Enter/Space select the active option (or open the list),
+    // arrows/Home/End move, Escape closes, Tab closes and moves on.
     selector.addEventListener('keydown', (e) => {
       const isOpen = selector.getAttribute('aria-expanded') === 'true';
+      const last = options.length - 1;
 
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleDropdown();
-      } else if (e.key === 'Escape' && isOpen) {
-        e.preventDefault();
-        toggleDropdown(false);
+      switch (e.key) {
+        case 'Enter':
+        case ' ':
+          e.preventDefault();
+          if (isOpen && activeIndex >= 0) {
+            selectOption(options[activeIndex]);
+            toggleDropdown(false);
+          } else {
+            toggleDropdown();
+          }
+          break;
+        case 'ArrowDown':
+        case 'ArrowUp':
+          e.preventDefault();
+          if (!isOpen) {
+            toggleDropdown(true);
+          } else if (activeIndex === -1) {
+            setActiveOption(e.key === 'ArrowDown' ? 0 : last);
+          } else {
+            const step = e.key === 'ArrowDown' ? 1 : -1;
+            setActiveOption((activeIndex + step + options.length) % options.length);
+          }
+          break;
+        case 'Home':
+        case 'End':
+          if (isOpen) {
+            e.preventDefault();
+            setActiveOption(e.key === 'Home' ? 0 : last);
+          }
+          break;
+        case 'Escape':
+          if (isOpen) {
+            e.preventDefault();
+            toggleDropdown(false);
+          }
+          break;
+        case 'Tab':
+          if (isOpen) toggleDropdown(false);
+          break;
       }
     });
 
     // Mark current selection
-    const saved = localStorage.getItem(STORAGE_KEY) || 'auto';
-    const selectedOption = optionsList.querySelector(`[data-value="${saved}"]`);
+    const selectedOption = optionsList.querySelector(`[data-value="${getSavedChoice()}"]`);
     if (selectedOption) {
       selectedOption.classList.add('selected');
+      selectedOption.setAttribute('aria-selected', 'true');
     }
   }
 

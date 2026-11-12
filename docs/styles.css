@@ -172,6 +172,13 @@ a:hover {
   background-color: var(--bg-alt);
 }
 
+/* The option that the arrow keys point to (focus stays on the combobox) */
+.selector-option.focused {
+  background-color: var(--bg-alt);
+  outline: 2px solid var(--secondary);
+  outline-offset: -2px;
+}
+
 .selector-option.selected {
   background-color: rgba(255, 153, 0, 0.1);
   font-weight: 500;

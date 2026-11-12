@@ -19,12 +19,12 @@
         <span>AWS Colorful Navbar</span>
       </div>
       <nav class="nav">
-        <div id="region-selector" class="region-selector" role="combobox" aria-label="Select region" aria-expanded="false" tabindex="0">
+        <div id="region-selector" class="region-selector" role="combobox" aria-label="Select region" aria-expanded="false" aria-haspopup="listbox" aria-controls="region-options" tabindex="0">
           <div class="selector-trigger">
             <span class="selector-text" id="selected-region">Auto</span>
-            <span class="selector-arrow">▼</span>
+            <span class="selector-arrow" aria-hidden="true">▼</span>
           </div>
-          <ul class="selector-options" role="listbox">
+          <ul id="region-options" class="selector-options" role="listbox" aria-label="Regions">
             <!-- Options will be populated by JavaScript -->
           </ul>
         </div>
@@ -74,7 +74,7 @@
         <div class="feature-card">
           <div class="feature-icon">&#127988;</div>
           <h3>Country Flags</h3>
-          <p>Flags appear next to the region selector. 29 countries and 38+ AWS regions supported.</p>
+          <p>Flags appear next to the region selector. 34 AWS regions in 27 countries and Global supported.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">&#127912;</div>
@@ -103,7 +103,7 @@
   <section id="regions" class="regions">
     <div class="container">
       <h2>Supported Regions</h2>
-      <p class="regions-description">38+ AWS regions across 29 countries</p>
+      <p class="regions-description">34 AWS regions across 27 countries, plus Global</p>
       <div class="regions-grid">
         <div class="region-group">
           <h4>Americas</h4>
