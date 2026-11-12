@@ -14,7 +14,7 @@ aws-navbar-extension/
 ├── popup.html             # Settings popup UI
 ├── popup.js               # Popup logic with color customization
 ├── css/popup.css          # Popup styles
-├── flags/                 # Country flag images (128x128 PNG, 28 countries)
+├── flags/                 # Country flag images (128x128 PNG: 27 countries and the globe)
 ├── icons/                 # UI icons (theme toggle, palette, flag)
 ├── docs/                  # GitHub Pages homepage (docs/colors.js is a copy of colors.js)
 ├── specs/                 # Documentation (ARCHITECTURE, CHANGELOG, etc.)
@@ -59,7 +59,7 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 - Features:
   - Toggle switches for Background and Flag
   - Navbar style selector (Vivid / Subtle)
-  - Region selector dropdown (38 regions)
+  - Region selector dropdown (34 regions and Global)
   - Color picker UI with 2-4 gradient colors
   - Real-time navbar preview with the readable theme colors, and a note when colors are adjusted
   - Reset to default per region
@@ -101,17 +101,17 @@ The AWS Console can show an account color: a 4px stripe above the navbar and a c
 ```
 
 ### 6. Static Resources
-- `flags/`: Country flag images (28 countries, 128x128 PNG)
+- `flags/`: Flag images (27 countries and the globe, 128x128 PNG)
 - `icons/`: UI icons (theme toggle, palette, flag)
-- `colors.js`: Shared color data (38 regions) and navbar themes (`getNavbarTheme()`)
+- `colors.js`: Shared color data (34 regions and Global) and navbar themes (`getNavbarTheme()`)
 
 ## Features
 
 ### Region Visualization
-- 38 AWS regions with unique default color gradients inspired by their flags
+- 34 AWS regions and Global with default color gradients inspired by their flags
 - Global services (IAM, CloudFront, Route 53, ...) use globe colors (ocean blue to land green)
 - User can customize gradient colors per region (2-4 colors)
-- Region flags next to the region selector and in the region menu (28 countries)
+- Region flags next to the region selector and in the region menu
 - Christmas season snow effect (Dec 20-26)
 
 ### Navbar Styles and Readability
