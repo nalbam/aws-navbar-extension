@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.2] - 2026-11-13
+
+Permission and package cleanup after the Chrome Web Store review, and popup accessibility fixes.
+
+### Removed
+- Host permission `*://*.console.aws.amazon.com/*` from `manifest.json` (`host_permissions`) and `manifest-v2.json` (`permissions`). A content script declared in the manifest does not need a host permission, and the extension sends no network requests. The content script `matches` still give access to AWS Console pages, so the browser shows the same site access as before.
+- `icons/*.ico` from `web_accessible_resources` (only the popup uses the icons), and the unused `icons/sun-hover.ico` and `icons/moon-hover.ico`.
+- `background.js`. No manifest declared it, so it never ran.
+- Region codes `eu-central-3`, `eu-south-3` and `me-west-1` from the region selector. They are not AWS regions. Custom colors saved for them are ignored.
+- `flags/README.md` from the packages.
+
+### Fixed
+- Popup region selector: Enter and Space select the option that the arrow keys point to. Before, the keyboard could not select a region.
+- Popup results: a status message shows applied, reset and error results, also to screen readers. An invalid hex value blocks Apply instead of saving the last valid color.
+- Popup focus indicators and button text contrast (4.5:1 or more in both themes).
+- During the snow season (Dec 20-26), a sticky or fixed navbar keeps its position.
+- Homepage region selector: keyboard selection, and a saved region that no longer exists counts as Auto.
+- Privacy policy: storage of the popup theme and the navbar style, and site access.
+
+### Changed
+- `package.sh` builds the packages in a temporary directory and stops on the first error. The repository manifests are no longer changed by a build.
+- The release workflow runs all repository checks (`node --test`) before it packages the extension.
+
 ## [2.3.1] - 2026-11-12
 
 ### Removed
