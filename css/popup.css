@@ -1,6 +1,10 @@
 :root {
   --primary-color: #232f3e;
   --accent-color: #ff9900;
+  /* Text colors with at least 4.5:1 contrast on --bg-color and --input-bg */
+  --accent-text: #a35200;
+  --error-color: #c82333;
+  --success-color: #1e7e34;
   --text-color: #333;
   --bg-color: #fff;
   --input-bg: #f8f9fa;
@@ -25,6 +29,9 @@
 
 [data-theme="dark"] {
   --primary-color: #fff;
+  --accent-text: #ff9900;
+  --error-color: #ff8a8a;
+  --success-color: #7ee2a0;
   --text-color: #eee;
   --bg-color: #232f3e;
   --input-bg: #2d3a4a;
@@ -137,6 +144,11 @@ input:checked + .slider:before {
   transform: translateX(20px);
 }
 
+.toggle input:focus-visible + .slider {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
 /* Segmented control (navbar style) */
 .segmented {
   display: inline-flex;
@@ -177,6 +189,14 @@ input:checked + .slider:before {
 .segmented:has(input:focus-visible) {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
+}
+
+/* Browsers without :has() (Firefox before 121) show the ring on any focus. */
+@supports not selector(:has(*)) {
+  .segmented:focus-within {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
 }
 
 /* Divider */
@@ -223,14 +243,15 @@ input:checked + .slider:before {
   transition: all 0.2s;
 }
 
-.custom-select:focus .select-trigger,
 .select-trigger:hover {
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.1);
 }
 
-.custom-select:focus {
-  outline: none;
+.custom-select:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--border-radius);
 }
 
 .select-text {
@@ -290,6 +311,12 @@ input:checked + .slider:before {
 .select-option:hover,
 .select-option.focused {
   background-color: var(--input-bg);
+}
+
+/* The option that the arrow keys point to (focus stays on the combobox) */
+.select-option.focused {
+  outline: 2px solid var(--primary-color);
+  outline-offset: -2px;
 }
 
 .select-option.selected {
@@ -403,8 +430,13 @@ input:checked + .slider:before {
 }
 
 .hex-input:focus {
-  outline: none;
+  outline: 2px solid var(--primary-color);
+  outline-offset: 1px;
   border-color: var(--accent-color);
+}
+
+.hex-input[aria-invalid="true"] {
+  border-color: var(--error-color);
 }
 
 .remove-color-btn {
@@ -439,7 +471,7 @@ input:checked + .slider:before {
   border: 1px solid var(--accent-color);
   border-radius: var(--border-radius);
   background-color: transparent;
-  color: var(--accent-color);
+  color: var(--accent-text);
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
@@ -447,7 +479,7 @@ input:checked + .slider:before {
 
 .secondary-btn:hover {
   background-color: var(--accent-color);
-  color: white;
+  color: #16191f;
 }
 
 .secondary-btn.disabled {
@@ -457,7 +489,7 @@ input:checked + .slider:before {
 
 .secondary-btn.disabled:hover {
   background-color: transparent;
-  color: var(--accent-color);
+  color: var(--accent-text);
 }
 
 /* Action Buttons */
@@ -476,7 +508,7 @@ input:checked + .slider:before {
   border: none;
   border-radius: var(--border-radius);
   background-color: var(--accent-color);
-  color: white;
+  color: #16191f;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -491,12 +523,22 @@ input:checked + .slider:before {
   background-color: #cc7a00;
 }
 
-.primary-btn.success {
-  background-color: #28a745;
+/* Result of the last action. role="status" announces it to screen readers. */
+.status-message {
+  margin: 8px 0 0;
+  font-size: 12px;
 }
 
-.primary-btn.error {
-  background-color: #dc3545;
+.status-message:empty {
+  margin: 0;
+}
+
+.status-message[data-kind="error"] {
+  color: var(--error-color);
+}
+
+.status-message[data-kind="success"] {
+  color: var(--success-color);
 }
 
 /* Theme Toggle Button */

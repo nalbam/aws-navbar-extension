@@ -16,19 +16,27 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   }
 });
 
-// Show error message to user
+const SUCCESS_MESSAGE_MS = 2000;
+let statusTimer = null;
+
+// Show the result of the last action below the settings. The element has
+// role="status", so screen readers announce it. A success message goes away
+// after a short time; an error message stays until the next result.
+function showStatus(message, kind) {
+  const status = document.getElementById('status-message');
+  clearTimeout(statusTimer);
+  status.textContent = message;
+  status.dataset.kind = kind;
+  if (kind === 'success') {
+    statusTimer = setTimeout(() => {
+      status.textContent = '';
+    }, SUCCESS_MESSAGE_MS);
+  }
+}
+
 function showError(message) {
   console.error(message);
-  const btn = document.getElementById('apply-btn');
-  if (btn) {
-    const originalContent = btn.textContent;
-    btn.textContent = 'Error!';
-    btn.classList.add('error');
-    setTimeout(() => {
-      btn.textContent = originalContent;
-      btn.classList.remove('error');
-    }, 2000);
-  }
+  showStatus(message, 'error');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -53,10 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   Object.keys(colors).sort().forEach(region => {
     const li = document.createElement('li');
+    li.id = `region-option-${region}`;
     li.className = 'select-option';
     li.setAttribute('role', 'option');
     li.setAttribute('data-value', region);
-    li.setAttribute('tabindex', '-1');
 
     const flagImg = document.createElement('img');
     flagImg.src = `flags/${colors[region].country}.png`;
@@ -133,11 +141,52 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectTrigger = regionSelect.querySelector('.select-trigger');
   const selectText = regionSelect.querySelector('.select-text');
 
-  // Toggle dropdown
+  // Keyboard focus stays on the combobox. The active option is the one that the
+  // arrow keys point to; aria-activedescendant tells screen readers which one.
+  const options = Array.from(optionsList.querySelectorAll('.select-option'));
+  let activeIndex = -1;
+
+  const setActiveOption = (index) => {
+    activeIndex = index;
+    options.forEach((opt, i) => opt.classList.toggle('focused', i === index));
+    if (index >= 0) {
+      regionSelect.setAttribute('aria-activedescendant', options[index].id);
+      options[index].scrollIntoView({ block: 'nearest' });
+    } else {
+      regionSelect.removeAttribute('aria-activedescendant');
+    }
+  };
+
+  // Open or close the list. An opened list starts at the selected region.
   const toggleDropdown = (open) => {
     const isOpen = open !== undefined ? open : regionSelect.getAttribute('aria-expanded') !== 'true';
     regionSelect.setAttribute('aria-expanded', isOpen);
     regionSelect.classList.toggle('open', isOpen);
+    setActiveOption(isOpen ? options.findIndex(opt => opt.classList.contains('selected')) : -1);
+  };
+
+  const selectRegion = (option) => {
+    const region = option.getAttribute('data-value');
+    if (!isValidRegion(region)) return;
+
+    // Update displayed text with flag
+    const flagImg = option.querySelector('.region-flag').cloneNode(true);
+    const text = option.querySelector('span').textContent;
+    selectText.innerHTML = '';
+    selectText.appendChild(flagImg);
+    selectText.appendChild(document.createTextNode(text));
+
+    // Update current region and load colors
+    currentRegion = region;
+    loadRegionColors(region).catch(() => {
+      showError('Failed to load region colors');
+    });
+    document.getElementById('color-editor').classList.remove('hidden');
+
+    options.forEach(opt => {
+      opt.setAttribute('aria-selected', opt === option);
+      opt.classList.toggle('selected', opt === option);
+    });
   };
 
   selectTrigger.addEventListener('click', (e) => {
@@ -145,33 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleDropdown();
   });
 
-  // Handle option selection
   optionsList.addEventListener('click', (e) => {
     const option = e.target.closest('.select-option');
-    if (!option) return;
-
-    const region = option.getAttribute('data-value');
-    if (region && isValidRegion(region)) {
-      // Update displayed text with flag
-      const flagImg = option.querySelector('.region-flag').cloneNode(true);
-      const text = option.querySelector('span').textContent;
-      selectText.innerHTML = '';
-      selectText.appendChild(flagImg);
-      selectText.appendChild(document.createTextNode(text));
-
-      // Update current region and load colors
-      currentRegion = region;
-      loadRegionColors(region).catch(error => {
-        showError('Failed to load region colors');
-      });
-      document.getElementById('color-editor').classList.remove('hidden');
-
-      // Update aria-selected
-      optionsList.querySelectorAll('.select-option').forEach(opt => {
-        opt.setAttribute('aria-selected', opt === option);
-        opt.classList.toggle('selected', opt === option);
-      });
-    }
+    if (option) selectRegion(option);
     toggleDropdown(false);
   });
 
@@ -182,32 +207,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Keyboard navigation
+  // Keyboard: Enter/Space select the active option (or open the list),
+  // arrows/Home/End move, Escape closes, Tab closes and moves on.
   regionSelect.addEventListener('keydown', (e) => {
     const isOpen = regionSelect.getAttribute('aria-expanded') === 'true';
+    const last = options.length - 1;
 
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      toggleDropdown();
-    } else if (e.key === 'Escape' && isOpen) {
-      e.preventDefault();
-      toggleDropdown(false);
-    } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && isOpen) {
-      e.preventDefault();
-      const options = Array.from(optionsList.querySelectorAll('.select-option'));
-      const currentIndex = options.findIndex(opt => opt.classList.contains('focused'));
-
-      let nextIndex;
-      if (e.key === 'ArrowDown') {
-        nextIndex = currentIndex < options.length - 1 ? currentIndex + 1 : 0;
-      } else {
-        nextIndex = currentIndex > 0 ? currentIndex - 1 : options.length - 1;
-      }
-
-      options.forEach((opt, idx) => {
-        opt.classList.toggle('focused', idx === nextIndex);
-      });
-      options[nextIndex].scrollIntoView({ block: 'nearest' });
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        if (isOpen && activeIndex >= 0) {
+          selectRegion(options[activeIndex]);
+          toggleDropdown(false);
+        } else {
+          toggleDropdown();
+        }
+        break;
+      case 'ArrowDown':
+      case 'ArrowUp':
+        e.preventDefault();
+        if (!isOpen) {
+          toggleDropdown(true);
+        } else if (activeIndex === -1) {
+          setActiveOption(e.key === 'ArrowDown' ? 0 : last);
+        } else {
+          const step = e.key === 'ArrowDown' ? 1 : -1;
+          setActiveOption((activeIndex + step + options.length) % options.length);
+        }
+        break;
+      case 'Home':
+      case 'End':
+        if (isOpen) {
+          e.preventDefault();
+          setActiveOption(e.key === 'Home' ? 0 : last);
+        }
+        break;
+      case 'Escape':
+        if (isOpen) {
+          e.preventDefault();
+          toggleDropdown(false);
+        }
+        break;
+      case 'Tab':
+        if (isOpen) toggleDropdown(false);
+        break;
     }
   });
 
@@ -231,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (Object.keys(config.customColors).length === 0) {
           delete config.customColors;
         }
-        saveConfig(config);
+        saveConfig(config, `Default colors restored for ${currentRegion}.`);
       }
       await loadRegionColors(currentRegion);
     } catch (error) {
@@ -243,6 +287,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('apply-btn').addEventListener('click', async () => {
     if (!currentRegion || !isValidRegion(currentRegion)) {
       showError('Invalid region selected');
+      return;
+    }
+
+    // An invalid hex field does not change its color, so applying would save a
+    // color that the field does not show.
+    const invalidInput = document.querySelector('.hex-input[aria-invalid="true"]');
+    if (invalidInput) {
+      showError(`Color ${invalidInput.dataset.colorNum}: enter a hex color such as #ff9900.`);
+      invalidInput.focus();
       return;
     }
 
@@ -264,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
         color3: validColors[2] || null,
         color4: validColors[3] || null,
       };
-      saveConfig(config, true);
+      saveConfig(config, `Colors applied to ${currentRegion}.`);
     } catch (error) {
       showError('Failed to apply colors');
     }
@@ -316,7 +369,10 @@ function createColorInputGroup(color, index, showRemoveBtn) {
     currentColors[index] = e.target.value;
     // Sync hex input
     const hexInput = inputGroup.querySelector('.hex-input');
-    if (hexInput) hexInput.value = e.target.value;
+    if (hexInput) {
+      hexInput.value = e.target.value;
+      hexInput.removeAttribute('aria-invalid');
+    }
     debouncedUpdatePreview();
   });
 
@@ -325,14 +381,18 @@ function createColorInputGroup(color, index, showRemoveBtn) {
   hexInput.value = color;
   hexInput.className = 'hex-input';
   hexInput.maxLength = 7;
+  hexInput.dataset.colorNum = colorNum;
   hexInput.setAttribute('aria-label', `Color ${colorNum} hex value`);
   hexInput.setAttribute('placeholder', '#000000');
   hexInput.addEventListener('input', (e) => {
     const hex = e.target.value;
     if (isValidHexColor(hex)) {
+      hexInput.removeAttribute('aria-invalid');
       currentColors[index] = hex;
       colorInput.value = hex;
       debouncedUpdatePreview();
+    } else {
+      hexInput.setAttribute('aria-invalid', 'true');
     }
   });
 
@@ -418,7 +478,8 @@ function getCurrentConfig(forceRefresh = false) {
   });
 }
 
-function saveConfig(config, showSaveMessage = false) {
+// Save the config. successMessage, when given, is shown after the save.
+function saveConfig(config, successMessage = null) {
   // Update cache immediately
   cachedConfig = config;
 
@@ -427,18 +488,11 @@ function saveConfig(config, showSaveMessage = false) {
       if (chrome.runtime.lastError) {
         // Invalidate cache on error
         cachedConfig = null;
-        showError('Failed to save settings');
+        showError(`Failed to save settings: ${chrome.runtime.lastError.message}`);
         return;
       }
-      if (showSaveMessage) {
-        const btn = document.getElementById('apply-btn');
-        const originalContent = btn.textContent;
-        btn.textContent = 'Applied!';
-        btn.classList.add('success');
-        setTimeout(() => {
-          btn.textContent = originalContent;
-          btn.classList.remove('success');
-        }, 1000);
+      if (successMessage) {
+        showStatus(successMessage, 'success');
       }
     });
   } catch (error) {
